@@ -33,6 +33,7 @@ export class MetaMask {
     let ret = false;
     if (!store.state.metaMask) {
       ElMessage.error("please connect wallet")
+      return false;
     } else {
       return true;
     }
@@ -183,6 +184,11 @@ export class MetaMask {
     const myContract = this.getContract(param.abi, param.address);
     let balance = await myContract.methods.balanceOf(param.from).call()
     return balance / Math.pow(10, 18);
+  }
+  async getRewardByContract(param) {
+    const myContract = this.getContract(param.abi, param.address);
+    let reward = await myContract.methods.stakingReward(param.from).call()
+    return reward / Math.pow(10, 18);
   }
   async getClubStatusByContract(param) {
     const myContract = this.getContract(param.abi, param.address);

@@ -5,11 +5,12 @@
         <div class="card ">
           <div class="card-header ">
             <el-row :gutter="10">
-              <el-col :span="20">
+              <el-col :span="16">
                 <h4 class="card-title">COSD Staking
                   <small class="description">Please choose purpose</small>
                 </h4>
               </el-col>
+              <el-col :span="4"><b style="font-size:18px;line-height: 32px;">{{ balance.cosd }}</b><small class="description">&nbsp;COSD</small></el-col>
               <el-col :span="4" style="text-align: right;">
                 <el-button type="primary" @click="open('buy')" round>Purchase COSD</el-button>
               </el-col>
@@ -190,7 +191,7 @@
                         <div class="card-icon icon-rose">
                           <i class="fa fa-line-chart"></i>
                         </div>
-                        <h3 class="card-title"> 200 COSD earned in 10 days</h3>
+                        <h3 class="card-title"> <b>{{ reward }}</b> COSD earned</h3>
                         <p class="card-description">
                         </p>
                         <button class="btn btn-warning btn-round" @click="open('defiunstaking')">Stop staking</button>
@@ -211,7 +212,7 @@
           USDT
         </el-col>
         <el-col :span="20">
-          <el-input-number v-model.number="action.amount1" controls-position="right" :step="1" :min="0" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
+          <el-input-number v-model.number="action.amount1" controls-position="right" :step="1" :min="1" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
         </el-col>
       </el-row>
       <el-row :gutter="5">
@@ -228,7 +229,7 @@
         </el-col>
         <el-col :span="24">
           <el-button type="success" @click="handleTransferOperate()" style="width:100%" :disabled="!disabled">
-            <el-tag size="small" v-if="needApprove">2</el-tag>&nbsp;Buy
+            <el-tag size="small" v-if="needApprove">2</el-tag>&nbsp;{{buttonText}}
           </el-button>
         </el-col>
       </el-row>
@@ -272,6 +273,8 @@ const needApprove = ref(true);
 let min = ref(400)
 const metaMask = new MetaMask();
 const disabled = ref(false)
+const reward = ref(0)
+const buttonText = ref('Buy')
 function handleClick(tab) {
   active.value = tab;
 }
@@ -309,7 +312,18 @@ function getBalance(key) {
     from: store.state.metaMask.account
   }
   metaMask.getBalanceByContract(data).then(res => {
-    balance.value[key] = res;
+    balance.value[key] = Math.round((res)*1000)/1000;
+  });
+}
+function getReward() {
+  if (!metaMask.isAvailable()) return;
+  let data = {
+    abi: abis.value['defi'],
+    address: CONTRACTS['defi'].address,
+    from: store.state.metaMask.account
+  }
+  metaMask.getRewardByContract(data).then(res => {
+    reward.value = Math.round((res)*1000)/1000
   });
 }
 function getClubStatus() {
@@ -334,9 +348,12 @@ function open(command) {
   if (command == 'slstaking') min.value = minSet.value.sl;
   else if (command == 'clubstaking') min.value = minSet.value.club;
   else min.value = 1;
+  
   if (command == 'clubunstaking' || command == 'slunstaking' || command == 'defiunstaking' || command == 'defirewards') {
     needApprove.value = false
-  } else needApprove.value = true;
+    buttonText.value = "Unstake"
+  } else {needApprove.value = true;buttonText.value = "Stake"}
+  if(command == 'buy') buttonText.value = "Buy"
   visible.value = true
 }
 function handleApproveOperate() {
@@ -462,6 +479,7 @@ function stakingFunc(key) {
     setTime(key)
     getBalance(key);
     if (key == 'club') getClubStatus()
+    if (key == 'defi') {getReward()}
   }).catch(err => {
     loadingHelper.hide();
   })
@@ -488,7 +506,7 @@ function unStakingFunc(key) {
       "poolId": POOL[key]
     }
     savaAfterTranscation(param)
-    if (key == 'defi') show.value = true;
+    if (key == 'defi') {show.value = true;getReward()}
     setTime(key)
     loadingHelper.hide();
     getBalance(key);
@@ -515,5 +533,6 @@ onMounted(() => {
   getBalance('defi')
   getTranscationTime()
   getClubStatus()
+  getReward()
 })
 </script>
