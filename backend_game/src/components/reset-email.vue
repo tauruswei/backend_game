@@ -5,53 +5,47 @@
         <el-input v-model="form.email" placeholder="enter your email"  clearable/>
       </el-form-item>
       <el-form-item label="verify code" prop="code">
-          <el-row :gutter="10">
-            <el-col :span="18">
-              <el-input v-model="form.code" type="text" placeholder="enter your verify code"  clearable/>
+          <el-row :gutter="10" style="width:100%">
+            <el-col :span="20">
+              <el-input v-model="form.code" placeholder="enter your verify code"  clearable/>
             </el-col>
-            <el-col :span="6">
-              <el-button @click="getVerifyCode">send</el-button>
+            <el-col :span="4">
+              <el-button @click="getVerifyCode" type="primary" plain>send</el-button>
             </el-col>
           </el-row>
       </el-form-item>
-      <el-form-item label="New Password" prop="password" v-if="form.code">
-        <el-input v-model="form.password" type="password" placeholder="enter your password" show-password  clearable/>
-      </el-form-item>
-      <el-form-item label="password" prop="rpassword" v-if="form.code">
-        <el-input v-model="form.rpassword" type="password" placeholder="enter your password again" show-password  clearable/>
+      <el-form-item label="New Email" prop="newEmail">
+        <el-input v-model="form.newEmail" placeholder="enter your email" clearable/>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" class="w-100" @click="submit">Sure</el-button>
+        <el-button type="primary" class="w-100" @click="submit">Save</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
-<script>
-import { ref } from "vue";
+<script setup>
+import { ref,defineEmits } from "vue";
 import { useRouter } from "vue-router";
 import { userApi } from "../api/request";
 import { loadingHelper } from "@/utils/loading";
 import { ElNotification } from "element-plus";
-export default {
-  name: "PasswordEdit",
-  emits:['close'],
-  setup({emit}) {
+const emit = defineEmits(['close'])
     const router = useRouter();
     const formRef = ref(null);
     const form = ref({
       email: "",
-      password: "",
-      rpassword: "",
+      newEmail: "",
+      code:""
     });
     const rules = ref({});
-    rules.value.password = [{ required: true, message: "password is required", trigger: "blur" }];
+    rules.value.email = [{ required: true, message: "email is required", trigger: "blur" }];
     rules.value.code = [{ required: true, message: "Verify code is required", trigger: "blur" }];
-    rules.value.rpasswd = [
-      { required: true, message: "password is required", trigger: "blur" },
+    rules.value.newEmail = [
+      { required: true, message: "new email is required", trigger: "blur" },
       {
         validator: function (rule, value, callback) {
-          if (value != form.value.passwd) {
-            callback(new Error("The passwords are inconsistent, please re-enter "));
+          if (value === form.value.newEmail) {
+            callback(new Error("e-mail cannot be repeated, please re-enter "));
           } else {
             //校验通过
             callback();
@@ -83,11 +77,11 @@ export default {
                 code:form.value.code,
                 password: form.value.password, 
             }
-            userApi.password(param).then((res)=>{
+            userApi.email(param).then((res)=>{
                 if(res.code==200&&res.msg=="success"){
                     ElNotification({
                         type:"success",
-                        message:"successed"
+                        message:"The email has been changed successfully!"
                     })
                     emit("close")
                     router.push({
@@ -100,12 +94,4 @@ export default {
       });
     }
 
-    return {
-      form,
-      rules,
-      formRef,
-      submit
-    };
-  },
-};
 </script>

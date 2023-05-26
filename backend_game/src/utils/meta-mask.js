@@ -4,6 +4,7 @@ import detectEthereumProvider from '@metamask/detect-provider';
 import Web3 from 'web3'
 import store from "@/store/index";
 import { ElMessage, ElNotification } from "element-plus"
+import { userApi } from '@/api/request';
 let option = {
   injectProvider: false,
   communicationLayerPreference: 'webrtc',
@@ -85,6 +86,10 @@ export class MetaMask {
       if (account) {
         store.commit("setMetaMask", { chainID: chainID, account: account });
         ElMessage.success('connected success!')
+        if(!store.state.user.account) userApi.update({wallet:account,name:store.state.user.name}).then(res=>{
+          console.log("updated")
+          store.commit('setUser',{...store.state.user,account:account})
+        })
       }
       else {
         store.commit("setMetaMask", null);

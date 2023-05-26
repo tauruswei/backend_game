@@ -74,7 +74,7 @@
                       <el-icon>
                         <SuccessFilled />
                       </el-icon>
-                      <b style="display:inline-block;vertical-align: top;font-weight:400">&nbsp;&nbsp;Connected</b>
+                      <b style="display:inline-block;vertical-align: top;font-weight:400">&nbsp;&nbsp;{{$store.state.metaMask.account.substring(0,12)+'...'}}</b>
                     </span>
                   </el-tooltip>
                 </el-button>
@@ -92,7 +92,8 @@
                 <template #dropdown>
                   <el-dropdown-menu>
                     <el-dropdown-item command="profile">Profile</el-dropdown-item>
-                    <el-dropdown-item command="password">Password</el-dropdown-item>
+                    <el-dropdown-item command="password">Change Password</el-dropdown-item>
+                    <el-dropdown-item command="email">Change Email</el-dropdown-item>
                     <el-dropdown-item divided command="logout">Sign Out</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -111,21 +112,26 @@
     <el-dialog v-model="visible" title="Change Password" width="480px" destroy-on-close>
       <password-cont @close="visible = false"></password-cont>
     </el-dialog>
+    <el-dialog v-model="visible1" title="Change Password" width="480px" destroy-on-close>
+      <email-cont @close="visible1 = false"></email-cont>
+    </el-dialog>
   </div>
 </template>
 <script setup>
 import { ref, computed } from "vue";
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
-import { logout } from "../utils/logout";
-import LayoutFooter from "./footer.vue"
-import PasswordCont from "./password.vue";
+import { logout } from "@/utils/logout";
+import LayoutFooter from "@/components/footer.vue"
+import PasswordCont from "@/components/password.vue";
+import EmailCont from "@/components/reset-email.vue";
 import { MetaMask } from "@/utils/meta-mask";
 const store = useStore();
 const router = useRouter()
 const isCollapse = ref(false);
 const width = ref("240px");
 const visible = ref(false);
+const visible1 = ref(false);
 const isConnected = ref(false)
 function change() {
   isCollapse.value = !isCollapse.value;
@@ -148,6 +154,7 @@ function handleCommand(command) {
     store.commit("setMetaMask", null)
   }
   if (command == 'password') visible.value = true;
+  if (command == 'email') visible1.value = true;
   if (command == 'profile') router.push('/setting/profile')
 }
 function connectWallet() {
