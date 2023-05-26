@@ -1,0 +1,1075 @@
+{
+	"info": {
+		"_postman_id": "ed15baf1-2acb-40cb-b2f6-09fc00bdf62c",
+		"name": "chess of stars",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5522142",
+		"_collection_link": "https://red-spaceship-970707.postman.co/workspace/Team-Workspace~dfa314be-cd03-424b-8cab-e934c6c94ab0/collection/5522142-ed15baf1-2acb-40cb-b2f6-09fc00bdf62c?action=share&creator=5522142&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "发送邮箱验证码",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"13156050650@163.com\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/user/sendCode",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"user",
+								"sendCode"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "查询俱乐部老板以及渠道商的地址",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"13156050650@163.com\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/user/queryClubAndChannelAddress?userId=5",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"user",
+								"queryClubAndChannelAddress"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "编译用户",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"cosd\",\r\n  \"oldPasswd\": \"cosd@123.com\",\r\n  \"passwd\": \"cosd@123.com\",\r\n  \"userId\": 5,\r\n  \"walletAddress\": \"0xccb233A8269726c51265cff07fDC84110F5F3F4c\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/user/updateUser",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"user",
+								"updateUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "根据userId查询用户信息",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "userId",
+									"value": "5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/user/queryUserById",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"user",
+								"queryUserById"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "根据 name 查询用户信息",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "userId",
+									"value": "5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/user/queryUserById?name=cosd",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"user",
+								"queryUserById"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "cosd"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "用户注册",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": 333589,\n  \"inviterId\": 0,\n  \"name\": \"cosd\",\n  \"passwd\": \"cosd@123.com\",\n  \"userSendCodeReq\": {\n    \"email\": \"rexuedongman@163.com\"\n  },\n  \"userType\": 1,\n  \"walletAddress\": \"0xccb233A8269726c51265cff07fDC84110F5F3F4c\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/user/register",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "渠道商注册",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"code\": 333589,\n  \"inviterId\": 0,\n  \"name\": \"cosd\",\n  \"passwd\": \"cosd@123.com\",\n  \"userSendCodeReq\": {\n    \"email\": \"rexuedongman@163.com\"\n  },\n  \"userType\": 1,\n  \"walletAddress\": \"0xccb233A8269726c51265cff07fDC84110F5F3F4c\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/user/register",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "nft",
+			"item": [
+				{
+					"name": "用户 NFT 列表查询",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"pageReq\": {\r\n    \"pageNo\": 1,\r\n    \"pageSize\": 5\r\n  },\r\n  \"status\": \"0\",\r\n  \"userId\": 5\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/nft/queryNFTsByUserIdAndStatus",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"nft",
+								"queryNFTsByUserIdAndStatus"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "web trans",
+			"item": [
+				{
+					"name": "用户质押 cosd 到defi",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"txId\":\"213123122\",\r\n  \"transType\":1,\r\n  \"fromUserId\":5,\r\n  \"fromAssetType\": 1,\r\n  \"fromAmount\": 4000,\r\n  \"toUserId\":5,\r\n  \"toAssetType\": 1,\r\n  \"toAmount\": 4000,\r\n  \"nftVo\":{\r\n\r\n  },\r\n  \"poolId\":1\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/webTransaction/save",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"webTransaction",
+								"save"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "用户从 defi 解押 COSD",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"txId\":\"212m\",\r\n  \"transType\":4,\r\n  \"fromUserId\":5,\r\n  \"fromAssetType\": 1,\r\n  \"fromAmount\": -20,\r\n  \"toUserId\":5,\r\n  \"toAssetType\": 1,\r\n  \"toAmount\": -20,\r\n  \"nftVo\":{\r\n\r\n  },\r\n  \"poolId\":1\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/webTransaction/save",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"webTransaction",
+								"save"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "用户质押 cosd 到星光",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"txId\":\"21312312\",\r\n  \"transType\":2,\r\n  \"fromUserId\":5,\r\n  \"fromAssetType\": 1,\r\n  \"fromAmount\": 400,\r\n  \"toUserId\":5,\r\n  \"toAssetType\": 1,\r\n  \"toAmount\": 400,\r\n  \"nftVo\":{\r\n\r\n  },\r\n  \"poolId\":2\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/webTransaction/save",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"webTransaction",
+								"save"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "用户从星光解押COSD",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"txId\":\"213123m2\",\r\n  \"transType\":5,\r\n  \"fromUserId\":5,\r\n  \"fromAssetType\": 1,\r\n  \"fromAmount\": -50,\r\n  \"toUserId\":5,\r\n  \"toAssetType\": 1,\r\n  \"toAmount\": -50,\r\n  \"nftVo\":{\r\n\r\n  },\r\n  \"poolId\":2\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/webTransaction/save",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"webTransaction",
+								"save"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "用户质押 cosd 到club",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"txId\":\"2131231223\",\r\n  \"transType\":3,\r\n  \"fromUserId\":5,\r\n  \"fromAssetType\": 1,\r\n  \"fromAmount\": 4000,\r\n  \"toUserId\":5,\r\n  \"toAssetType\": 1,\r\n  \"toAmount\": 4000,\r\n  \"nftVo\":{\r\n\r\n  },\r\n  \"poolId\":3\r\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/webTransaction/save",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"webTransaction",
+								"save"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "用户从club解押COSD",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"txId\":\"21312qm2\",\r\n  \"transType\":6,\r\n  \"fromUserId\":5,\r\n  \"fromAssetType\": 1,\r\n  \"fromAmount\": -100,\r\n  \"toUserId\":5,\r\n  \"toAssetType\": 1,\r\n  \"toAmount\": -100,\r\n  \"nftVo\":{\r\n\r\n  },\r\n  \"poolId\":3\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/webTransaction/save",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"webTransaction",
+								"save"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "用户购买 nft 盲盒",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"txId\":\"213123m2h122\",\r\n  \"transType\":9,\r\n  \"fromUserId\":5,\r\n  \"fromAssetType\": 0,\r\n  \"fromAmount\": 20,\r\n  \"toUserId\":5,\r\n  \"toAssetType\": 2,\r\n  \"toAmount\": 1,\r\n  \"nftVo\":{\r\n    \"tokenId\":\"21313123212\",\r\n    \"attr1\":\"10001\",\r\n    \"attr2\":\"50\"\r\n  }\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/webTransaction/save",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"webTransaction",
+								"save"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "用户购买 COSD",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"txId\":\"213123m2n\",\r\n  \"transType\":0,\r\n  \"fromUserId\":5,\r\n  \"fromAssetType\": 0,\r\n  \"fromAmount\": 1,\r\n  \"toUserId\":5,\r\n  \"toAssetType\": 1,\r\n  \"toAmount\": 20,\r\n  \"nftVo\":{\r\n  }\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/webTransaction/save",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"webTransaction",
+								"save"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "查看用户是否可以解押 COSD",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "userId",
+									"value": "5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/webTransaction/queryUserIsAbleForUnStake",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"webTransaction",
+								"queryUserIsAbleForUnStake"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "evics",
+			"item": [
+				{
+					"name": "用户同质化资产查询",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n  \"userId\": 5,\r\n  \"assetType\": 2\r\n}\r\n"
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/asset/queryUserAssets",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"asset",
+								"queryUserAssets"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "game",
+			"item": [
+				{
+					"name": "用户登录",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "userName",
+									"value": "cosd",
+									"type": "text"
+								},
+								{
+									"key": "userPassword",
+									"value": "cosd@123.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/game/getUserProfile",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"game",
+								"getUserProfile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "棋手nft 数量修改",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/game/increaseUserChesserPts?userId=5&chesserId=10001&ptsInc=1",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"game",
+								"increaseUserChesserPts"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "5"
+								},
+								{
+									"key": "chesserId",
+									"value": "10001"
+								},
+								{
+									"key": "ptsInc",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "用户钱币修改",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "1234.com",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "perftest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://{{host}}:{{port}}/game/increaseUserMoney?userId=5&moneyId=1&moneyAmount=11",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"game",
+								"increaseUserMoney"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "5"
+								},
+								{
+									"key": "moneyId",
+									"value": "1"
+								},
+								{
+									"key": "moneyAmount",
+									"value": "11"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

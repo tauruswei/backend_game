@@ -1,0 +1,107 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+
+
+
+interface AnotherContract {
+    function mintAndTransfer(address  param1, string memory param2 ,string memory param3) external returns (uint256);
+}
+
+contract BuyBlindBox {
+    using SafeMath for uint256;
+    using SafeERC20 for IERC20;
+    IERC20 public usdt; // USDT 合约实例
+    address address1;
+    address address2;
+    address owner;
+    // 价格
+    uint256 public price;
+
+    string[] private group1 = ["10001","10002","10003","10004","10005","10006","10007","10008","10009","20001"];
+    string[] private group2 = ["20002","20003","20004","20005","20006"];
+    string[] private group3 = ["30001","30002","30003","30004"];
+    string[] private group4 = ["40001","40002","40003"];
+
+    AnotherContract private anotherContract;
+
+    constructor(
+        address _anotherContractAddress,
+        address _usdtAddress,
+        address _address1,
+        address _address2,
+        uint256 _price){
+        anotherContract = AnotherContract(_anotherContractAddress);
+        usdt = IERC20(_usdtAddress);
+        address1 = _address1;
+        address2 = _address2;
+        price = _price;
+        owner = msg.sender;
+    }
+    
+    event DrawCardEvent(address indexed from, uint256 cardId);
+
+    modifier onlyOwner() {
+      require(msg.sender == owner, "Message sender must be the contract's owner.");
+      _;
+    }
+
+    function drawCard(uint256 _usdtAmount,address _clubAddress, address _channelAddress) public {
+        uint256 cardId;
+        uint256 r = random() % 1000;
+
+        require(usdt.balanceOf(msg.sender) >= _usdtAmount, "Not enough USDT");
+        require(price <= _usdtAmount, "Need more USDT");
+
+        uint256 transferAmount = _usdtAmount.mul(9).div(10);
+        uint256 restAmount = _usdtAmount.sub(transferAmount);
+        uint256 clubAmount;
+        uint256 channelAmount;
+
+
+        require(usdt.transferFrom(msg.sender, address1, transferAmount),"Transfer to address1 failed");
+
+        if(!isAddressEmpty(_clubAddress)){
+            clubAmount = restAmount.mul(5).div(10);
+            require(usdt.transferFrom(msg.sender, _clubAddress, clubAmount),"Transfer to clubAddress failed");
+        }
+        if(!isAddressEmpty(_channelAddress)){
+            channelAmount = restAmount.mul(1).div(10);
+            require(usdt.transferFrom(msg.sender, _channelAddress, channelAmount),"Transfer to clubAddress failed");
+
+        }
+        require(usdt.transferFrom(msg.sender, address2, restAmount.sub(clubAmount).sub(channelAmount)),"Transfer to address2 failed");
+
+        if (r < 800) {
+            cardId = anotherContract.mintAndTransfer(msg.sender, group1[random()%(group1.length)],"50");
+        } else if (r < 960) {
+            cardId = anotherContract.mintAndTransfer(msg.sender, group2[random()%(group2.length)],"100");
+        } else if (r < 992) {
+            cardId = anotherContract.mintAndTransfer(msg.sender, group3[random()%(group3.length)],"200");
+        } else {
+            cardId = anotherContract.mintAndTransfer(msg.sender, group4[random()%(group4.length)],"400");
+        }
+        emit DrawCardEvent(msg.sender,cardId);
+    }
+
+    function random() private view returns (uint256) {
+        return uint256(
+           keccak256(abi.encode(block.timestamp, blockhash(block.timestamp), msg.sender))
+        );
+    }
+
+    function setPrice(uint256 _price) external onlyOwner {
+        price = _price;
+    }
+
+    function setRandomAddress(address _address1, address _address2) external onlyOwner{
+        address1 = _address1;
+        address2 = _address2;
+    }
+    function isAddressEmpty(address addr) internal pure returns (bool) {
+        return (addr == address(0));
+    }
+}
