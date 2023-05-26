@@ -211,7 +211,7 @@
           USDT
         </el-col>
         <el-col :span="20">
-          <el-input-number v-model.number="action.amount1" controls-position="right" :step="1" :min="20" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
+          <el-input-number v-model.number="action.amount1" controls-position="right" :step="1" :min="0" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
         </el-col>
       </el-row>
       <el-row :gutter="5">
@@ -222,13 +222,13 @@
           <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
         </el-col>
         <el-col :span="24" style="margin:20px 0 10px" v-if="needApprove">
-          <el-button type="primary" @click="handleSwapOperate()" style="width:100%" :disabled="disabled">
+          <el-button type="primary" @click="handleApproveOperate()" style="width:100%" :disabled="disabled">
             <el-tag size="small">1</el-tag>&nbsp;Approve Spending
           </el-button>
         </el-col>
         <el-col :span="24">
           <el-button type="success" @click="handleTransferOperate()" style="width:100%" :disabled="!disabled">
-            <el-tag size="small" v-if="needApprove">2</el-tag>&nbsp;Swap
+            <el-tag size="small" v-if="needApprove">2</el-tag>&nbsp;Buy
           </el-button>
         </el-col>
       </el-row>
@@ -257,7 +257,7 @@ const balance = ref({
 const contracts = ref(CONTRACTS)
 const abis = ref({ sl: slStaking, club: clubStaking, defi: defiStaking, buy: buyToken, cosd: cosdToken, busd: busdApprove })
 const action = ref({
-  amount1: 20,
+  amount1: 0.05,
   amount: 1,
   title: '',
   command: ''
@@ -278,9 +278,9 @@ function handleClick(tab) {
 function translate(type) {
   let rate = 20;
   if (type == 'cosd') {
-    action.value.amount1 = action.value.amount * rate;
+    action.value.amount1 = action.value.amount / rate;
   } else if (type == 'usdt') {
-    action.value.amount = action.value.amount1 / rate;
+    action.value.amount = action.value.amount1 * rate;
   }
 }
 function setTime(key) {
@@ -325,7 +325,7 @@ function getClubStatus() {
 }
 function open(command) {
   action.value = {
-    amount1: 20,
+    amount1: 0.05,
     amount: 1,
     title: titles.value[command],
     command: command
@@ -339,7 +339,7 @@ function open(command) {
   } else needApprove.value = true;
   visible.value = true
 }
-function handleSwapOperate() {
+function handleApproveOperate() {
   if (action.value.command == "buy") purchaseApprove();
   if (action.value.command == "slstaking") stakingApprove('sl');
   if (action.value.command == "clubstaking") stakingApprove('club');

@@ -58,6 +58,7 @@ let mocks = [
   { url: "/user/logout", type: "get", response: response },
   { url: "/user/checkUserName?userName=", type: "get", response: Admin.checkNameServ},
   { url: "/user/updateUser", type:"get", response: response},
+  { url: "/user/sendCode", type:"post", response: Admin.codeServ},
   { url: "/user/queryUserByName", type:"post", response: Admin.userServ},
   { url: "/user/queryUserById", type:"post", response: Admin.userServ},
   { url: "/user/queryClubChannelAddress", type:"post", response: Admin.walletServ},

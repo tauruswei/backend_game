@@ -80,9 +80,13 @@
     <!--View NFT on Blockchain-->
     <el-dialog v-model="visible1" title="Get a NFT in the blind box" width="400px" destroy-on-close>
       <el-row>
-        <el-col :span="4">AMOUNT</el-col>
+        <el-col :span="4">USDT</el-col>
         <el-col :span="20">
-          <el-input-number v-model.number="amount" controls-position="right" :step="1" :min="20" :max="100000" placeholder="`set amount" style="width:100%" clearable></el-input-number>
+          <el-input-number v-model.number="amount" controls-position="right" :step="20" :min="20" :max="100000" placeholder="`set amount" @change="translate('usdt')" style="width:100%" clearable></el-input-number>
+        </el-col>
+        <el-col :span="4" style="margin-top:10px;">NFT</el-col>
+        <el-col :span="20" style="margin-top:10px;">
+          <el-input-number v-model.number="amount1" controls-position="right" :step="1" :min="1" :max="100000" placeholder="`set amount" @change="translate('nft')" style="width:100%" clearable></el-input-number>
         </el-col>
         <el-col :span="24" style="margin:20px 0 10px">
           <el-button type="primary" @click="nftApprove()" style="width:100%" :disabled="disabled">
@@ -91,7 +95,7 @@
         </el-col>
         <el-col :span="24">
           <el-button type="success" @click="nftSwap()" style="width:100%" :disabled="!disabled">
-            <el-tag size="small">2</el-tag>&nbsp;Swap
+            <el-tag size="small">2</el-tag>&nbsp;Buy
           </el-button>
         </el-col>
       </el-row>
@@ -128,7 +132,8 @@ const address = ref({
   clubAddress: "",
   userAddress: ""
 })
-const amount = ref(0);
+const amount = ref(20);
+const amount1 = ref(1);
 const metaMask = new MetaMask();
 const disabled = ref(false)
 function view(data) {
@@ -173,6 +178,14 @@ function handlePageChange(val) {
   pageNum.value = val;
   query();
 }
+function translate(type) {
+  let rate = 20;
+  if (type == 'usdt') {
+    amount1.value = parseInt(amount.value / rate);
+  } else if (type == 'nft') {
+    amount.value = amount1.value * rate;
+  }
+}
 function isEmpty() {
   if (!amount.value) {
     ElMessage.error("amount is required!")
@@ -191,11 +204,10 @@ function getCard() {
 }
 function nftApprove() {
   if (!metaMask.isAvailable()) return;
-  let account = store.state.metaMask.account;
-  let data = { from: account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: blindBox, club: address.value.clubAddress, channel: address.value.channelAddress }
   if (isEmpty()) return;
+  let data = { from: store.state.metaMask.account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: blindBox, club: address.value.clubAddress, channel: address.value.channelAddress }
   loadingHelper.show()
-  metaMask.approveByContract({ ...data, abi: busdToken, approveAddress: CONTRACTS["busd"].address }).then(() => {
+  metaMask.approveByContract({ ...data, abiApprove: busdToken, approveAddress: CONTRACTS["busd"].address }).then(() => {
     disabled.value = true;
     loadingHelper.hide();
   }).catch(err => {
@@ -204,8 +216,8 @@ function nftApprove() {
 }
 function nftSwap() {
   if (!metaMask.isAvailable()) return;
-  let account = store.state.metaMask.account;
-  let data = { from: account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: blindBox, club: address.value.clubAddress, channel: address.value.channelAddress }
+  if (isEmpty()) return;
+  let data = { from: store.state.metaMask.account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: blindBox, club: address.value.clubAddress, channel: address.value.channelAddress }
   loadingHelper.show()
   metaMask.nftBlindBoxByContract(data).then((res) => {
     visible1.value = false;

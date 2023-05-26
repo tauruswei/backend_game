@@ -30,20 +30,20 @@ let roles = {
 };
 export default {
   loginServ: (req) => {
-    const { password, email } = req.body;
+    const { userPassword ,userName} = req.body;
     let response = {};
-    if (password && email) {
+    if (userPassword) {
       response = {
         code: 200,
         msg: "success",
         data: {
           token: "eyJpZCI6MSwiZXhwaXJlIjoxNjE5MTQ3ODk0LCJOZXR3b3JrSWQiOjB9.e61af7bb5d0973c77d02afb41a8da3b424355ff403875c7eaad7c10925b95e75",
           user: {
-            email: email,
+            email: userName,
             name: 'admin',
             id: 1,
             role: 1,//'@pick([0,1])'
-            account:"0x5fb6ac2aff7b356ab5bbd49e544e63557cdb1e13"
+            account: "0x5fb6ac2aff7b356ab5bbd49e544e63557cdb1e13"
           },
         },
       };
@@ -89,15 +89,22 @@ export default {
     console.log(req)
     return roles
   },
-  walletServ:()=>{
+  walletServ: () => {
     return {
-      code:200,
-      msg:"success",
-      data:{
-        channelAddress:"0x0000000000000000000000000000000000000000",
-        clubAddress:"0x0000000000000000000000000000000000000000",
-        userAddress:"0x5fb6ac2aff7b356ab5bbd49e544e63557cdb1e13"
+      code: 200,
+      msg: "success",
+      data: {
+        channelAddress: "0x0000000000000000000000000000000000000000",
+        clubAddress: "0x0000000000000000000000000000000000000000",
+        userAddress: "0x5fb6ac2aff7b356ab5bbd49e544e63557cdb1e13"
       }
+    }
+  },
+  codeServ: () => {
+    return {
+      code: 200,
+      msg: "success",
+      data: '2345'
     }
   }
 };

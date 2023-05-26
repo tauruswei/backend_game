@@ -9,26 +9,26 @@
       <p class="text-muted"><small>register your own account^^</small></p>
       <el-form ref="formRef" :rules="rules" label-position="top" label-width="100px" :model="form" style="padding-top: 40px">
         <el-form-item label="email" prop="email">
-          <el-input v-model="form.email" placeholder="enter your email" />
+          <el-input v-model="form.email" placeholder="enter your email" clearable/>
         </el-form-item>
         <el-form-item label="verify code" prop="code">
           <el-row :gutter="10">
             <el-col :span="18">
-              <el-input v-model="form.code" type="text" placeholder="enter your verify code" />
+              <el-input v-model="form.code" type="text" placeholder="enter your verify code"  clearable/>
             </el-col>
             <el-col :span="6">
               <el-button @click="getVerifyCode">send</el-button>
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="Nick name" prop="userName">
-          <el-input v-model="form.userName" placeholder="enter your nick name" />
+        <el-form-item label="Nick name" prop="name">
+          <el-input v-model="form.name" placeholder="enter your nick name"  clearable/>
         </el-form-item>
         <el-form-item label="password" prop="password">
-          <el-input v-model="form.password" type="password" placeholder="enter your password" show-password />
+          <el-input v-model="form.password" type="password" placeholder="enter your password" show-password  clearable/>
         </el-form-item>
         <el-form-item label="type">
-          <el-select v-model="form.userType" placeholder="select" style="width: 100%">
+          <el-select v-model="form.userType" placeholder="select" style="width: 100%" clearable>
             <el-option v-for="(item, index) in roleList" :key="index" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
@@ -52,15 +52,14 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
-    const roleList = ref([]);
+    const roleList = ref([{id:0,name:'admin'},{id:1,name:'user'}]);
     const formRef = ref(null);
     const form = ref({
       email: "",
-      userName: "",
+      name: "",
       password: "",
       userType: 1,
-      code:"",
-      walletAddress:""
+      code:""
     });
     const rules = ref({});
     rules.value.email = [
@@ -71,19 +70,12 @@ export default {
         trigger: ['blur', 'change'],
       },
     ];
-    rules.value.userName = [
+    rules.value.name = [
       { required: true, message: "Nick name is required", trigger: "blur" },
       { min: 2, max: 64, message: "The length between 2 and 64 character", trigger: "blur" },
     ];
     rules.value.password = [{ required: true, message: "Password is required", trigger: "blur" }];
     rules.value.code = [{ required: true, message: "Verify code is required", trigger: "blur" }];
-    function getRoleList() {
-      userApi.roles().then((res) => {
-        if (res.code == 200 && res.msg == "success") {
-          roleList.value = res.data;
-        }
-      });
-    }
     function getVerifyCode(){
       if(!form.value.email){
         ElMessage.error("Email is required")
@@ -101,10 +93,6 @@ export default {
     function doRegister() {
       formRef.value.validate((valid) => {
         if (valid) {
-          if(!form.value.walletAddress) {
-            ElMessage.error(" failed to connect wallet")
-            return;
-          }
           loadingHelper.show();
           userApi.login(form.value).then((res) => {
             if (res.code == 200 && res.msg == "success") {
@@ -122,8 +110,8 @@ export default {
     function doLogin() {
       loadingHelper.show();
       let data = {
-        userName: form.value.userName,
-        password: form.value.password,
+        userName: form.value.email,
+        userPassword: form.value.password,
       };
       userApi.login(data).then((res) => {
         if (res.code == 200 && res.msg == "success") {
@@ -137,12 +125,6 @@ export default {
         loadingHelper.hide();
       });
     }
-    onMounted(() => {
-      getRoleList();
-      let metaMask = new MetaMask();
-      if(!metaMask.connectMetaMask()) return;
-      form.value.walletAddress = store.state.metaMask.account;
-    });
     return {
       form,
       doRegister,

@@ -1,14 +1,14 @@
 <template>
   <div>
     <el-form ref="formRef" :rules="rules" label-position="top" label-width="100px" :model="form">
-      <el-form-item label="email" prop="email">
-        <el-input v-model="form.email" placeholder="enter your email" />
+      <el-form-item label="Old Password" prop="oldPassword">
+        <el-input v-model="form.oldPassword" placeholder="enter your old password"  clearable/>
       </el-form-item>
-      <el-form-item label="password" prop="password">
-        <el-input v-model="form.password" type="password" placeholder="enter your password" show-password />
+      <el-form-item label="New Password" prop="password">
+        <el-input v-model="form.password" type="password" placeholder="enter your password" show-password  clearable/>
       </el-form-item>
       <el-form-item label="password" prop="rpassword">
-        <el-input v-model="form.rpassword" type="password" placeholder="enter your password again" show-password />
+        <el-input v-model="form.rpassword" type="password" placeholder="enter your password again" show-password  clearable/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" class="w-100" @click="submit">Sure</el-button>

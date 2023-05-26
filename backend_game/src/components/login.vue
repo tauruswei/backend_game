@@ -9,10 +9,10 @@
       <p class="text-muted"><small>have a nice time^^</small></p>
       <el-form ref="formRef" :rules="rules" label-position="top" label-width="100px" :model="form" style="padding-top: 40px">
         <el-form-item label="email" prop="email">
-          <el-input v-model="form.email" placeholder="enter your email" />
+          <el-input v-model="form.email" placeholder="enter your email"  clearable/>
         </el-form-item>
         <el-form-item label="password" prop="password">
-          <el-input v-model="form.password" type="password" placeholder="enter your password" show-password />
+          <el-input v-model="form.password" type="password" placeholder="enter your password" show-password  clearable/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="w-100 shadow" @click="doLogin()">Sign In</el-button>
@@ -52,7 +52,11 @@ export default {
       formRef.value.validate((valid) => {
         if (valid) {
           loadingHelper.show();
-          userApi.login(form.value).then((res) => {
+          let data = {
+            userName: form.value.email,
+            userPassword: form.value.password,
+          };
+          userApi.login(data).then((res) => {
             if (res.code == 200 && res.msg == "success") {
               store.commit("setUser", res.data.user);
               store.commit("setRole", res.data.user.role);
