@@ -1,2 +1,5 @@
 # Project exclude paths
 /backend_game/node_modules/
+.idea
+.DS_Store
+*/.DS_Store
