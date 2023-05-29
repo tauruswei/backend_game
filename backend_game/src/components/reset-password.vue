@@ -5,19 +5,19 @@
         <el-input v-model="form.email" placeholder="enter your email" clearable />
       </el-form-item>
       <el-form-item label="verify code" prop="code">
-        <el-row :gutter="10">
-          <el-col :span="18">
+        <el-row :gutter="10" style="width:100%">
+          <el-col :span="20">
             <el-input v-model="form.code" type="text" placeholder="enter your verify code" clearable />
           </el-col>
-          <el-col :span="6">
-            <el-button @click="getVerifyCode">send</el-button>
+          <el-col :span="4">
+            <el-button @click="getVerifyCode" plain>send</el-button>
           </el-col>
         </el-row>
       </el-form-item>
-      <el-form-item label="New Password" prop="password" v-if="form.code">
+      <el-form-item label="New Password" prop="password">
         <el-input v-model="form.password" type="password" placeholder="enter your password" show-password clearable />
       </el-form-item>
-      <el-form-item label="password" prop="rpassword" v-if="form.code">
+      <el-form-item label="password" prop="rpassword">
         <el-input v-model="form.rpassword" type="password" placeholder="enter your password again" show-password clearable />
       </el-form-item>
       <el-form-item>
