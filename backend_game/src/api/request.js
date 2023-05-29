@@ -23,8 +23,8 @@ export const chainApi = {
   transactions: (data) => post("/blockChain/call", data),
   save:(data)=>post("/webTransaction/save",data)
 }
-export const evicApi = {
-  data: (data) => get("/evic/queryUserEvics", data)
+export const evicsApi = {
+  data: (data) => post("/asset/queryUserAssets", data)
 }
 export const cosdApi = {
   buy: (data) => post("/cosd/purchaseCOSD", data),

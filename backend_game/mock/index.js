@@ -77,6 +77,7 @@ let mocks = [
   { url: "/blog/add", type: "post", response: addResponse },
   { url: "/blog/edit", type: "post", response: addResponse },
   { url: "/webTransaction/save", type: "post", response: addResponse },
+  { url: "/asset/queryUserAssets", type: "post", response: {code:200,msg:"success",data:20} }
 ];
 
 mockXHR(mocks);

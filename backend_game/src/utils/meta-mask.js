@@ -17,9 +17,10 @@ export const CONTRACTS = {
   buycosd: { address: "0xc65e7140d7FbBB86286C5eDe1c763B063703C610", owner: "0x3249F5fb49982A927A566b2b8Ad0CCf34d4f84CE" },//0xD95bbD3D7e1348827Ae5A432AA3382deC0cE9c24
   defi: { address: "0x548eEc700CDcb2bB899EB436CEb1b2ACF9984C75", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
   blindbox: { address: "0xd319b75ECD766D2e41809351d4Fa387Bba7A9018", owner: "" },
-  nft: { address: "0x3759B7Db9CaE0aac51B3712bcD70dEa89804973c", owner: "" }
+  nft: { address: "0x3759B7Db9CaE0aac51B3712bcD70dEa89804973c", owner: "" },
+  evic: { address: "0xccb233A8269726c51265cff07fDC84110F5F3F4c", owner: "" }
 }
-export const TXTYPE = { buy: 0, stake: { defi: 1, sl: 2, club: 3, evic: 7 }, unstake: { defi: 4, sl: 5, club: 6, evic: 8 }, blindbox: 9, nft: 10 }
+export const TXTYPE = { buy: 0, stake: { defi: 1, sl: 2, club: 3 }, evic: 7, unstake: { defi: 4, sl: 5, club: 6 }, blindbox: 9, nft: 10 }
 export const ASSETTYPE = { usdt: 0, cosd: 1, nft: 2, evic: 3, sl: 4 }
 export const POOL = { defi: 3, club: 2, sl: 1 }
 const provider = await detectEthereumProvider();
@@ -86,9 +87,9 @@ export class MetaMask {
       if (account) {
         store.commit("setMetaMask", { chainID: chainID, account: account });
         ElMessage.success('connected success!')
-        if(!store.state.user.account) userApi.update({wallet:account,name:store.state.user.name}).then(res=>{
+        if (!store.state.user.account) userApi.update({ wallet: account, name: store.state.user.name }).then(res => {
           console.log("updated")
-          store.commit('setUser',{...store.state.user,account:account})
+          store.commit('setUser', { ...store.state.user, account: account })
         })
       }
       else {
@@ -188,7 +189,7 @@ export class MetaMask {
   async getBalanceByContract(param) {
     const myContract = this.getContract(param.abi, param.address);
     let balance = await myContract.methods.balanceOf(param.from).call()
-    return balance / Math.pow(10, 18);
+    return (param.key && param.key == 'nft') ? balance : (balance / Math.pow(10, 18));
   }
   async getRewardByContract(param) {
     const myContract = this.getContract(param.abi, param.address);
@@ -198,7 +199,6 @@ export class MetaMask {
   async getClubStatusByContract(param) {
     const myContract = this.getContract(param.abi, param.address);
     let status = await myContract.methods.isClub(param.from).call()
-    console.log(status)
     return status;
   }
   //查询授权余额
@@ -284,7 +284,7 @@ export class MetaMask {
   async getNFTInfoByContract(param) {
     const myContract = this.getContract(param.abi, param.address);
     return new Promise((resolve, reject) => {
-      myContract.methods.getNFT(param.txid).send({
+      myContract.methods.getNFT(param.tokenId).send({
         from: param.from
       }).then(res => {
         resolve(res)
@@ -294,4 +294,24 @@ export class MetaMask {
       })
     })
   }
+  async transferEvicByContract(param) {
+    const myContract = this.getContract(param.abi, param.address);
+    return new Promise((resolve, reject) => {
+      myContract.methods.transfer(param.to,this.toHex(param.money)).send({
+        from: param.from
+      }).then(res => {
+        console.log(res)
+        ElNotification({ type: "success", message: "transcation successed" })
+        resolve(res)
+      }).catch(err => {
+        reject(error)
+        ElMessage.error(err)
+      })
+    })
+  }
+}
+export function savaAfterTranscation(param) {
+  chainApi.save(param).then(res => {
+    console.log("saved")
+  })
 }

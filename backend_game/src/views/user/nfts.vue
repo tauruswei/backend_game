@@ -113,7 +113,7 @@ import nftToken from "@/abi/nft.json";
 import PageTitle from "@/components/page-title.vue";
 import DynamicTable from "@/components/dynamic-table.vue";
 import { loadingHelper } from "@/utils/loading";
-import { CONTRACTS, MetaMask } from "@/utils/meta-mask";
+import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE,savaAfterTranscation } from "@/utils/meta-mask";
 import { ElMessage } from "element-plus";
 const store = useStore()
 let activeName = ref("active");
@@ -221,8 +221,21 @@ function nftSwap() {
   loadingHelper.show()
   metaMask.nftBlindBoxByContract(data).then((res) => {
     visible1.value = false;
-    let id = res.events.DrawCardEvent.returnValues.cardId;
-    nftInfo(id)
+    let param = {
+      "txId": res.transactionHash,
+      "transType": TXTYPE.usdt,
+      "fromUserId": store.state.user.id,
+      "fromAssetType": ASSETTYPE.nft,
+      "fromAmount": amount.value,
+      "toUserId": store.state.user.id,
+      "toAssetType": ASSETTYPE.nft,
+      "toAmount": amount.value,
+      "nftVo": {},
+      "blockNumber":res.blockNumber
+    }
+    savaAfterTranscation(param)
+    let tokenid = res.events.DrawCardEvent.returnValues.cardId;
+    nftInfo(tokenid)
     loadingHelper.hide()
   }).catch(err => {
     console.log(err)
@@ -235,7 +248,7 @@ function nftInfo(id) {
     abi: nftToken,
     from: store.state.metaMask.account,
     address: CONTRACTS['nft'].address,
-    txid: id
+    tokenId: id
   }
   metaMask.getNFTInfoByContract(param).then(res => {
     console.log(res)

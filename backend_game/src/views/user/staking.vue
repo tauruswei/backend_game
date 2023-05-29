@@ -247,7 +247,7 @@ import clubStaking from "@/abi/clubStaking.json";
 import defiStaking from "@/abi/stakingPool.json";
 import { chainApi } from "@/api/request";
 import { loadingHelper } from "@/utils/loading";
-import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, POOL } from "@/utils/meta-mask";
+import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, POOL,savaAfterTranscation } from "@/utils/meta-mask";
 import { ElMessage } from "element-plus";
 const store = useStore();
 const active = ref("sl");
@@ -388,11 +388,6 @@ function validatorAmount(key) {
     return true;
   }
 }
-function savaAfterTranscation(param) {
-  chainApi.save(param).then(res => {
-    console.log("saved")
-  })
-}
 function purchaseApprove() {
   if (!metaMask.isAvailable()) return;
   let data = {
@@ -414,6 +409,7 @@ function purchaseApprove() {
 }
 function purchase() {
   if (!metaMask.isAvailable()) return;
+  if (isEmpty()) return;
   let data = {
     from: store.state.metaMask.account,
     address: CONTRACTS["buycosd"].address,
@@ -427,7 +423,7 @@ function purchase() {
     visible.value = false;
     loadingHelper.hide();
     let param = {
-      "txId": res.events.BuyToken.returnValues.cardId,
+      "txId": res.transactionHash,
       "transType": TXTYPE.buy,
       "fromUserId": store.state.user.id,
       "fromAssetType": ASSETTYPE.usdt,
@@ -436,6 +432,7 @@ function purchase() {
       "toAssetType": ASSETTYPE.cosd,
       "toAmount": action.value.amount1,
       "nftVo": {},
+      "blockNumber":res.blockNumber
     }
     savaAfterTranscation(param)
     getBalance('cosd');
@@ -465,7 +462,7 @@ function stakingFunc(key) {
     visible.value = false;
     loadingHelper.hide()
     let param = {
-      "txId": res.events.BuyToken.returnValues.cardId,
+      "txId": res.transactionHash,
       "transType": TXTYPE.stake[key],
       "fromUserId": store.state.user.id,
       "fromAssetType": ASSETTYPE.cosd,
@@ -474,7 +471,8 @@ function stakingFunc(key) {
       "toAssetType": ASSETTYPE[key] ? ASSETTYPE[key] : ASSETTYPE.cosd,
       "toAmount": action.value.amount,
       "nftVo": {},
-      "poolId": POOL[key]
+      "poolId": POOL[key],
+      "blockNumber":res.blockNumber
     }
     savaAfterTranscation(param)
     setTime(key)
@@ -495,7 +493,7 @@ function unStakingFunc(key) {
   metaMask.unStakingByContract(data).then((res) => {
     visible.value = false;
     let param = {
-      "txId": res.events.BuyToken.returnValues.cardId,
+      "txId": res.transactionHash,
       "transType": TXTYPE.unstake[key],
       "fromUserId": store.state.user.id,
       "fromAssetType": ASSETTYPE[key] ? ASSETTYPE[key] : ASSETTYPE.cosd,
@@ -504,7 +502,8 @@ function unStakingFunc(key) {
       "toAssetType": ASSETTYPE.cosd,
       "toAmount": action.value.amount,
       "nftVo": {},
-      "poolId": POOL[key]
+      "poolId": POOL[key],
+      "blockNumber":res.blockNumber
     }
     savaAfterTranscation(param)
     if (key == 'defi') { show.value = true; getReward() }
