@@ -222,12 +222,12 @@
         <el-col :span="20">
           <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
         </el-col>
-        <el-col :span="24" style="margin:20px 0 10px" v-if="needApprove">
+        <el-col :span="24" style="margin-top:15px" v-if="needApprove">
           <el-button type="primary" @click="handleApproveOperate()" style="width:100%" :disabled="disabled">
             <el-tag size="small">1</el-tag>&nbsp;Approve Spending
           </el-button>
         </el-col>
-        <el-col :span="24">
+        <el-col :span="24" style="margin-top:15px">
           <el-button type="success" @click="handleTransferOperate()" style="width:100%" :disabled="!disabled">
             <el-tag size="small" v-if="needApprove">2</el-tag>&nbsp;{{buttonText}}
           </el-button>
@@ -352,6 +352,7 @@ function open(command) {
   if (command == 'clubunstaking' || command == 'slunstaking' || command == 'defiunstaking' || command == 'defirewards') {
     needApprove.value = false
     buttonText.value = "Unstake"
+    disabled.value = true;
   } else { needApprove.value = true; buttonText.value = "Stake" }
   if (command == 'buy') buttonText.value = "Buy"
   visible.value = true

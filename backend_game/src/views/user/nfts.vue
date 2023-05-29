@@ -88,12 +88,12 @@
         <el-col :span="20" style="margin-top:10px;">
           <el-input-number v-model.number="amount1" controls-position="right" :step="1" :min="1" :max="100000" placeholder="`set amount" @change="translate('nft')" style="width:100%" clearable></el-input-number>
         </el-col>
-        <el-col :span="24" style="margin:20px 0 10px">
+        <el-col :span="24" style="margin-top:15px">
           <el-button type="primary" @click="nftApprove()" style="width:100%" :disabled="disabled">
             <el-tag size="small">1</el-tag>&nbsp;Approve Spending
           </el-button>
         </el-col>
-        <el-col :span="24">
+        <el-col :span="24" style="margin-top:15px;">
           <el-button type="success" @click="nftSwap()" style="width:100%" :disabled="!disabled">
             <el-tag size="small">2</el-tag>&nbsp;Buy
           </el-button>
