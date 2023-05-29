@@ -209,15 +209,15 @@
     <el-dialog v-model="visible" :title="action.title" width="400px" destroy-on-close>
       <el-row :gutter="5" style="margin-bottom:20px" v-if="action.command == 'buy'">
         <el-col :span="4">
-          USDT
+          COSD
         </el-col>
         <el-col :span="20">
-          <el-input-number v-model.number="action.amount1" controls-position="right" :step="1" :min="1" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
+          <el-input-number v-model.number="action.amount1" controls-position="right" :step="1" :min="20" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
         </el-col>
       </el-row>
       <el-row :gutter="5">
         <el-col :span="4">
-          {{action.command == 'buy'?'COSD':'AMOUNT'}}
+          {{action.command == 'buy'?'USDT':'AMOUNT'}}
         </el-col>
         <el-col :span="20">
           <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
@@ -258,7 +258,7 @@ const balance = ref({
 const contracts = ref(CONTRACTS)
 const abis = ref({ sl: slStaking, club: clubStaking, defi: defiStaking, buy: buyToken, cosd: cosdToken, busd: busdApprove })
 const action = ref({
-  amount1: 0.05,
+  amount1: 20,
   amount: 1,
   title: '',
   command: ''
@@ -281,9 +281,9 @@ function handleClick(tab) {
 function translate(type) {
   let rate = 20;
   if (type == 'cosd') {
-    action.value.amount1 = action.value.amount / rate;
+    action.value.amount1 = action.value.amount * rate;
   } else if (type == 'usdt') {
-    action.value.amount = action.value.amount1 * rate;
+    action.value.amount = action.value.amount1 / rate;
   }
 }
 function setTime(key) {
@@ -312,7 +312,7 @@ function getBalance(key) {
     from: store.state.metaMask.account
   }
   metaMask.getBalanceByContract(data).then(res => {
-    balance.value[key] = Math.round((res)*1000)/1000;
+    balance.value[key] = Math.round((res) * 1000) / 1000;
   });
 }
 function getReward() {
@@ -323,7 +323,7 @@ function getReward() {
     from: store.state.metaMask.account
   }
   metaMask.getRewardByContract(data).then(res => {
-    reward.value = Math.round((res)*1000)/1000
+    reward.value = Math.round((res) * 1000) / 1000
   });
 }
 function getClubStatus() {
@@ -339,7 +339,7 @@ function getClubStatus() {
 }
 function open(command) {
   action.value = {
-    amount1: 0.05,
+    amount1: 20,
     amount: 1,
     title: titles.value[command],
     command: command
@@ -348,12 +348,12 @@ function open(command) {
   if (command == 'slstaking') min.value = minSet.value.sl;
   else if (command == 'clubstaking') min.value = minSet.value.club;
   else min.value = 1;
-  
+
   if (command == 'clubunstaking' || command == 'slunstaking' || command == 'defiunstaking' || command == 'defirewards') {
     needApprove.value = false
     buttonText.value = "Unstake"
-  } else {needApprove.value = true;buttonText.value = "Stake"}
-  if(command == 'buy') buttonText.value = "Buy"
+  } else { needApprove.value = true; buttonText.value = "Stake" }
+  if (command == 'buy') buttonText.value = "Buy"
   visible.value = true
 }
 function handleApproveOperate() {
@@ -430,10 +430,10 @@ function purchase() {
       "transType": TXTYPE.buy,
       "fromUserId": store.state.user.id,
       "fromAssetType": ASSETTYPE.usdt,
-      "fromAmount": action.value.amount1,
+      "fromAmount": action.value.amount,
       "toUserId": store.state.user.id,
       "toAssetType": ASSETTYPE.cosd,
-      "toAmount": action.value.amount,
+      "toAmount": action.value.amount1,
       "nftVo": {},
     }
     savaAfterTranscation(param)
@@ -479,7 +479,7 @@ function stakingFunc(key) {
     setTime(key)
     getBalance(key);
     if (key == 'club') getClubStatus()
-    if (key == 'defi') {getReward()}
+    if (key == 'defi') { getReward() }
   }).catch(err => {
     loadingHelper.hide();
   })
@@ -506,7 +506,7 @@ function unStakingFunc(key) {
       "poolId": POOL[key]
     }
     savaAfterTranscation(param)
-    if (key == 'defi') {show.value = true;getReward()}
+    if (key == 'defi') { show.value = true; getReward() }
     setTime(key)
     loadingHelper.hide();
     getBalance(key);
@@ -527,12 +527,14 @@ function claimReward() {
   })
 }
 onMounted(() => {
-  getBalance('cosd')
-  getBalance('sl')
-  getBalance('club')
-  getBalance('defi')
-  getTranscationTime()
-  getClubStatus()
-  getReward()
+  if (store.state.metaMask) {
+    getBalance('cosd')
+    getBalance('sl')
+    getBalance('club')
+    getBalance('defi')
+    getTranscationTime()
+    getClubStatus()
+    getReward()
+  }
 })
 </script>

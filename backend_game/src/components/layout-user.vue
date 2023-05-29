@@ -132,7 +132,6 @@ const isCollapse = ref(false);
 const width = ref("240px");
 const visible = ref(false);
 const visible1 = ref(false);
-const isConnected = ref(false)
 function change() {
   isCollapse.value = !isCollapse.value;
   if (isCollapse.value) {
@@ -141,10 +140,10 @@ function change() {
     width.value = "240px";
   }
 }
-isConnected.value = computed(() => {
+let isConnected= computed(() => {
   return store.state.metaMask ? true : false
 })
-
+console.log(isConnected)
 function handleCommand(command) {
   if (command == "logout") {
     logout();
