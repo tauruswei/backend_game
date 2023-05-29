@@ -74,8 +74,8 @@ const emit = defineEmits(['close'])
             loadingHelper.show();
             let param ={
                 email: form.value.email,
-                code:form.value.code,
-                password: form.value.password, 
+                code: form.value.code,
+                userId: store.state.user.id, 
             }
             userApi.email(param).then((res)=>{
                 if(res.code==200&&res.msg=="success"){

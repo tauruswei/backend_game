@@ -80,9 +80,9 @@ function submit() {
       let param = {
         email: form.value.email,
         code: form.value.code,
-        password: form.value.password,
+        newPasswd: form.value.password,
       }
-      userApi.password(param).then((res) => {
+      userApi.reset(param).then((res) => {
         if (res.code == 200 && res.msg == "success") {
           ElNotification({
             type: "success",
