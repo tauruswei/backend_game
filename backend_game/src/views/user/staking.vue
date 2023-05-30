@@ -5,12 +5,12 @@
         <div class="card ">
           <div class="card-header ">
             <el-row :gutter="10">
-              <el-col :span="16">
+              <el-col :span="12">
                 <h4 class="card-title">COSD Staking
                   <small class="description">Please choose purpose</small>
                 </h4>
               </el-col>
-              <el-col :span="4"><b style="font-size:18px;line-height: 32px;">{{ balance.cosd }}</b><small class="description">&nbsp;COSD</small></el-col>
+              <el-col :span="8" style="font-size:18px;line-height: 32px;">current balance:&nbsp;<b>{{ balance.cosd }}</b></el-col>
               <el-col :span="4" style="text-align: right;">
                 <el-button type="primary" @click="open('buy')" round>Purchase COSD</el-button>
               </el-col>
@@ -71,7 +71,7 @@
                           <span style="text-decoration:line-through!important;">1980 COSD = 99 USDT</span>&nbsp;&nbsp;Limited time discount
                         </div>
                         <p class="card-description">
-                          You need to stake 1980 COSD (equivalent to 99 USDT) to get a qualification for Starlight League.
+                          You need to stake 400 COSD (equivalent to 20 USDT) to get a qualification for Starlight League.
                         </p>
                         <button class="btn btn-rose btn-round" @click="open('slstaking')">Stake</button>
                       </div>
@@ -125,10 +125,10 @@
                         </div>
                         <h3 class="card-title" style="color: rgb(188, 0, 0);font-weight:bold;"> 4000 COSD = 200 USDT</h3>
                         <div style="font-weight: bold;color:rgb(66, 66, 66);">
-                          <span style="text-decoration:line-through!important;">1980 COSD = 99 USDT</span>&nbsp;&nbsp;Limited time discount
+                          <span style="text-decoration:line-through!important;">19800 COSD = 990 USDT</span>&nbsp;&nbsp;Limited time discount
                         </div>
                         <p class="card-description">
-                          You need to stake 1980 COSD (equivalent to 99 USDT) to get a qualification for a club ownership.
+                          You need to stake 4000 COSD (equivalent to 200 USDT) to get a qualification for a club ownership.
                         </p>
                         <a href="javascript:void(0);" class="btn btn-rose btn-round" @click="open('clubstaking')">Stake</a>
                       </div>
@@ -195,7 +195,7 @@
                         <p class="card-description">
                         </p>
                         <button class="btn btn-warning btn-round" @click="open('defiunstaking')">Stop staking</button>
-                        <button class="btn btn-success btn-round" v-if="show" @click="open('defirewards')">Claim rewards</button>
+                        <button class="btn btn-success btn-round" v-if="show" @click="claimReward()">Claim rewards</button>
                       </div>
                     </div>
                   </div>
@@ -207,6 +207,7 @@
       </div>
     </div>
     <el-dialog v-model="visible" :title="action.title" width="400px" destroy-on-close>
+      <el-alert v-if="action.command == 'buy'" title="Tip: Accumulated expenses of usdt cannot exceed 100,000" type="info" style="margin-bottom:20px"></el-alert>
       <el-row :gutter="5" style="margin-bottom:20px" v-if="action.command == 'buy'">
         <el-col :span="4">
           COSD
@@ -220,7 +221,7 @@
           {{action.command == 'buy'?'USDT':'AMOUNT'}}
         </el-col>
         <el-col :span="20">
-          <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
+          <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="1" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
         </el-col>
         <el-col :span="24" style="margin-top:15px" v-if="needApprove">
           <el-button type="primary" @click="handleApproveOperate()" style="width:100%" :disabled="disabled">
@@ -267,10 +268,8 @@ const titles = ref({ buy: "Purchase COSD", "slstaking": "Staking for starlight l
 const visible = ref(false)
 const show = ref(false)
 const timeEnd = ref({ defi: 30 * 60 * 1000, sl: 60 * 60 * 1000, club: 60 * 60 * 1000 })
-const minSet = ref({ sl: 400, club: 4000, defi: 1 })
 const isClubBoss = ref(false)
 const needApprove = ref(true);
-let min = ref(400)
 const metaMask = new MetaMask();
 const disabled = ref(false)
 const reward = ref(0)
@@ -345,16 +344,34 @@ function open(command) {
     command: command
   }
   disabled.value = false;
-  if (command == 'slstaking') min.value = minSet.value.sl;
-  else if (command == 'clubstaking') min.value = minSet.value.club;
-  else min.value = 1;
-
-  if (command == 'clubunstaking' || command == 'slunstaking' || command == 'defiunstaking' || command == 'defirewards') {
+  if (command == 'buy') buttonText.value = "Buy"
+  if (command == 'slstaking') {
+    needApprove.value = true; 
+    buttonText.value = "Stake";
+  }
+  if(command == 'clubunstaking') {
+    action.value.amount = balance.value['club'];
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
-  } else { needApprove.value = true; buttonText.value = "Stake" }
-  if (command == 'buy') buttonText.value = "Buy"
+  }
+  if(command == 'slunstaking') {
+    action.value.amount = balance.value['sl'];
+    needApprove.value = false
+    buttonText.value = "Unstake"
+    disabled.value = true;
+  }
+  if(command == 'defiunstaking') {
+    action.value.amount = balance.value['defi'];
+    needApprove.value = false
+    buttonText.value = "Unstake"
+    disabled.value = true;
+  }
+  if(command == 'defirewards') {
+    needApprove.value = false
+    buttonText.value = "Unstake"
+    disabled.value = true;
+  }
   visible.value = true
 }
 function handleApproveOperate() {
@@ -371,7 +388,6 @@ function handleTransferOperate() {
   if (action.value.command == "slunstaking") unStakingFunc('sl');
   if (action.value.command == "clubunstaking") unStakingFunc('club');
   if (action.value.command == "defiunstaking") unStakingFunc('defi');
-  if (action.value.command == "defirewards") claimReward('defi');
 }
 function isEmpty() {
   if (!action.value.amount) {
@@ -486,9 +502,9 @@ function stakingFunc(key) {
 function unStakingFunc(key) {
   if (!isTimeAvailable(key)) return
   if (!metaMask.isAvailable()) return;
+  if (!validatorAmount(key)) return;
   let account = store.state.metaMask.account;
   let data = { from: account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key] }
-  if (!validatorAmount(key)) return;
   loadingHelper.show()
   metaMask.unStakingByContract(data).then((res) => {
     visible.value = false;
@@ -520,7 +536,6 @@ function claimReward() {
   let data = { from: store.state.metaMask.account, address: CONTRACTS['defi'].address, abi: abis.value['defi'] };
   loadingHelper.show();
   metaMask.claimRewardByContract(data).then(() => {
-    visible.value = false;
     loadingHelper.hide();
   }).catch(err => {
     loadingHelper.hide();

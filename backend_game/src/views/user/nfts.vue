@@ -36,7 +36,8 @@
           <div class="card-icon icon-rose">
             <i class="fa fa-gift"></i>
           </div>
-          <h3 class="card-title">99 USDT</h3>
+          <h3 class="card-title">20 USDT</h3>
+          <span style="text-decoration:line-through!important;">99 USDT</span> 
           <p class="card-description">
             Each blind box contains a NFT, which may be one of the
             <a target="_blank" href="https://chessofstars.io/nftlist">NFTs here</a>.

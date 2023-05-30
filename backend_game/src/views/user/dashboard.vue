@@ -111,8 +111,8 @@
             <div style="display:flex;align-items: center;justify-content: space-between;padding:10px;">
               <div>Current Evics: <b>{{ dashboard.evics }}</b></div>
               <div>
-                <el-button type="primary" @click="open('buy')" round>purchase</el-button>
-                <el-button type="success" @click="open('cashout')" round>withdraw</el-button>
+                <button class="btn btn-warning btn-round" @click="open('buy')">purchase</button>
+                <button class="btn btn-success btn-round" style="margin-left:10px;" @click="open('cashout')">withdraw</button>
               </div>
             </div>
           </div>
@@ -225,7 +225,7 @@ function cashout() {
     "transType": TXTYPE.evic,
     "fromUserId": store.state.user.id,
     "fromAssetType": ASSETTYPE.evic,
-    "fromAmount": amount.value,
+    "fromAmount": 0-amount.value,
     "toUserId": store.state.user.id,
     "toAssetType": ASSETTYPE.usdt,
     "toAmount": amount.value,

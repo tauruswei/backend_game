@@ -2,10 +2,10 @@
   <div>
     <el-form ref="formRef" :rules="rules" label-position="top" label-width="100px" :model="form">
       <el-form-item label="Old Password" prop="oldPassword">
-        <el-input v-model="form.oldPassword" placeholder="enter your old password" clearable />
+        <el-input v-model="form.oldPassword" type="password" placeholder="enter your old password" show-password clearable />
       </el-form-item>
       <el-form-item label="New Password" prop="newPassword">
-        <el-input v-model="form.password" type="password" placeholder="enter your password" show-password clearable />
+        <el-input v-model="form.newPassword" type="password" placeholder="enter your password" show-password clearable />
       </el-form-item>
       <el-form-item label="New Password Again" prop="rpassword">
         <el-input v-model="form.rpassword" type="password" placeholder="enter your password again" show-password clearable />

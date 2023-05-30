@@ -4,7 +4,7 @@ import detectEthereumProvider from '@metamask/detect-provider';
 import Web3 from 'web3'
 import store from "@/store/index";
 import { ElMessage, ElNotification } from "element-plus"
-import { userApi,chainApi } from '@/api/request';
+import { userApi, chainApi } from '@/api/request';
 let option = {
   injectProvider: false,
   communicationLayerPreference: 'webrtc',
@@ -20,7 +20,7 @@ export const CONTRACTS = {
   nft: { address: "0x92BB51D54e0f2865199158A840227CFaC22d55bf", owner: "" },
   evic: { address: "0xccb233A8269726c51265cff07fDC84110F5F3F4c", owner: "" }
 }
-export const TXTYPE = { buy: 0, stake: { defi: 1, sl: 2, club: 3 }, evic: 7,evic: 8, unstake: { defi: 4, sl: 5, club: 6 }, blindbox: 9, nft: 10 }
+export const TXTYPE = { buy: 0, stake: { defi: 1, sl: 2, club: 3 }, evic: 7, evic: 8, unstake: { defi: 4, sl: 5, club: 6 }, blindbox: 9, nft: 10 }
 export const ASSETTYPE = { usdt: 0, cosd: 1, nft: 2, evic: 3, sl: 4 }
 export const POOL = { defi: 3, club: 2, sl: 1 }
 const provider = await detectEthereumProvider();
@@ -72,9 +72,11 @@ export class MetaMask {
       const chainID = await window.ethereum.request({ method: 'eth_chainId' });
       const account = accounts[0];
       window.ethereum.on('chainChanged', () => {
+        console.log('chainChanged')
         window.location.reload()
       })
       window.ethereum.on('accountsChanged', () => {
+        console.log('accountsChanged')
         window.location.reload()
       })
       window.ethereum.on('message', message => {
@@ -156,7 +158,7 @@ export class MetaMask {
           throw new Error('Something went wrong.');
         }
       })
-      .catch(console.error);
+      .catch((error) => console.error(error));
   }
   async getBalance(account) {
     let balance = await web3.eth.getBalance(account);
@@ -181,6 +183,7 @@ export class MetaMask {
         resolve(res)
       }).catch(err => {
         reject(error)
+        console.log(err)
         ElMessage.error(err)
       })
     })
@@ -233,6 +236,7 @@ export class MetaMask {
         resolve(res)
       }).catch(err => {
         ElMessage.error(err)
+        console.log(err)
         reject(err)
       })
     })
@@ -261,6 +265,7 @@ export class MetaMask {
         ElNotification({ type: "success", message: "claim rewards successed" })
         resolve(res)
       }).catch(err => {
+        console.log(err)
         ElMessage.error(err)
         reject(err)
       })
@@ -276,6 +281,7 @@ export class MetaMask {
         ElNotification({ type: "success", message: "successed" })
         resolve(res)
       }).catch(err => {
+        console.log(err)
         ElMessage.error(err)
         reject(err)
       })
@@ -283,19 +289,20 @@ export class MetaMask {
   }
   async getNFTInfoByContract(param) {
     const myContract = this.getContract(param.abi, param.address);
-   let info = await  myContract.methods.getNFT(param.tokenId).call();
-   return info;
+    let info = await myContract.methods.getNFT(param.tokenId).call();
+    return info;
   }
   async transferEvicByContract(param) {
     const myContract = this.getContract(param.abi, param.address);
     return new Promise((resolve, reject) => {
-      myContract.methods.transfer(param.to,this.toHex(param.money)).send({
+      myContract.methods.transfer(param.to, this.toHex(param.money)).send({
         from: param.from
       }).then(res => {
         console.log(res)
         ElNotification({ type: "success", message: "transcation successed" })
         resolve(res)
       }).catch(err => {
+        console.log(err)
         reject(error)
         ElMessage.error(err)
       })
@@ -304,6 +311,9 @@ export class MetaMask {
 }
 export function savaAfterTranscation(param) {
   chainApi.save(param).then(res => {
+    console.log(res)
     console.log("saved")
+  }).catch((err) => {
+    console.log(err)
   })
 }
