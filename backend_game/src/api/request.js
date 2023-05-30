@@ -24,7 +24,8 @@ export const chainApi = {
   save:(data)=>post("/webTransaction/save",data)
 }
 export const evicsApi = {
-  data: (data) => post("/asset/queryUserAssets", data)
+  data: (data) => post("/asset/queryUserAssets", data),
+  withdraw: (data) => post("/webTransaction/withdrawEvic",data)
 }
 export const cosdApi = {
   buy: (data) => post("/cosd/purchaseCOSD", data),

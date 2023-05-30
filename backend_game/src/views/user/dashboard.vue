@@ -109,16 +109,16 @@
         <div class="col-lg-12 col-md-12 col-sm-12">
           <div class="card">
             <div style="display:flex;align-items: center;justify-content: space-between;padding:10px;">
-            <div>Current Evics: <b>{{ dashboard.evics }}</b></div>
-            <div>
-              <el-button type="primary" @click="open('buy')" round>purchase</el-button>
-              <el-button type="success" @click="open('cashout')" round>cash out</el-button>
+              <div>Current Evics: <b>{{ dashboard.evics }}</b></div>
+              <div>
+                <el-button type="primary" @click="open('buy')" round>purchase</el-button>
+                <el-button type="success" @click="open('cashout')" round>withdraw</el-button>
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </div>
-      
+
     </div>
   </div>
   <el-dialog v-model="visible" :title="action.title" width="400px" destroy-on-close>
@@ -134,33 +134,33 @@
   </el-dialog>
 </template>
  <script setup>
-import { ref,onMounted } from 'vue'
-import {useStore} from "vuex";
+import { ref, onMounted } from 'vue'
+import { useStore } from "vuex";
 import cosdToken from "@/abi/cosdtoken.json";
 import nftToken from "@/abi/nft.json";
 import busdToken from "@/abi/busdtoken.json";
-import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE,savaAfterTranscation } from "@/utils/meta-mask";
+import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import { evicsApi } from '@/api/request';
 import { loadingHelper } from "@/utils/loading";
 const store = useStore();
-const dashboard = ref({cosd:'N',nft:'N',games:1,evics:0})
+const dashboard = ref({ cosd: 'N', nft: 'N', games: 1, evics: 0 })
 const metaMask = new MetaMask();
-const abis = ref({ cosd: cosdToken,nft:nftToken,busd:busdToken})
+const abis = ref({ cosd: cosdToken, nft: nftToken, busd: busdToken })
 const amount = ref(0)
 const visible = ref(false)
-const action = ref({title:"",btn:""})
+const action = ref({ title: "", btn: "" })
 function isEmpty() {
   if (!amount.value) {
     ElMessage.error("amount is required!")
   }
-  return amount.value? false : true;
+  return amount.value ? false : true;
 }
-function evicBalance(){
+function evicBalance() {
   let data = {
-    email:store.state.user.name
+    email: store.state.user.name
   }
-  evicsApi.data(data).then(res=>{
-    if(res.code==200) dashboard.value.evics = res.data
+  evicsApi.data(data).then(res => {
+    if (res.code == 200) dashboard.value.evics = res.data
   })
 }
 function getBalance(key) {
@@ -169,24 +169,24 @@ function getBalance(key) {
     abi: abis.value[key],
     address: CONTRACTS[key].address,
     from: store.state.metaMask.account,
-    key:key
+    key: key
   }
   metaMask.getBalanceByContract(data).then(res => {
     dashboard.value[key] = Math.round((res) * 1000) / 1000;
   });
 }
-function open(command){
-  action.value={
-    btn: command == 'buy'?'Buy':"Cash Out",
-    title:"Evics Transcation",
-    command:command
+function open(command) {
+  action.value = {
+    btn: command == 'buy' ? 'Buy' : "Withdraw",
+    title: "Evics Transcation",
+    command: command
   }
   amount.value = 1;
   visible.value = true;
 }
-function handleOperate(){
-  if(action.value.command =='buy') purchase()
-  if(action.value.command =='cashout') cashout()
+function handleOperate() {
+  if (action.value.command == 'buy') purchase()
+  if (action.value.command == 'cashout') cashout()
 }
 function purchase() {
   if (!metaMask.isAvailable()) return;
@@ -220,38 +220,27 @@ function purchase() {
   })
 }
 function cashout() {
-  if (!metaMask.isAvailable()) return;
   if (isEmpty()) return;
-  let data = {
-    to: store.state.metaMask.account,
-    from: CONTRACTS['evic'].address,
-    address: CONTRACTS["busd"].address,
-    money: amount.value,
-    abi: abis.value.busd
+  let param = {
+    "transType": TXTYPE.evic,
+    "fromUserId": store.state.user.id,
+    "fromAssetType": ASSETTYPE.evic,
+    "fromAmount": amount.value,
+    "toUserId": store.state.user.id,
+    "toAssetType": ASSETTYPE.usdt,
+    "toAmount": amount.value,
+    "nftVo": {}
   }
   loadingHelper.show()
-  metaMask.transferEvicByContract(data).then((res) => {
+  evicsApi.withdraw(param).then((res) => {
     visible.value = false;
     loadingHelper.hide();
-    let param = {
-      "txId": res.transactionHash,
-      "transType": TXTYPE.evic,
-      "fromUserId": store.state.user.id,
-      "fromAssetType": ASSETTYPE.evic,
-      "fromAmount": amount.value,
-      "toUserId": store.state.user.id,
-      "toAssetType": ASSETTYPE.usdt,
-      "toAmount": amount.value,
-      "nftVo": {},
-      "blockNumber":res.blockNumber
-    }
-    savaAfterTranscation(param)
     evicBalance();
   }).catch(err => {
     loadingHelper.hide();
   })
 }
-onMounted(()=>{
+onMounted(() => {
   evicBalance()
   if (store.state.metaMask) {
     getBalance('cosd')
