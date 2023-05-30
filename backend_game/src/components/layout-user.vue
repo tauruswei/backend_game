@@ -13,37 +13,37 @@
             </el-icon>
             <span>Dashboard</span>
           </el-menu-item>
-          <el-menu-item index="/plat/staking-rewards" v-if="$store.state.role==0">
+          <el-menu-item index="/plat/staking-rewards" v-if="$store.state.role == 3">
             <el-icon>
               <MessageBox />
             </el-icon>
             <span>Staking Rewards</span>
           </el-menu-item>
-          <el-menu-item index="/plat/promotion-rewards" v-if="$store.state.role==0">
+          <el-menu-item index="/plat/promotion-rewards" v-if="$store.state.role == 3">
             <el-icon>
               <Present />
             </el-icon>
             <span>Promotion Rewards</span>
           </el-menu-item>
-          <el-menu-item index="/plat/blog" v-if="$store.state.role==0">
+          <el-menu-item index="/plat/blog" v-if="$store.state.role == 3">
             <el-icon>
               <Memo />
             </el-icon>
             <span>Blog</span>
           </el-menu-item>
-          <el-menu-item index="/plat/logs" v-if="$store.state.role==0">
+          <el-menu-item index="/plat/logs" v-if="$store.state.role == 3">
             <el-icon>
               <Document />
             </el-icon>
             <span>Logs</span>
           </el-menu-item>
-          <el-menu-item index="/plat/nfts" v-if="$store.state.role==1">
+          <el-menu-item index="/plat/nfts" v-if="$store.state.role == 2||$store.state.role == 1">
             <el-icon>
               <Coin />
             </el-icon>
             <span>NFTs</span>
           </el-menu-item>
-          <el-menu-item index="/plat/staking" v-if="$store.state.role==1">
+          <el-menu-item index="/plat/staking" v-if="$store.state.role == 2||$store.state.role == 1">
             <el-icon>
               <MessageBox />
             </el-icon>

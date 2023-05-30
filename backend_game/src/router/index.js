@@ -192,8 +192,11 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title;
     //进入登录页面的时候清除 token
     if (to.path === "/login") {
+      store.commit("setUser", {});
+      store.commit("setRole", null);
       store.commit("removeToken", "");
       store.commit("clearRequestToken");
+      store.commit("setMetaMask", null);
       sessionStorage.clear();
     }
     if (to.meta.requireAuth) {

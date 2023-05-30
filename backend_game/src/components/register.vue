@@ -24,8 +24,8 @@
         <el-form-item label="Nick name" prop="name">
           <el-input v-model="form.name" placeholder="enter your nick name"  clearable/>
         </el-form-item>
-        <el-form-item label="password" prop="password">
-          <el-input v-model="form.password" type="password" placeholder="enter your password" show-password  clearable/>
+        <el-form-item label="password" prop="passwd">
+          <el-input v-model="form.passwd" type="password" placeholder="enter your password" show-password  clearable/>
         </el-form-item>
         <!--<el-form-item label="type">
           <el-select v-model="form.userType" placeholder="select" style="width: 100%" clearable>
@@ -52,12 +52,12 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
-    const roleList = ref([{id:0,name:'admin'},{id:1,name:'user'}]);
+    const roleList = ref([{id:0,name:'admin'},{id:1,name:'user'}]);//0-渠道商 1-俱乐部老板 2 普通用户
     const formRef = ref(null);
     const form = ref({
       email: "",
       name: "",
-      password: "",
+      passwd: "",
       userType: 1,
       code:""
     });
@@ -74,7 +74,7 @@ export default {
       { required: true, message: "Nick name is required", trigger: "blur" },
       { min: 2, max: 64, message: "The length between 2 and 64 character", trigger: "blur" },
     ];
-    rules.value.password = [{ required: true, message: "Password is required", trigger: "blur" }];
+    rules.value.passwd = [{ required: true, message: "Password is required", trigger: "blur" }];
     rules.value.code = [{ required: true, message: "Verify code is required", trigger: "blur" }];
     function getVerifyCode(){
       if(!form.value.email){
@@ -99,7 +99,7 @@ export default {
       formRef.value.validate((valid) => {
         if (valid) {
           loadingHelper.show();
-          userApi.login(form.value).then((res) => {
+          userApi.signup(form.value).then((res) => {
             if (res.code == 0 && res.msg == "success") {
               ElNotification({
                 type: "success",
@@ -116,12 +116,12 @@ export default {
       loadingHelper.show();
       let data = {
         email: form.value.email,
-        passwd: form.value.password,
+        passwd: form.value.passwd,
       };
       userApi.login(data).then((res) => {
         if (res.code == 0 && res.msg == "success") {
-          store.commit("setUser", res.data.user);
-          store.commit("setRole", res.data.user.role);
+          store.commit("setUser", {name:res.data.userName,account:res.data.walletAddress,id:res.data.userId});
+          store.commit("setRole", res.data.userType);
           store.commit("setToken", res.data.token);
           router.push({
             path: "/plat/dashboard",

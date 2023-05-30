@@ -142,6 +142,7 @@ import busdToken from "@/abi/busdtoken.json";
 import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import { evicsApi } from '@/api/request';
 import { loadingHelper } from "@/utils/loading";
+import {ElNotification} from "element-plus";
 const store = useStore();
 const dashboard = ref({ cosd: 'N', nft: 'N', games: 1, evics: 0 })
 const metaMask = new MetaMask();
@@ -157,10 +158,17 @@ function isEmpty() {
 }
 function evicBalance() {
   let data = {
-    email: store.state.user.name
+    "userId": store.state.user.id,
+    "assetType": 3
   }
   evicsApi.data(data).then(res => {
-    if (res.code == 0) dashboard.value.evics = res.data
+    if (res.code == 0) dashboard.value.evics = res.data.amount
+    else{
+      ElNotification({
+        type:"error",
+        message:res.msg
+      })
+    }
   })
 }
 function getBalance(key) {
@@ -225,7 +233,7 @@ function cashout() {
     "transType": TXTYPE.evic,
     "fromUserId": store.state.user.id,
     "fromAssetType": ASSETTYPE.evic,
-    "fromAmount": 0-amount.value,
+    "fromAmount": 0 - amount.value,
     "toUserId": store.state.user.id,
     "toAssetType": ASSETTYPE.usdt,
     "toAmount": amount.value,
