@@ -68,7 +68,7 @@ function submit() {
         newPassword: form.value.newPassword,
       }
       userApi.password(param).then((res) => {
-        if (res.code == 200 && res.msg == "success") {
+        if (res.code == 0 && res.msg == "success") {
           ElNotification({
             type: "success",
             message: "The password has been changed successfully!"

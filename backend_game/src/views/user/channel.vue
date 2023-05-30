@@ -45,7 +45,7 @@ function submit(){
         return;
     }
     userApi.channel(walletAddress.value).then(res=>{
-        if(res.code == 200){
+        if(res.code == 0){
             ElNotification({
                 type:"success",
                 message:"Congratulations! You have been a channel leader"

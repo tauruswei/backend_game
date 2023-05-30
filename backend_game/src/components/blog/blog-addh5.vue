@@ -101,7 +101,7 @@ function submit() {
     if (valid) {
       if (type.value == 'add') {
         blogApi.add(form.value).then((res) => {
-          if (res.code == 200) {
+          if (res.code == 0) {
             ElNotification({
               type: "success",
               message: "Successed",
@@ -110,7 +110,7 @@ function submit() {
         })
       } else {
         blogApi.edit(form.value).then((res) => {
-          if (res.code == 200) {
+          if (res.code == 0) {
             ElNotification({
               type: "success",
               message: "Successed",

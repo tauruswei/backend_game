@@ -160,7 +160,7 @@ function evicBalance() {
     email: store.state.user.name
   }
   evicsApi.data(data).then(res => {
-    if (res.code == 200) dashboard.value.evics = res.data
+    if (res.code == 0) dashboard.value.evics = res.data
   })
 }
 function getBalance(key) {

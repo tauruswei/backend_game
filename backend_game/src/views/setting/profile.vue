@@ -204,7 +204,7 @@ function query() {
   }
   userApi.userById(param).then((res) => {
     console.log(res)
-    if(res.code == 200) userData.value = res.data;
+    if(res.code == 0) userData.value = res.data;
   })
 }
 query();

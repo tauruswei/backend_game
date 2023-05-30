@@ -196,7 +196,7 @@ function isEmpty() {
 //随机获取
 function getCard() {
   userApi.wallet(store.state.user.id).then(res => {
-    if (res.code == 200) {
+    if (res.code == 0) {
       address.value = res.data;
       disabled.value = false;
       visible1.value = true;

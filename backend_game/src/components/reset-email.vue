@@ -60,7 +60,7 @@ const emit = defineEmits(['close'])
         return;
       }
       userApi.code({email:form.value.email}).then(res=>{
-        if(res.code == 200) {
+        if(res.code == 0) {
           ElNotification({
                 type: "success",
                 message: "send successfully!",

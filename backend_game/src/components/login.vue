@@ -63,11 +63,11 @@ function doLogin() {
     if (valid) {
       loadingHelper.show();
       let data = {
-        userName: form.value.email,
-        userPassword: form.value.password,
+        email: form.value.email,
+        passwd: form.value.password,
       };
       userApi.login(data).then((res) => {
-        if (res.code == 200 && res.msg == "success") {
+        if (res.code == 0 && res.msg == "success") {
           store.commit("setUser", res.data.user);
           store.commit("setRole", res.data.user.role);
           store.commit("setToken", res.data.token);

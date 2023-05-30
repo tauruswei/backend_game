@@ -65,7 +65,7 @@ function getVerifyCode() {
     return;
   }
   userApi.code({ email: form.value.email }).then(res => {
-    if (res.code == 200) {
+    if (res.code == 0) {
       ElNotification({
         type: "success",
         message: "send successfully!",
@@ -83,7 +83,7 @@ function submit() {
         newPasswd: form.value.password,
       }
       userApi.reset(param).then((res) => {
-        if (res.code == 200 && res.msg == "success") {
+        if (res.code == 0 && res.msg == "success") {
           ElNotification({
             type: "success",
             message: "successed"

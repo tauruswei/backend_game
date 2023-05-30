@@ -27,11 +27,11 @@
         <el-form-item label="password" prop="password">
           <el-input v-model="form.password" type="password" placeholder="enter your password" show-password  clearable/>
         </el-form-item>
-        <el-form-item label="type">
+        <!--<el-form-item label="type">
           <el-select v-model="form.userType" placeholder="select" style="width: 100%" clearable>
             <el-option v-for="(item, index) in roleList" :key="index" :label="item.name" :value="item.id"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item>
           <el-button type="primary" class="w-100 shadow" @click="doRegister()">Sign Up</el-button>
         </el-form-item>
@@ -82,10 +82,15 @@ export default {
         return;
       }
       userApi.code({email:form.value.email}).then(res=>{
-        if(res.code == 200) {
+        if(res.code == 0) {
           ElNotification({
                 type: "success",
                 message: "send successfully!",
+          });
+        }else{
+          ElNotification({
+                type: "error",
+                message: res.msg,
           });
         }
       })
@@ -95,7 +100,7 @@ export default {
         if (valid) {
           loadingHelper.show();
           userApi.login(form.value).then((res) => {
-            if (res.code == 200 && res.msg == "success") {
+            if (res.code == 0 && res.msg == "success") {
               ElNotification({
                 type: "success",
                 message: "logging ...",
@@ -110,11 +115,11 @@ export default {
     function doLogin() {
       loadingHelper.show();
       let data = {
-        userName: form.value.email,
-        userPassword: form.value.password,
+        email: form.value.email,
+        passwd: form.value.password,
       };
       userApi.login(data).then((res) => {
-        if (res.code == 200 && res.msg == "success") {
+        if (res.code == 0 && res.msg == "success") {
           store.commit("setUser", res.data.user);
           store.commit("setRole", res.data.user.role);
           store.commit("setToken", res.data.token);
