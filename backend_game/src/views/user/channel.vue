@@ -14,7 +14,7 @@
                 </h4>
               </div>
               <div class="card-body">
-                <form>
+                <div>
                   <div class="row">
                     <div class="col-md-12">
                       <div class="form-group">
@@ -23,9 +23,9 @@
                       </div>
                     </div>
                   </div>
-                  <button type="submit" class="btn btn-warning pull-right" @click="submit"><i class="fa fa-edit"></i>&nbsp;&nbsp;Submit</button>
+                  <button type="submit" class="btn btn-warning pull-right" @click="submit()"><i class="fa fa-edit"></i>&nbsp;&nbsp;Submit</button>
                   <div class="clearfix"></div>
-                </form>
+                </div>
               </div>
             </div>
           </div>
@@ -35,6 +35,7 @@
       </div>
 </template>
 <script setup>
+import {ref} from "vue";
 import { userApi } from "@/api/request";
 import { ElMessage, ElNotification } from "element-plus";
 
@@ -45,10 +46,16 @@ function submit(){
         return;
     }
     userApi.channel(walletAddress.value).then(res=>{
+      console.log(res)
         if(res.code == 0){
             ElNotification({
                 type:"success",
                 message:"Congratulations! You have been a channel leader"
+            })
+        }else{
+          ElNotification({
+                type:"error",
+                message:res.msg
             })
         }
     })
