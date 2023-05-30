@@ -143,7 +143,6 @@ function change() {
 let isConnected= computed(() => {
   return store.state.metaMask ? true : false
 })
-console.log(isConnected)
 function handleCommand(command) {
   if (command == "logout") {
     logout();

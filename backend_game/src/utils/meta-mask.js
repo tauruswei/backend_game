@@ -27,6 +27,25 @@ const provider = await detectEthereumProvider();
 const MMSDK = new MetaMaskSDK(option);
 const ethereum = MMSDK.getProvider();
 const web3 = new Web3(provider)
+provider.on('chainChanged', (chainId) => {
+  //window.location.reload()
+  console.log('chainChanged',chainId)
+})
+provider.on('connect', (accounts) => {
+  console.log('connect',accounts)
+})
+provider.on('accountsChanged', (accounts) => {
+  //window.location.reload()
+  console.log('accountsChanged',accounts);
+  if(!accounts.length) store.commit("setMetaMask", null);
+})
+provider.on('message', message => {
+  console.log('message', message)
+})
+provider.on('disconnect', () => {
+  //window.location.reload()
+  store.commit("setMetaMask", null);
+})
 export class MetaMask {
   constructor() {
     this.provider = provider;
@@ -66,26 +85,11 @@ export class MetaMask {
     }
 
     try {
-      const accounts = await window.ethereum.request({
+      const accounts = await provider.request({
         method: 'eth_requestAccounts'
       });
-      const chainID = await window.ethereum.request({ method: 'eth_chainId' });
+      const chainID = await provider.request({ method: 'eth_chainId' });
       const account = accounts[0];
-      window.ethereum.on('chainChanged', () => {
-        console.log('chainChanged')
-        window.location.reload()
-      })
-      window.ethereum.on('accountsChanged', () => {
-        console.log('accountsChanged')
-        window.location.reload()
-      })
-      window.ethereum.on('message', message => {
-        console.log('message', message)
-      })
-      window.ethereum.on('disconnect', () => {
-        store.commit("setMetaMask", null);
-        window.location.reload()
-      })
       if (account) {
         store.commit("setMetaMask", { chainID: chainID, account: account });
         ElMessage.success('connected success!')
@@ -309,7 +313,7 @@ export class MetaMask {
     })
   }
 }
-export function savaAfterTranscation(param) {
+export const savaAfterTranscation = (param)=> {
   chainApi.save(param).then(res => {
     console.log(res)
     console.log("saved")

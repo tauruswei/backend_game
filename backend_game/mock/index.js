@@ -18,6 +18,7 @@ function getResponse(data) {
   let msg;
   let response;
   for (let k in data) {
+    if(typeof data[k] == 'number') data[k] = data[k].toString();
     if (data[k] == undefined || data[k] == null || data[k] == "") {
       msg = k + "不能为空";
       break;
