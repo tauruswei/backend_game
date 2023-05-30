@@ -5,7 +5,7 @@ import { createApp } from "vue";
 import 'font-awesome/css/font-awesome.min.css'
 import installElementPlus from "./plugins/element";
 //import "./assets/font/iconfont.css";
-require("../mock/index.js");
+//require("../mock/index.js");
 
 const app = createApp(App);
 installElementPlus(app);

@@ -9,6 +9,7 @@ import { loadingHelper } from "./loading";
 axios.defaults.withCredentials = true;
 //连后台跨域"/proxy"
 //process.env.VUE_APP_URL
+console.log(process.env.VUE_APP_URL)
 axios.defaults.baseURL = process.env.VUE_APP_URL;
 axios.defaults.headers["token"] = "";
 axios.defaults.timeout = 100000; //超时时间
