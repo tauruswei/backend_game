@@ -7,7 +7,7 @@ let nfts = Mock.mock({
     {
       id: "@increment(0)",
       nft_type: "@word(5, 18)",
-      blockchain: "@word(5, 18)",
+      blockchain: "Binance Smart Chain",
       minted_at: "@datetime()",
       "game_chances|1-100": 20,
       token_id: "0xc0661B3f0bAax2F4C10B8C400D34eCc860233be6",

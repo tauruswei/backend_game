@@ -233,9 +233,12 @@ function nftSwap() {
       "nftVo": {},
       "blockNumber":res.blockNumber
     }
+    rowData.value.blockchain = 'Binance Smart Chain';
+    rowData.value.contract_address = CONTRACTS['blindbox'].address;
     savaAfterTranscation(param)
     let tokenid = res.events.DrawCardEvent.returnValues.cardId;
     nftInfo(tokenid)
+    rowData.value.token_id = tokenid;
     loadingHelper.hide()
   }).catch(err => {
     console.log(err)
@@ -251,8 +254,10 @@ function nftInfo(id) {
     tokenId: id
   }
   metaMask.getNFTInfoByContract(param).then(res => {
-    console.log(res)
-    rowData.value = res;
+    visible.value = true;
+    rowData.value.src = res.uri;
+    rowData.value.game_chances = res.chances;
+    rowData.value.nft_type = res.number;
   })
 }
 onMounted(() => {

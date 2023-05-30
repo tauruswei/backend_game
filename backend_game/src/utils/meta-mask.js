@@ -4,7 +4,7 @@ import detectEthereumProvider from '@metamask/detect-provider';
 import Web3 from 'web3'
 import store from "@/store/index";
 import { ElMessage, ElNotification } from "element-plus"
-import { userApi } from '@/api/request';
+import { userApi,chainApi } from '@/api/request';
 let option = {
   injectProvider: false,
   communicationLayerPreference: 'webrtc',
@@ -16,8 +16,8 @@ export const CONTRACTS = {
   busd: { address: "0x401084C7F44f4e2d2945F37bcad2406c24edE223", owner: "0x65B7F91FB4bDa26f712087E9152862D93b34c51d" },
   buycosd: { address: "0xc65e7140d7FbBB86286C5eDe1c763B063703C610", owner: "0x3249F5fb49982A927A566b2b8Ad0CCf34d4f84CE" },//0xD95bbD3D7e1348827Ae5A432AA3382deC0cE9c24
   defi: { address: "0x548eEc700CDcb2bB899EB436CEb1b2ACF9984C75", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
-  blindbox: { address: "0xd319b75ECD766D2e41809351d4Fa387Bba7A9018", owner: "" },
-  nft: { address: "0x3759B7Db9CaE0aac51B3712bcD70dEa89804973c", owner: "" },
+  blindbox: { address: "0x7d6f6F4edBAEd3A427F20d15A81F488D65c9d0Aa", owner: "" },
+  nft: { address: "0x92BB51D54e0f2865199158A840227CFaC22d55bf", owner: "" },
   evic: { address: "0xccb233A8269726c51265cff07fDC84110F5F3F4c", owner: "" }
 }
 export const TXTYPE = { buy: 0, stake: { defi: 1, sl: 2, club: 3 }, evic: 7,evic: 8, unstake: { defi: 4, sl: 5, club: 6 }, blindbox: 9, nft: 10 }
@@ -283,16 +283,8 @@ export class MetaMask {
   }
   async getNFTInfoByContract(param) {
     const myContract = this.getContract(param.abi, param.address);
-    return new Promise((resolve, reject) => {
-      myContract.methods.getNFT(param.tokenId).send({
-        from: param.from
-      }).then(res => {
-        resolve(res)
-      }).catch(err => {
-        ElMessage.error(err)
-        reject(err)
-      })
-    })
+   let info = await  myContract.methods.getNFT(param.tokenId).call();
+   return info;
   }
   async transferEvicByContract(param) {
     const myContract = this.getContract(param.abi, param.address);
