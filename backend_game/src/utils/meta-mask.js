@@ -126,7 +126,7 @@ export class MetaMask {
     if(store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()){
       ElMessage({
         dangerouslyUseHTMLString: true,
-        message: 'Not the current account! <a href="/setting/profile">click to update</a> Or switch to the current account',
+        message: '<p><b>Not the current account!</b></p><br/> <a href="/setting/profile">click to update</a> Or switch Metamask to the current account',
       })
     }
     return store.state.user.account.toLowerCase() == store.state.metaMask.account.toLowerCase();
