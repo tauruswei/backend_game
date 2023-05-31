@@ -1,15 +1,16 @@
-import { get, post, del } from "../utils/axios";
+import { get, post, del } from "@/utils/axios";
+import { toQuery } from "@/utils/toquery";
 export const userApi = {
   logout: (data) => post("/user/logout", data),
   login: (data) => post("/user/login", data),
   signup: (data) => post("/user/register", data),
-  checkedName: (data) => get("/user/checkUserName", data),
+  checkedName: (data) => post("/user/queryUserByEmail?email=" + data),
   roles: () => get("/role/selectList"),
-  users: () => get("/user/list"),
+  users: () => post("/user/list"),
   reset: (data) => post("/user/resetPasswd", data),
   password: (data) => post("/user/modifyPasswd", data),
   email: (data) => post("/user/modifyEmail", data),
-  update: (data) => get("/user/updateUser", data),
+  update: (data) => post("/user/updateUser", data),
   code: (data) => post("/user/sendCode", data),
   userById: (data) => post("/user/queryUserById", data),
   userByName: (data) => post("/user/queryUserByName", data),
@@ -17,16 +18,16 @@ export const userApi = {
   profile: (data) => post("/user/getUserProfile", data),
   register: (data) => post("/user/createChannelLeader", data),
   wallet: (id) => post("/user/queryClubChannelAddress?userId=" + id),
-  channel: (id) => post("/user/createChannelLeader?walletAddress=" + id)
+  channel: (data) => post("/user/createChannelLeader",data)
 };
 export const chainApi = {
   transactions: (data) => post("/blockChain/call", data),
-  save:(data)=>post("/webTransaction/save",data)
+  save: (data) => post("/webTransaction/save", data)
 }
 export const evicsApi = {
   assets: (data) => post("/asset/queryUserAssets", data),
   data: (data) => post("/asset/queryUserAsset", data),
-  withdraw: (data) => post("/webTransaction/withdrawEvic",data)
+  withdraw: (data) => post("/webTransaction/withdrawEvic", data)
 }
 export const cosdApi = {
   buy: (data) => post("/cosd/purchaseCOSD", data),

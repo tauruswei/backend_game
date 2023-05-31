@@ -142,9 +142,9 @@ import busdToken from "@/abi/busdtoken.json";
 import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import { evicsApi } from '@/api/request';
 import { loadingHelper } from "@/utils/loading";
-import {ElNotification} from "element-plus";
+import { ElNotification } from "element-plus";
 const store = useStore();
-const dashboard = ref({ cosd: 'N', nft: 'N', games: 1, evics: 0 })
+const dashboard = ref({ cosd: 0, nft: 0, games: 1, evics: 0 })
 const metaMask = new MetaMask();
 const abis = ref({ cosd: cosdToken, nft: nftToken, busd: busdToken })
 const amount = ref(0)
@@ -163,12 +163,6 @@ function evicBalance() {
   }
   evicsApi.data(data).then(res => {
     if (res.code == 0) dashboard.value.evics = res.data.amount
-    else{
-      ElNotification({
-        type:"error",
-        message:res.msg
-      })
-    }
   })
 }
 function getBalance(key) {
@@ -218,32 +212,36 @@ function purchase() {
       "fromAmount": amount.value,
       "toUserId": store.state.user.id,
       "toAssetType": ASSETTYPE.evic,
-      "toAmount": amount.value,
+      "toAmount": amount.value * 100,
       "nftVo": {},
     }
     savaAfterTranscation(param)
-    evicBalance();
+    dashboard.value.evics = dashboard.value.evics + amount.value * 100;
   }).catch(err => {
     loadingHelper.hide();
   })
 }
 function cashout() {
   if (isEmpty()) return;
+  if(amount.value > dashboard.value.evics){
+    ElMessage.error("cannot exceed the balance!")
+    return
+  }
   let param = {
     "transType": TXTYPE.evic,
     "fromUserId": store.state.user.id,
-    "fromAssetType": ASSETTYPE.evic,
+    "fromAssetType": ASSETTYPE.evic1,
     "fromAmount": 0 - amount.value,
     "toUserId": store.state.user.id,
     "toAssetType": ASSETTYPE.usdt,
-    "toAmount": amount.value,
+    "toAmount": 0 - amount.value / 100,
     "nftVo": {}
   }
   loadingHelper.show()
   evicsApi.withdraw(param).then((res) => {
     visible.value = false;
     loadingHelper.hide();
-    evicBalance();
+    dashboard.value.evics = dashboard.value.evics - amount.value;
   }).catch(err => {
     loadingHelper.hide();
   })

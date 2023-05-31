@@ -20,7 +20,7 @@ export const CONTRACTS = {
   nft: { address: "0x92BB51D54e0f2865199158A840227CFaC22d55bf", owner: "" },
   evic: { address: "0xccb233A8269726c51265cff07fDC84110F5F3F4c", owner: "" }
 }
-export const TXTYPE = { buy: 0, stake: { defi: 1, sl: 2, club: 3 }, evic: 7, evic: 8, unstake: { defi: 4, sl: 5, club: 6 }, blindbox: 9, nft: 10 }
+export const TXTYPE = { buy: 0, stake: { defi: 1, sl: 2, club: 3 }, evic: 7, evic1: 8, unstake: { defi: 4, sl: 5, club: 6 }, blindbox: 9, nft: 10 }
 export const ASSETTYPE = { usdt: 0, cosd: 1, nft: 2, evic: 3, sl: 4 }
 export const POOL = { defi: 3, club: 2, sl: 1 }
 const provider = await detectEthereumProvider();

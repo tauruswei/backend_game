@@ -134,19 +134,20 @@ const routes = [
           name: "staking",
           requireAuth: true,
         },
-      }, {
-        path: "channel",
-        name: "channel",
-        component: () => import("../views/user/channel.vue"),
-        meta: {
-          route: "/plat/channel",
-          permission: "user",
-          title: "channel",
-          name: "channel",
-          requireAuth: false,
-        },
       }
     ],
+  },
+  {
+    path: "/channel",
+    name: "channel",
+    component: () => import("../views/user/channel.vue"),
+    meta: {
+      route: "/channel",
+      permission: "user",
+      title: "channel",
+      name: "channel",
+      requireAuth: false,
+    },
   },
   {
     path: "/setting",

@@ -78,6 +78,9 @@
                     </span>
                   </el-tooltip>
                 </el-button>
+                <el-tooltip placement="bottom" content="Invite to be channel Leader">
+                  <el-button type="success" @click="inviteVisible = true" round><el-icon><Share /></el-icon>&nbsp;Invite</el-button>
+                </el-tooltip>
               </div>
               <el-dropdown @command="handleCommand">
                 <span class="el-dropdown-link">
@@ -115,6 +118,9 @@
     <el-dialog v-model="visible1" title="Change Password" width="480px" destroy-on-close>
       <email-cont @close="visible1 = false"></email-cont>
     </el-dialog>
+    <el-dialog v-model="inviteVisible" title="Invite to be a channel leader" width="440px">
+      <qcode-cont style="width:100%;text-align: center;"></qcode-cont>
+    </el-dialog>
   </div>
 </template>
 <script setup>
@@ -125,6 +131,7 @@ import { logout } from "@/utils/logout";
 import LayoutFooter from "@/components/footer.vue"
 import PasswordCont from "@/components/password.vue";
 import EmailCont from "@/components/reset-email.vue";
+import QcodeCont from "@/components/qcode.vue";
 import { MetaMask } from "@/utils/meta-mask";
 const store = useStore();
 const router = useRouter()
@@ -132,6 +139,7 @@ const isCollapse = ref(false);
 const width = ref("240px");
 const visible = ref(false);
 const visible1 = ref(false);
+const inviteVisible = ref(false)
 function change() {
   isCollapse.value = !isCollapse.value;
   if (isCollapse.value) {
@@ -145,11 +153,7 @@ let isConnected= computed(() => {
 })
 function handleCommand(command) {
   if (command == "logout") {
-    logout();
-    store.commit("removeToken")
-    store.commit("setUser", '')
-    store.commit("setRole", '')
-    store.commit("setMetaMask", null)
+    router.push("/login")
   }
   if (command == 'password') visible.value = true;
   if (command == 'email') visible1.value = true;

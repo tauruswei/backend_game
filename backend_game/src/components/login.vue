@@ -57,7 +57,16 @@ rules.value.email = [
     trigger: ['blur', 'change'],
   },
 ];
-rules.value.password = [{ required: true, message: "Password is required", trigger: "blur" }];
+rules.value.password = [
+  { required: true, message: "Password is required", trigger: "blur" },
+  { min: 8, max: 64, message: "The length between 8 and 64 character", trigger: "blur" }, 
+  {
+    required: true,
+    pattern: /^(?!^\d+$)(?!^[a-z]+$)(?!^[A-Z]+$)(?!^[^a-z0-9]+$)(?!^[^A-Z0-9]+$)(?!^.*[\u4E00-\u9FA5].*$)^\S*$/,
+    message: "Contains at least two types of numbers, uppercase and lowercase letters, and special characters",
+    trigger: "blur",
+  }
+];
 function doLogin() {
   formRef.value.validate((valid) => {
     if (valid) {
@@ -68,7 +77,7 @@ function doLogin() {
       };
       userApi.login(data).then((res) => {
         if (res.code == 0 && res.msg == "success") {
-          store.commit("setUser", {name:res.data.userName,account:res.data.walletAddress,id:res.data.userId});
+          store.commit("setUser", { name: res.data.userName, account: res.data.walletAddress, id: res.data.userId });
           store.commit("setRole", res.data.userType);
           store.commit("setToken", res.data.token);
           console.log(res)

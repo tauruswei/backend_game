@@ -18,11 +18,13 @@
 </template>
 <script setup>
 import { ref, defineEmits } from "vue";
+import { useStore } from "vuex"
 import { useRouter } from "vue-router";
 import { userApi } from "../api/request";
 import { loadingHelper } from "@/utils/loading";
 import { ElNotification } from "element-plus";
 const emit = defineEmits(['close'])
+const store = useStore();
 const router = useRouter();
 const formRef = ref(null);
 const form = ref({
@@ -31,9 +33,24 @@ const form = ref({
   rpassword: "",
 });
 const rules = ref({});
-rules.value.oldPassword = [{ required: true, message: "old password is required", trigger: "blur" }];
+rules.value.oldPassword = [
+  { required: true, message: "old password is required", trigger: "blur" },
+  { min: 8, max: 64, message: "The length between 8 and 64 character", trigger: "blur" }, 
+  {
+    required: true,
+    pattern: /^(?!^\d+$)(?!^[a-z]+$)(?!^[A-Z]+$)(?!^[^a-z0-9]+$)(?!^[^A-Z0-9]+$)(?!^.*[\u4E00-\u9FA5].*$)^\S*$/,
+    message: "Contains at least two types of numbers, uppercase and lowercase letters, and special characters",
+    trigger: "blur",
+  }];
 rules.value.newPassword = [
   { required: true, message: "new password is required", trigger: "blur" },
+  { min: 8, max: 64, message: "The length between 8 and 64 character", trigger: "blur" }, 
+  {
+    required: true,
+    pattern: /^(?!^\d+$)(?!^[a-z]+$)(?!^[A-Z]+$)(?!^[^a-z0-9]+$)(?!^[^A-Z0-9]+$)(?!^.*[\u4E00-\u9FA5].*$)^\S*$/,
+    message: "Contains at least two types of numbers, uppercase and lowercase letters, and special characters",
+    trigger: "blur",
+  },
   {
     validator: function (rule, value, callback) {
       if (value === form.value.oldPassword) {
@@ -47,6 +64,13 @@ rules.value.newPassword = [
   },];
 rules.value.rpassword = [
   { required: true, message: "password is required", trigger: "blur" },
+  { min: 8, max: 64, message: "The length between 8 and 64 character", trigger: "blur" }, 
+  {
+    required: true,
+    pattern: /^(?!^\d+$)(?!^[a-z]+$)(?!^[A-Z]+$)(?!^[^a-z0-9]+$)(?!^[^A-Z0-9]+$)(?!^.*[\u4E00-\u9FA5].*$)^\S*$/,
+    message: "Contains at least two types of numbers, uppercase and lowercase letters, and special characters",
+    trigger: "blur",
+  },
   {
     validator: function (rule, value, callback) {
       if (value != form.value.newPassword) {
@@ -66,6 +90,7 @@ function submit() {
       let param = {
         oldPassword: form.value.oldPassword,
         newPassword: form.value.newPassword,
+        userId: store.state.user.id
       }
       userApi.password(param).then((res) => {
         if (res.code == 0 && res.msg == "success") {

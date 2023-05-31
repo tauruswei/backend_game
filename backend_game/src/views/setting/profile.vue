@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <div class="container-fluid">
-      <div class="row" v-if="$store.state.role ==1">
+      <div class="row" v-if="$store.state.role == 0||$store.state.role == 1||$store.state.role == 2">
         <div class="col-md-8">
           <div class="row">
             <div class="card">
@@ -14,20 +14,12 @@
                 </h4>
               </div>
               <div class="card-body">
-                <form>
+                <div>
                   <div class="row">
                     <div class="col-md-12">
                       <div class="form-group">
-                        <label class="bmd-label-floating">Email address</label>
-                        <input type="email" class="form-control" v-model="userData.email" disabled>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <label class="bmd-label-floating">Nick</label>
-                        <input type="text" class="form-control" v-model="userData.name" disabled>
+                        <label class="bmd-label-floating">Nick Name</label>
+                        <input type="text" class="form-control" v-model="userData.name">
                       </div>
                     </div>
                   </div>
@@ -36,17 +28,17 @@
                       <div class="form-group">
                         <label class="bmd-label-floating">Wallet Adress</label>
                         <div class="input-group no-border">
-                          <input type="text" class="form-control" v-model="userData.wallet_address_nft" disabled>
-                          <button class="btn btn-sm btn-info btn-round btn-just-icon" data-original-title="View address on blockchain" title="View address on blockchain">
+                          <input type="text" class="form-control" v-model="userData.wallet_address">
+                          <button class="btn btn-sm btn-info btn-round btn-just-icon" @click="getAddress" title="View address on blockchain">
                             <i class="fa fa-external-link"></i>
                           </button>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <button type="submit" class="btn btn-warning pull-right"><i class="fa fa-edit"></i>&nbsp;&nbsp;Change Address</button>
+                  <button class="btn btn-warning pull-right" @click="update()"><i class="fa fa-edit"></i>&nbsp;&nbsp;Update</button>
                   <div class="clearfix"></div>
-                </form>
+                </div>
               </div>
             </div>
           </div>
@@ -101,7 +93,7 @@
           </div>
         </div>
       </div>
-      <div class="row" v-if="$store.state.role ==0">
+      <div class="row" v-if="$store.state.role == 3">
         <div class="col-md-8">
           <div class="row">
             <div class="card">
@@ -126,7 +118,7 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group">
-                        <label class="bmd-label-floating">Nick</label>
+                        <label class="bmd-label-floating">Nick Name</label>
                         <input type="text" class="form-control" v-model="userData.name" disabled>
                       </div>
                     </div>
@@ -191,21 +183,46 @@
 import { ref } from "vue";
 import { useStore } from "vuex";
 import { userApi } from "@/api/request"
+import { loadingHelper } from "@/utils/loading";
+import { ElMessage, ElNotification } from "element-plus";
 const store = useStore();
 const userData = ref({
-    wallet_address_nft:"gueryiy",
-    wallet_address_sl:"gueryiy",
-    email:"",
-    name:""
+  wallet_address_nft: "gueryiy",
+  wallet_address_sl: "gueryiy",
+  name: store.state.user.name,
+  wallet_address: store.state.user.account
 })
-function query() {
-  let param = {
-    userId: store.state.user.id
+function getAddress() {
+  if (!store.state.metaMask) {
+    ElMessage.error("please connect the wallet")
+    return
   }
-  userApi.userById(param).then((res) => {
-    console.log(res)
-    if(res.code == 0) userData.value = res.data;
+  userData.value.wallet_address = store.state.metaMask.account
+}
+function update() {
+  if (!userData.value.name) {
+    ElMessage.error("username is required")
+    return
+  }
+  if (!userData.value.wallet_address) {
+    ElMessage.error("wallet address is required")
+    return
+  }
+  let data = {
+    name: userData.value.name,
+    userId:store.state.user.id,
+    walletAddress: userData.value.wallet_address
+  }
+  loadingHelper.show()
+  userApi.update(data).then(res => {
+    if (res.code == 0) {
+      ElNotification({
+        type: "success",
+        message: "update successfully"
+      })
+      loadingHelper.hide()
+      store.commit("setUser", { ...store.state.user, name: userData.value.name, account: userData.value.wallet_address })
+    }
   })
 }
-query();
 </script>
