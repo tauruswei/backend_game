@@ -88,8 +88,8 @@ function submit() {
     if (valid) {
       loadingHelper.show();
       let param = {
-        oldPassword: form.value.oldPassword,
-        newPassword: form.value.newPassword,
+        oldPasswd: form.value.oldPassword,
+        newPasswd: form.value.newPassword,
         userId: store.state.user.id
       }
       userApi.password(param).then((res) => {

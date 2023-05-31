@@ -5,39 +5,38 @@
       <span class="wtext-l">Chess Of Stars</span>
     </div>
     <div class="login-box">
-      <h3 class="title-des wtext-xl">To Be Channel Leader !</h3>
+      <h3 class="title-des wtext-xl">Channel Leader !</h3>
       <p class="text-muted"><small>Enter your wallet Address</small></p>
       <div style="text-align: left;">
         <label>wallet address</label>
         <el-input v-model="walletAddress" clearable></el-input>
-        <el-button type="primary" class="w-100 shadow" style="margin:30px 0 0" @click="submit()">Submit</el-button>
+        <el-button type="primary" class="w-100 shadow" style="margin:30px 0 0" @click="submit()">Generate Qrcode</el-button>
       </div>
     </div>
+    <el-dialog v-model="inviteVisible" title="Welcome to Chess of stars" width="440px">
+      <qcode-cont style="width:100%;text-align: center;" :id="inviteId"></qcode-cont>
+    </el-dialog>
   </div>
 </template>
 <script setup>
 import { ref } from "vue";
 import { userApi } from "@/api/request";
-import { AppHelper } from "@/utils/helper";
 import { ElMessage, ElNotification } from "element-plus";
 
 const walletAddress = ref("")
+const inviteId = ref();
 function submit() {
   if (!walletAddress.value) {
     ElMessage.error("Wallet address is required!")
     return;
   }
   let data = {
-    inviteId: AppHelper.getURLParam('id'),
     walletAddress: walletAddress.value
   }
-  userApi.channel(data).then(res => {
-    console.log(res)
+  userApi.channelLeader(data).then(res => {
     if (res.code == 0) {
-      ElNotification({
-        type: "success",
-        message: "Congratulations! You have been a channel leader"
-      })
+      inviteId.value = res.data;
+      inviteVisible.value = true;
     }
   })
 }

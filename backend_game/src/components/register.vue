@@ -46,7 +46,8 @@
 import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import { userApi } from "../api/request";
+import { userApi } from "@/api/request";
+import { AppHelper } from "@/utils/helper";
 import { loadingHelper } from "@/utils/loading";
 import { ElNotification, ElMessage } from "element-plus";
 import CountDownTime from "@/components/count-down-time.vue"
@@ -59,7 +60,8 @@ const form = ref({
   name: "",
   passwd: "",
   userType: 2,
-  code: ""
+  code: "",
+  inviteId: AppHelper.getURLParam('id'),
 });
 const rules = ref({});
 const time = ref(0)

@@ -18,7 +18,8 @@ export const userApi = {
   profile: (data) => post("/user/getUserProfile", data),
   register: (data) => post("/user/createChannelLeader", data),
   wallet: (id) => post("/user/queryClubChannelAddress?userId=" + id),
-  channel: (data) => post("/user/createChannelLeader",data)
+  channel: (data) => post("/user/createChannelLeader",data),
+  channelLeader:(data)=> post("/user/queryChannelLeaderByWalletAddress",data)
 };
 export const chainApi = {
   transactions: (data) => post("/blockChain/call", data),

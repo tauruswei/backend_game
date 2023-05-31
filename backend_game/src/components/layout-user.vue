@@ -78,7 +78,7 @@
                     </span>
                   </el-tooltip>
                 </el-button>
-                <el-tooltip placement="bottom" content="Invite to be channel Leader" v-if="$store.state.role == 0||$store.state.role == 1">
+                <el-tooltip placement="bottom" content="Invite to be channel Leader" v-if="$store.state.role == 1">
                   <el-button type="success" @click="inviteVisible = true" round><el-icon><Share /></el-icon>&nbsp;Invite</el-button>
                 </el-tooltip>
               </div>
@@ -118,7 +118,7 @@
     <el-dialog v-model="visible1" title="Change Password" width="480px" destroy-on-close>
       <email-cont @close="visible1 = false"></email-cont>
     </el-dialog>
-    <el-dialog v-model="inviteVisible" title="Invite to be a channel leader" width="440px">
+    <el-dialog v-model="inviteVisible" title="Welcome to Chess of stars" width="440px">
       <qcode-cont style="width:100%;text-align: center;"></qcode-cont>
     </el-dialog>
   </div>

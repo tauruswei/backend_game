@@ -19,7 +19,7 @@
       <el-form-item label="New Password" prop="password">
         <el-input v-model="form.password" type="password" placeholder="enter your password" show-password clearable />
       </el-form-item>
-      <el-form-item label="password" prop="rpassword">
+      <el-form-item label="New Password again" prop="rpassword">
         <el-input v-model="form.rpassword" type="password" placeholder="enter your password again" show-password clearable />
       </el-form-item>
       <el-form-item>
