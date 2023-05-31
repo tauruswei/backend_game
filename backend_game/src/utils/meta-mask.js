@@ -10,7 +10,7 @@ let option = {
   communicationLayerPreference: 'webrtc',
 }
 export const CONTRACTS = {
-  sl: { address: "0x03E4a9feeE158200C7F532B23e7B6993bb39A981", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
+  sl: { address: "0x2795bA76b7f6665669FcBE3dA0B5e4e5FBdA634c", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
   club: { address: "0x285B0B99C8182F344d57A4FbDa665BDe4Ff32fd3", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
   cosd: { address: "0x21c571BF05b9CE69458541f6f8ce491332158603", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
   busd: { address: "0x401084C7F44f4e2d2945F37bcad2406c24edE223", owner: "0x65B7F91FB4bDa26f712087E9152862D93b34c51d" },
