@@ -37,7 +37,7 @@ function submit() {
   }
   userApi.channelLeader(data).then(res => {
     if (res.code == 0) {
-      inviteId.value = res.data;
+      inviteId.value = res.data.id;
       inviteVisible.value = true;
     }
   })
