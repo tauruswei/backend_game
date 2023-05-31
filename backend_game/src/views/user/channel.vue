@@ -20,6 +20,7 @@
 </template>
 <script setup>
 import { ref } from "vue";
+import QcodeCont from "@/components/qcode.vue";
 import { userApi } from "@/api/request";
 import { ElMessage, ElNotification } from "element-plus";
 
