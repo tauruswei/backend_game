@@ -179,7 +179,6 @@ function evicBalance() {
   })
 }
 function getBalance(key) {
-  if (!metaMask.isAvailable()) return;
   let data = {
     abi: abis.value[key],
     address: CONTRACTS[key].address,
