@@ -221,7 +221,7 @@
           {{action.command == 'buy'?'USDT':'AMOUNT'}}
         </el-col>
         <el-col :span="20">
-          <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="1" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
+          <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min.value" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
         </el-col>
         <el-col :span="24" style="margin-top:15px" v-if="needApprove">
           <el-button type="primary" @click="handleApproveOperate()" style="width:100%" :disabled="disabled">
@@ -274,6 +274,7 @@ const metaMask = new MetaMask();
 const disabled = ref(false)
 const reward = ref(0)
 const buttonText = ref('Buy')
+const min = ref(1)
 function handleClick(tab) {
   active.value = tab;
 }
@@ -345,16 +346,19 @@ function open(command) {
     command: command
   }
   disabled.value = false;
+  min.value = 1;
   if (command == 'buy') buttonText.value = "Buy"
   if (command == 'slstaking') {
     needApprove.value = true; 
     buttonText.value = "Stake";
+    min.value = 400;
   }
   if(command == 'clubunstaking') {
     action.value.amount = balance.value['club'];
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
+    min.value = 4000;
   }
   if(command == 'slunstaking') {
     action.value.amount = balance.value['sl'];

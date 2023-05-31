@@ -30,7 +30,7 @@
 
       </div>
       <div class="card-body" v-if="activeName == 1||activeName == 2">
-        <dynamic-table :data="tableData" :header="tableHeader1" :preNum="pageNum * pageSize - pageSize" :operations="operations" @commands="view"></dynamic-table>
+        <dynamic-table :data="tableData" :header="tableHeader1" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="view"></dynamic-table>
         <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
 
       </div>
@@ -65,7 +65,7 @@
           <div class="row">
             <div class="col-md-4">
               <el-image :src="rowData.src" style="width:200px"></el-image>
-              <el-button type="primary" v-if="rowData.status == 0" @click="updataStatus()" round>use it for game</el-button>
+              <el-button type="primary" v-if="rowData.status == 0" @click="updataStatus(rowData)" round>use it for game</el-button>
             </div>
             <div class="col-md-8 ml-auto mr-auto">
               <div class="table-responsive table-sales">
@@ -131,7 +131,9 @@ let title = ref({ type: "warning", title: "NFTs", desc: "All NFTs for points com
 let tableData = ref([])
 let tableHeader = ref(["id", "NFT_type", "blockchain", "minted_at", "game_chances"])
 let tableHeader1 = ref(["id", "NFT_type", "blockchain", "minted_at", "run_out_time"])
-let operations = ref([{ id: 1, type: 'success', icon: "fa fa-external-link", name: "View NFT on Blockchain", event: 'view' }])
+let operations = ref([{ id: 1, type: 'success', icon: "fa fa-external-link", name: "View NFT on Blockchain", event: 'view' },
+{ id: 2, type: 'primary', icon: "fa fa-gameplayed", name: "use it for game", event: 'updataStatus' },])
+let operations1 = ref([{ id: 1, type: 'success', icon: "fa fa-external-link", name: "View NFT on Blockchain", event: 'view' },])
 let visible = ref(false);
 let visible1 = ref(false);
 let rowData = ref({});
@@ -147,6 +149,7 @@ const amount = ref(20);
 const amount1 = ref(1);
 const metaMask = new MetaMask();
 const disabled = ref(false)
+const nftParam = ref({})
 function view(data) {
   if (data.command == "view") {
     visible.value = true;
@@ -248,7 +251,7 @@ function nftSwap() {
   loadingHelper.show()
   metaMask.nftBlindBoxByContract(data).then((res) => {
     visible1.value = false;
-    let param = {
+    nftParam.value = {
       "txId": res.transactionHash,
       "transType": TXTYPE.usdt,
       "fromUserId": store.state.user.id,
@@ -257,12 +260,15 @@ function nftSwap() {
       "toUserId": store.state.user.id,
       "toAssetType": ASSETTYPE.nft,
       "toAmount": amount.value,
-      "nftVo": {},
+      "nftVo": {
+        "tokenId":res.events.DrawCardEvent.returnValues.cardId,
+        "attr1": "",
+        "attr2": ""
+      },
       "blockNumber": res.blockNumber
     }
-    rowData.value.blockchain =blockChain.value;
+    rowData.value.blockchain = blockChain.value;
     rowData.value.contract_address = CONTRACTS['blindbox'].address;
-    savaAfterTranscation(param)
     let tokenid = res.events.DrawCardEvent.returnValues.cardId;
     nftInfo(tokenid)
     rowData.value.Token_ID = tokenid;
@@ -285,11 +291,14 @@ function nftInfo(id) {
     rowData.value.src = res.uri;
     rowData.value.game_chances = res.chances;
     rowData.value.nft_type = res.number;
+    nftParam.value.nftVo.attr1 = res.number
+    nftParam.value.nftVo.attr2 = res.chances
+    savaAfterTranscation(nftParam.value);
   })
 }
-function updataStatus(){
+function updataStatus(row){
   let data = {
-    "tokenId": rowData.value.Token_ID,
+    "tokenId": row.Token_ID,
     "status": 1
   }
   loadingHelper.show()

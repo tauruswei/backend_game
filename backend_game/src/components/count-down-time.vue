@@ -2,13 +2,14 @@
   <div>{{ time }}</div>
 </template>
 <script setup>
-import { ref, onBeforeUnmount, defineProps, watch } from 'vue';
+import { ref, onBeforeUnmount, defineProps,defineEmits, watch } from 'vue';
 const props = defineProps({
   limit: {
     type: [Number, String],
     default: 60
   }
 })
+const emit = defineEmits(['change'])
 const time = ref(0);
 let gen = null;
 let timer = null;
@@ -24,14 +25,18 @@ function* genTime(num) {
   let second = num;
   while (true) {
     second -= 1;
-    if (second === 0) {
-      second = 60;
+    if (second === -1) {
+      clear()
     }
     yield `${second} s`;
   }
 }
-onBeforeUnmount(() => {
+function clear() {
   clearInterval(timer);
   gen = null;
+  emit('change')
+}
+onBeforeUnmount(() => {
+  clear()
 })
   </script>

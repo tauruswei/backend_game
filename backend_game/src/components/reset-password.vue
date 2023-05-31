@@ -11,7 +11,7 @@
           </el-col>
           <el-col :span="4">
             <el-button @click="getVerifyCode" type="primary" :disabled="btndisabled" plain>{{!btndisabled?'send': ''}}
-                <count-down-time v-if="btndisabled" :limit="time"></count-down-time>
+                <count-down-time v-if="btndisabled" :limit="time" @change="()=>{btndisabled = false}"></count-down-time>
               </el-button>
           </el-col>
         </el-row>
@@ -67,7 +67,7 @@ rules.value.password = [
   }
 ];
 rules.value.code = [{ required: true, message: "Verify code is required", trigger: "blur" }];
-rules.value.rpasswd = [
+rules.value.rpassword = [
   { required: true, message: "password is required", trigger: "blur" },
   { min: 8, max: 64, message: "The length between 8 and 64 character", trigger: "blur" }, 
   {

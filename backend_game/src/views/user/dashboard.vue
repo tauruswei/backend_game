@@ -123,9 +123,13 @@
   </div>
   <el-dialog v-model="visible" :title="action.title" width="400px" destroy-on-close>
     <el-row :gutter="10">
-      <el-col :span="6">AMOUNT</el-col>
+      <el-col :span="6">EVIC</el-col>
       <el-col :span="18">
-        <el-input-number v-model.number="amount" controls-position="right" :step="1" :min="1" :max="100000" style="width:100%" clearable></el-input-number>
+        <el-input-number v-model.number="amount1" controls-position="right" :step="1" :min="100" :max="100000" style="width:100%" @change="translate('evic')" clearable></el-input-number>
+      </el-col>
+      <el-col :span="6">USDT</el-col>
+      <el-col :span="18">
+        <el-input-number v-model.number="amount" controls-position="right" :step="1" :min="1" :max="100000" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
       </el-col>
       <el-col :span="24" style="margin-top:15px;">
         <el-button type="success" style="width:100%" @click="handleOperate">{{ action.btn }}</el-button>
@@ -148,6 +152,7 @@ const dashboard = ref({ cosd: 0, nft: 0, games: 1, evics: 0 })
 const metaMask = new MetaMask();
 const abis = ref({ cosd: cosdToken, nft: nftToken, busd: busdToken })
 const amount = ref(0)
+const amount1 = ref(0)
 const visible = ref(false)
 const action = ref({ title: "", btn: "" })
 function isEmpty() {
@@ -155,6 +160,14 @@ function isEmpty() {
     ElMessage.error("amount is required!")
   }
   return amount.value ? false : true;
+}
+function translate(type) {
+  let rate = 100;
+  if (type == 'evic') {
+    amount1 .value= amount .value * rate;
+  } else if (type == 'usdt') {
+    amount.value = amount1 .value / rate;
+  }
 }
 function evicBalance() {
   let data = {
@@ -213,7 +226,7 @@ function purchase() {
       "fromAmount": amount.value,
       "toUserId": store.state.user.id,
       "toAssetType": ASSETTYPE.evic,
-      "toAmount": amount.value * 100,
+      "toAmount": amount1.value,
       "nftVo": {},
     }
     savaAfterTranscation(param)
@@ -223,8 +236,8 @@ function purchase() {
   })
 }
 function cashout() {
-  if (isEmpty()) return;
-  if(amount.value > dashboard.value.evics){
+  if (!amount1.value) return;
+  if(amount1.value > dashboard.value.evics){
     ElMessage.error("cannot exceed the balance!")
     return
   }
@@ -232,10 +245,10 @@ function cashout() {
     "transType": TXTYPE.evic,
     "fromUserId": store.state.user.id,
     "fromAssetType": ASSETTYPE.evic1,
-    "fromAmount": 0 - amount.value,
+    "fromAmount": 0 - amount1.value,
     "toUserId": store.state.user.id,
     "toAssetType": ASSETTYPE.usdt,
-    "toAmount": 0 - amount.value / 100,
+    "toAmount": 0 - amount.value,
     "nftVo": {}
   }
   loadingHelper.show()

@@ -18,7 +18,7 @@
             </el-col>
             <el-col :span="6">
               <el-button @click="getVerifyCode" type="primary" :disabled="btndisabled" plain>{{!btndisabled?'send': ''}}
-                <count-down-time v-if="btndisabled" :limit="time"></count-down-time>
+                <count-down-time v-if="btndisabled" :limit="time" @change="()=>{btndisabled = false}"></count-down-time>
               </el-button>
             </el-col>
           </el-row>
