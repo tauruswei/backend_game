@@ -8,8 +8,10 @@
 </template>
 <script setup>
 import QrcodeVue from 'qrcode.vue'
+import { useStore } from "vuex"
 import { ElMessage } from "element-plus";
 import { ref } from "vue"
+const store = useStore();
 const url = ref(null)
 url.value = process.env.VUE_APP_MODE == "development"?(window.location.protocol+window.location.host+window.location.port+'/channel?id='+store.state.user.id):process.env.VUE_APP_LOCAL
 const size = ref(240)
