@@ -197,7 +197,7 @@ export class MetaMask {
         ElNotification({ type: "success", message: "transcation successfully\nIf the balance is not refreshed, manually refresh later" })
         resolve(res)
       }).catch(err => {
-        reject(error)
+        reject(err)
         console.log(err)
         ElMessage.error(err)
       })
@@ -318,7 +318,7 @@ export class MetaMask {
         resolve(res)
       }).catch(err => {
         console.log(err)
-        reject(error)
+        reject(err)
         ElMessage.error(err)
       })
     })
