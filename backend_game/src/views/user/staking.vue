@@ -337,6 +337,7 @@ function getClubStatus() {
   });
 }
 function open(command) {
+  if (!metaMask.isAvailable()) return;
   action.value = {
     amount1: 20,
     amount: 1,

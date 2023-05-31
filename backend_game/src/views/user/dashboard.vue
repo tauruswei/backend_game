@@ -178,6 +178,7 @@ function getBalance(key) {
   });
 }
 function open(command) {
+  if (!metaMask.isAvailable()) return;
   action.value = {
     btn: command == 'buy' ? 'Buy' : "Withdraw",
     title: "Evics Transcation",
