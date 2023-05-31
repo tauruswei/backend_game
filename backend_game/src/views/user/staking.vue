@@ -518,10 +518,10 @@ function unStakingFunc(key) {
       "transType": TXTYPE.unstake[key],
       "fromUserId": store.state.user.id,
       "fromAssetType": ASSETTYPE[key] ? ASSETTYPE[key] : ASSETTYPE.cosd,
-      "fromAmount": action.value.amount,
+      "fromAmount": 0 - action.value.amount,
       "toUserId": store.state.user.id,
       "toAssetType": ASSETTYPE.cosd,
-      "toAmount": action.value.amount,
+      "toAmount": 0 - action.value.amount,
       "nftVo": {},
       "poolId": POOL[key],
       "blockNumber":res.blockNumber
