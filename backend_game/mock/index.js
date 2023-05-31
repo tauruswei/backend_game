@@ -65,7 +65,7 @@ let mocks = [
   { url: "/user/sendCode", type:"post", response: Admin.codeServ},
   { url: "/user/queryUserByName", type:"post", response: Admin.userServ},
   { url: "/user/queryUserById", type:"post", response: Admin.userServ},
-  { url: "/user/queryClubChannelAddress", type:"post", response: Admin.walletServ},
+  { url: "/user/queryClubAndChannelAddress", type:"post", response: Admin.walletServ},
   { url: "/role/selectList", type: "get", response: Admin.rolesServ},
   { url: "/user/list", type: "get", response: Admin.usersServ},
   { url: "/user/logs", type: "get", response: List.logsServ },
