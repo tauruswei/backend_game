@@ -248,7 +248,7 @@ function cashout() {
 }
 onMounted(() => {
   evicBalance()
-  if (store.state.metaMask) {
+  if (metaMask.isAvailable()) {
     getBalance('cosd')
     getBalance('nft')
   }
