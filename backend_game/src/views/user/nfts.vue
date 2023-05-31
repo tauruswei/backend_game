@@ -174,6 +174,7 @@ function query() {
           game_chances: i.gameChances,
           src:`https://cosd1.s3.amazonaws.com/${i.nftType}.png'`
         }
+        return item
       });
       total.value = res.data.total;
     }
