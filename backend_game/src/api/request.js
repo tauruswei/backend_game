@@ -17,7 +17,7 @@ export const userApi = {
   logs: (data) => get("/user/logs", data),
   profile: (data) => post("/user/getUserProfile", data),
   register: (data) => post("/user/createChannelLeader", data),
-  wallet: (id) => post("/user/queryClubChannelAddress?userId=" + id),
+  wallet: (id) => post("/user/queryClubAndChannelAddress?userId=" + id),
   channel: (data) => post("/user/createChannelLeader",data),
   channelLeader:(data)=> post("/user/queryChannelLeaderByWalletAddress",data)
 };
