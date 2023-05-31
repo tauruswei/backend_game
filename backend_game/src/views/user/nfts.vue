@@ -132,7 +132,7 @@ let tableData = ref([])
 let tableHeader = ref(["id", "NFT_type", "blockchain", "minted_at", "game_chances"])
 let tableHeader1 = ref(["id", "NFT_type", "blockchain", "minted_at", "run_out_time"])
 let operations = ref([{ id: 1, type: 'success', icon: "fa fa-external-link", name: "View NFT on Blockchain", event: 'view' },
-{ id: 2, type: 'primary', icon: "fa fa-gameplayed", name: "use it for game", event: 'updataStatus' },])
+{ id: 2, type: 'primary', icon: "fa fa-gamepad", name: "use it for game", event: 'updataStatus' },])
 let operations1 = ref([{ id: 1, type: 'success', icon: "fa fa-external-link", name: "View NFT on Blockchain", event: 'view' },])
 let visible = ref(false);
 let visible1 = ref(false);
