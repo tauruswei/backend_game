@@ -24,6 +24,7 @@ import { userApi } from "@/api/request";
 import { ElMessage, ElNotification } from "element-plus";
 
 const walletAddress = ref("")
+const inviteVisible = ref(false)
 const inviteId = ref();
 function submit() {
   if (!walletAddress.value) {
