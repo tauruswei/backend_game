@@ -78,7 +78,7 @@
                     </span>
                   </el-tooltip>
                 </el-button>
-                <el-tooltip placement="bottom" content="Invite to be channel Leader">
+                <el-tooltip placement="bottom" content="Invite to be channel Leader" v-if="$store.state.role == 0||$store.state.role == 1">
                   <el-button type="success" @click="inviteVisible = true" round><el-icon><Share /></el-icon>&nbsp;Invite</el-button>
                 </el-tooltip>
               </div>

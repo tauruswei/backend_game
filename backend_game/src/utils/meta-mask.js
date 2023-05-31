@@ -29,15 +29,21 @@ const ethereum = MMSDK.getProvider();
 const web3 = new Web3(provider)
 provider.on('chainChanged', (chainId) => {
   //window.location.reload()
-  console.log('chainChanged',chainId)
+  store.commit("setMetaMask", { ...store.state.metaMask, chainID: chainId });
+  console.log('chainChanged', chainId)
 })
 provider.on('connect', (accounts) => {
-  console.log('connect',accounts)
+  console.log('connect', accounts)
 })
 provider.on('accountsChanged', (accounts) => {
   //window.location.reload()
-  console.log('accountsChanged',accounts);
-  if(!accounts.length) store.commit("setMetaMask", null);
+  console.log('accountsChanged', accounts);
+  if (!accounts.length) store.commit("setMetaMask", null);
+  else {
+    store.commit("setMetaMask", { ...store.state.metaMask, account: accounts[0] });
+    store.commit('setUser', { ...store.state.user, account: accounts[0] })
+  }
+
 })
 provider.on('message', message => {
   console.log('message', message)
@@ -313,7 +319,7 @@ export class MetaMask {
     })
   }
 }
-export const savaAfterTranscation = (param)=> {
+export const savaAfterTranscation = (param) => {
   chainApi.save(param).then(res => {
     console.log(res)
     console.log("saved")

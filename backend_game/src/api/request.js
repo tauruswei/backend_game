@@ -39,7 +39,7 @@ export const cosdApi = {
   unStakeForSL: (data) => post("/cosd/unStakeForSL", data)
 }
 export const nftApi = {
-  list: (data) => get("/nft/queryNFTsByUserIdAndStatus", data),
+  list: (data) => post("/nft/queryNFTsByUserIdAndStatus", data),
 }
 export const gameApi = {
   increaseChesserPts: (data) => post("/game/increaseUserChesserPts", data),

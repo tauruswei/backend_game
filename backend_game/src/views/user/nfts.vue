@@ -1,14 +1,19 @@
 <template>
   <div>
     <ul class="nav nav-pills nav-pills-warning nav-pills-icons justify-content-center" role="tablist">
-      <li class="nav-item" @click="handleClick('active')">
-        <a class="nav-link" :class="activeName=='active'?' active':''" href="javascript:void(0);" role="tablist">
+      <li class="nav-item" @click="handleClick(0)">
+        <a class="nav-link" :class="activeName==0?' active':''" href="javascript:void(0);" role="tablist">
           <i class="fa fa-fire"></i> Active
         </a>
       </li>
-      <li class="nav-item" @click="handleClick('used')">
-        <a class="nav-link" :class="activeName=='used'?' active':''" href="javascript:void(0);" role="tablist">
+      <li class="nav-item" @click="handleClick(1)">
+        <a class="nav-link" :class="activeName==1?' active':''" href="javascript:void(0);" role="tablist">
           <i class="fa fa-clock-o"></i> Used
+        </a>
+      </li>
+      <li class="nav-item" @click="handleClick(2)">
+        <a class="nav-link" :class="activeName==2?' active':''" href="javascript:void(0);" role="tablist">
+          <i class="fa fa-clock-o"></i> Expired
         </a>
       </li>
       <li class="nav-item" @click="handleClick('buy')">
@@ -19,14 +24,10 @@
     </ul>
     <div class="card">
       <page-title :option="title" v-if="activeName !=='buy'"></page-title>
-      <div class="card-body" v-if="activeName =='active'">
+      <div class="card-body" v-if="activeName !=='buy'">
         <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations" @commands="view"></dynamic-table>
         <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
 
-      </div>
-      <div class="card-body" v-if="activeName =='used'">
-        <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations" @commands="view"></dynamic-table>
-        <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
       </div>
     </div>
     <template v-if="activeName =='buy'">
@@ -37,7 +38,7 @@
             <i class="fa fa-gift"></i>
           </div>
           <h3 class="card-title">20 USDT</h3>
-          <span style="text-decoration:line-through!important;">99 USDT</span> 
+          <span style="text-decoration:line-through!important;">99 USDT</span>
           <p class="card-description">
             Each blind box contains a NFT, which may be one of the
             <a target="_blank" href="https://chessofstars.io/nftlist">NFTs here</a>.
@@ -104,7 +105,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, reactive } from "vue";
 import { useStore } from "vuex";
 import { nftApi, userApi } from "@/api/request";
 import { chainApi } from "@/api/request";
@@ -114,10 +115,11 @@ import nftToken from "@/abi/nft.json";
 import PageTitle from "@/components/page-title.vue";
 import DynamicTable from "@/components/dynamic-table.vue";
 import { loadingHelper } from "@/utils/loading";
-import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE,savaAfterTranscation } from "@/utils/meta-mask";
+import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import { ElMessage } from "element-plus";
 const store = useStore()
-let activeName = ref("active");
+const TYPES = reactive({ buy: 0, used: 1, expire: 2 })
+let activeName = ref(0);
 let title = ref({ type: "warning", title: "NFTs", desc: "All NFTs for points competitions which come from blind boxes" })
 let tableData = ref([])
 let tableHeader = ref(["id", "nft_type", "blockchain", "minted_at", "game_chances"])
@@ -232,7 +234,7 @@ function nftSwap() {
       "toAssetType": ASSETTYPE.nft,
       "toAmount": amount.value,
       "nftVo": {},
-      "blockNumber":res.blockNumber
+      "blockNumber": res.blockNumber
     }
     rowData.value.blockchain = 'Binance Smart Chain';
     rowData.value.contract_address = CONTRACTS['blindbox'].address;
