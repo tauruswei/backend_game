@@ -62,14 +62,10 @@ export class MetaMask {
       ElMessage.error("please connect wallet")
       return false;
     } else {
-      return true;
+      ret = true;
     }
-    if (this.connectMetaMask()) return ret = true;
-    if (!this.isCurrentAccount()) {
-      ElMessage.error("Not the current account, please switch to the current account")
-    } else {
-      ret = true
-    }
+    if (this.isCurrentAccount()) ret = true;
+    else ret = false;
     return ret;
   }
   async connectMetaMask() {
@@ -120,6 +116,19 @@ export class MetaMask {
     return Boolean(ethereum && ethereum.isMetaMask)
   }
   isCurrentAccount() {
+    if(!store.state.user.account){
+      ElMessage({
+        dangerouslyUseHTMLString: true,
+        message: 'please update your wallet address! <a href="/setting/profile">click to update</a>',
+      })
+      return false
+    }
+    if(store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()){
+      ElMessage({
+        dangerouslyUseHTMLString: true,
+        message: 'Not the current account! <a href="/setting/profile">click to update</a> Or switch to the current account',
+      })
+    }
     return store.state.user.account.toLowerCase() == store.state.metaMask.account.toLowerCase();
   }
   //ETH转账
@@ -144,10 +153,6 @@ export class MetaMask {
   }
   //添加代币
   watchAsset(param) {
-    if (!this.isCurrentAccount()) {
-      ElMessage.error("Not the current account, please switch to the current account")
-      return;
-    }
     ethereum
       .request({
         method: 'wallet_watchAsset',
@@ -189,7 +194,7 @@ export class MetaMask {
         from: param.from
       }).then(res => {
         console.log(res)
-        ElNotification({ type: "success", message: "transcation successed" })
+        ElNotification({ type: "success", message: "transcation successfully\nIf the balance is not refreshed, manually refresh later" })
         resolve(res)
       }).catch(err => {
         reject(error)
@@ -226,7 +231,7 @@ export class MetaMask {
     return new Promise((resolve, reject) => {
       myContract.methods.approve(param.address, this.toHex(param.money)).send({ from: param.from })
         .then(res => {
-          ElNotification({ type: "success", message: "Approve successed" })
+          ElNotification({ type: "success", message: "Approve successfully" })
           resolve(res)
         }).catch(err => {
           ElMessage.error(err)
@@ -241,7 +246,7 @@ export class MetaMask {
       myContract.methods.stake(this.toHex(param.money)).send({
         from: param.from
       }).then(res => {
-        ElNotification({ type: "success", message: "Stake successed" })
+        ElNotification({ type: "success", message: "Stake successfully\nIf the balance is not refreshed, manually refresh later" })
         console.log(res)
         resolve(res)
       }).catch(err => {
@@ -258,7 +263,7 @@ export class MetaMask {
       myContract.methods.unStake(this.toHex(param.money)).send({
         from: param.from
       }).then(res => {
-        ElNotification({ type: "success", message: "unstake successed" })
+        ElNotification({ type: "success", message: "unstake successfully\nIf the balance is not refreshed, manually refresh later" })
         resolve(res)
       }).catch(err => {
         ElMessage.error(err)
@@ -272,7 +277,7 @@ export class MetaMask {
       myContract.methods.claimReward().send({
         from: param.from
       }).then(res => {
-        ElNotification({ type: "success", message: "claim rewards successed" })
+        ElNotification({ type: "success", message: "claim rewards successfully" })
         resolve(res)
       }).catch(err => {
         console.log(err)
@@ -288,7 +293,7 @@ export class MetaMask {
       myContract.methods.drawCard(this.toHex(param.money), param.club, param.channel).send({
         from: param.from
       }).then(res => {
-        ElNotification({ type: "success", message: "successed" })
+        ElNotification({ type: "success", message: "get blindbox successfully" })
         resolve(res)
       }).catch(err => {
         console.log(err)
@@ -309,7 +314,7 @@ export class MetaMask {
         from: param.from
       }).then(res => {
         console.log(res)
-        ElNotification({ type: "success", message: "transcation successed" })
+        ElNotification({ type: "success", message: "transcation successfully" })
         resolve(res)
       }).catch(err => {
         console.log(err)

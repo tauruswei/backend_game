@@ -8,12 +8,12 @@
       </li>
       <li class="nav-item" @click="handleClick(1)">
         <a class="nav-link" :class="activeName==1?' active':''" href="javascript:void(0);" role="tablist">
-          <i class="fa fa-clock-o"></i> Used
+          <i class="fa fa-clock-o"></i> Using
         </a>
       </li>
       <li class="nav-item" @click="handleClick(2)">
         <a class="nav-link" :class="activeName==2?' active':''" href="javascript:void(0);" role="tablist">
-          <i class="fa fa-clock-o"></i> Expired
+          <i class="fa fa-ban"></i> Used
         </a>
       </li>
       <li class="nav-item" @click="handleClick('buy')">
@@ -24,8 +24,13 @@
     </ul>
     <div class="card">
       <page-title :option="title" v-if="activeName !=='buy'"></page-title>
-      <div class="card-body" v-if="activeName !=='buy'">
+      <div class="card-body" v-if="activeName == 0">
         <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations" @commands="view"></dynamic-table>
+        <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
+
+      </div>
+      <div class="card-body" v-if="activeName == 1||activeName == 2">
+        <dynamic-table :data="tableData" :header="tableHeader1" :preNum="pageNum * pageSize - pageSize" :operations="operations" @commands="view"></dynamic-table>
         <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
 
       </div>
@@ -60,6 +65,7 @@
           <div class="row">
             <div class="col-md-4">
               <el-image :src="rowData.src" style="width:200px"></el-image>
+              <el-button type="primary" v-if="rowData.status == 0" @click="updataStatus()" round>use it for game</el-button>
             </div>
             <div class="col-md-8 ml-auto mr-auto">
               <div class="table-responsive table-sales">
@@ -67,7 +73,7 @@
                   <tbody>
                     <template v-for="(item,key) in rowData">
                       <tr v-if="key !='src'" :key="key">
-                        <td>{{ key.replace(/\_/g," ")+":" }}</td>
+                        <td style="text-transform: capitalize;">{{ key.replace(/\_/g," ")+":" }}</td>
                         <td>{{ item }}</td>
                       </tr>
                     </template>
@@ -115,21 +121,23 @@ import nftToken from "@/abi/nft.json";
 import PageTitle from "@/components/page-title.vue";
 import DynamicTable from "@/components/dynamic-table.vue";
 import { loadingHelper } from "@/utils/loading";
+import { DateHelper } from "@/utils/helper";
 import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElNotification } from "element-plus";
 const store = useStore()
 const TYPES = reactive({ buy: 0, used: 1, expire: 2 })
 let activeName = ref(0);
 let title = ref({ type: "warning", title: "NFTs", desc: "All NFTs for points competitions which come from blind boxes" })
 let tableData = ref([])
-let tableHeader = ref(["id", "nft_type", "blockchain", "minted_at", "game_chances"])
-let tableHeader1 = ref(["id", "nft_type", "blockchain", "minted_at", "run_out_time"])
+let tableHeader = ref(["id", "NFT_type", "blockchain", "minted_at", "game_chances"])
+let tableHeader1 = ref(["id", "NFT_type", "blockchain", "minted_at", "run_out_time"])
 let operations = ref([{ id: 1, type: 'success', icon: "fa fa-external-link", name: "View NFT on Blockchain", event: 'view' }])
 let visible = ref(false);
 let visible1 = ref(false);
 let rowData = ref({});
 let pageNum = ref(1); let total = ref(1);
 let pageSize = ref(10);
+let blockChain = ref('Binance Smart Chain')
 const address = ref({
   channelAddress: "",
   clubAddress: "",
@@ -148,12 +156,25 @@ function view(data) {
 function query() {
   let data = {
     pageSize: pageSize.value,
-    pageNum: pageNum.value,
-    type: activeName.value
+    pageNo: pageNum.value,
+    status: activeName.value,
+    userId: store.state.user.id
   }
   nftApi.list(data).then((res) => {
-    if (res.data.data) {
-      tableData.value = res.data.data;
+    if (res.data.list) {
+      tableData.value = res.data.list.map(i=>{
+        let item ={
+          id: i.id,
+          Token_ID: i.tokenId,
+          tx_id: i.txId,
+          NFT_type: i.nftType,
+          blockchain: i.blockChain,
+          minted_at: DateHelper.toString(i.mintedAt),
+          run_out_time: DateHelper.toString(i.runOutTime),
+          game_chances: i.gameChances,
+          src:`https://cosd1.s3.amazonaws.com/${i.nftType}.png'`
+        }
+      });
       total.value = res.data.total;
     }
   })
@@ -161,12 +182,12 @@ function query() {
 function queryRow(data) {
   let res = [data].map(i => {
     return {
-      NFT_type: i.nft_type,
-      Game_chances: i.game_chances,
-      Blockchain: i.blockchain,
-      Token_ID: i.token_id,
-      Contract_Address: i.contract_address,
-      Minted_at: i.minted_at,
+      NFT_type: i.NFT_type,
+      game_chances: i.game_chances,
+      blockchain: i.blockchain,
+      Token_ID: i.Token_ID,
+      contract_address: CONTRACTS['blindbox'].address,
+      minted_at: i.minted_at,
       src: i.src
     }
   });
@@ -174,6 +195,7 @@ function queryRow(data) {
 }
 function handleClick(tab) {
   activeName.value = tab;
+  if(tab == 'buy') return
   pageNum.value = 1;
   query();
 }
@@ -236,12 +258,12 @@ function nftSwap() {
       "nftVo": {},
       "blockNumber": res.blockNumber
     }
-    rowData.value.blockchain = 'Binance Smart Chain';
+    rowData.value.blockchain =blockChain.value;
     rowData.value.contract_address = CONTRACTS['blindbox'].address;
     savaAfterTranscation(param)
     let tokenid = res.events.DrawCardEvent.returnValues.cardId;
     nftInfo(tokenid)
-    rowData.value.token_id = tokenid;
+    rowData.value.Token_ID = tokenid;
     loadingHelper.hide()
   }).catch(err => {
     console.log(err)
@@ -261,6 +283,23 @@ function nftInfo(id) {
     rowData.value.src = res.uri;
     rowData.value.game_chances = res.chances;
     rowData.value.nft_type = res.number;
+  })
+}
+function updataStatus(){
+  let data = {
+    "tokenId": rowData.value.Token_ID,
+    "status": 1
+  }
+  loadingHelper.show()
+  nftApi.status(data).then(res=>{
+    if(res.code == 0){
+      ElNotification({
+        type:"success",
+        message:"use it successfully"
+      })
+      rowData.value.status = 1
+      loadingHelper.hide()
+    }
   })
 }
 onMounted(() => {

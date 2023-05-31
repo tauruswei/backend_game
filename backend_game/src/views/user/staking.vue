@@ -542,7 +542,7 @@ function claimReward() {
   })
 }
 onMounted(() => {
-  if (store.state.metaMask) {
+  if (metaMask.isAvailable()) {
     getBalance('cosd')
     getBalance('sl')
     getBalance('club')

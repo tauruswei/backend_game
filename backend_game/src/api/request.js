@@ -41,6 +41,7 @@ export const cosdApi = {
 }
 export const nftApi = {
   list: (data) => post("/nft/queryNFTsByUserIdAndStatus", data),
+  status:(data)=>post("/nft/updateNFTStatus",data)
 }
 export const gameApi = {
   increaseChesserPts: (data) => post("/game/increaseUserChesserPts", data),
