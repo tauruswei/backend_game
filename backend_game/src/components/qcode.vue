@@ -19,7 +19,10 @@ const props = defineProps({
 })
 const inviteId = ref(store.state.user.id)
 watch(()=>props.id,(val)=>{
-  if(val) inviteId.value = val
+  if(val) {
+    inviteId.value = val;
+    url.value = process.env.VUE_APP_MODE == "development"?(window.location.protocol+window.location.host+'/register?id=' + inviteId.value):process.env.VUE_APP_LOCAL
+  }
 },{immediate:true})
 
 const url = ref(null)
