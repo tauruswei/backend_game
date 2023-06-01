@@ -125,10 +125,10 @@
     <el-row :gutter="10">
       <el-col :span="6">EVIC</el-col>
       <el-col :span="18">
-        <el-input-number v-model.number="amount1" controls-position="right" :step="1" :min="100" :max="100000" style="width:100%" @change="translate('evic')" clearable></el-input-number>
+        <el-input-number v-model.number="amount1" controls-position="right" :step="100" :min="100" :max="100000" style="width:100%" @change="translate('evic')" clearable></el-input-number>
       </el-col>
-      <el-col :span="6">USDT</el-col>
-      <el-col :span="18">
+      <el-col :span="6" style="margin-top:10px">USDT</el-col>
+      <el-col :span="18" style="margin-top:10px">
         <el-input-number v-model.number="amount" controls-position="right" :step="1" :min="1" :max="100000" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
       </el-col>
       <el-col :span="24" style="margin-top:15px;">
@@ -164,9 +164,9 @@ function isEmpty() {
 function translate(type) {
   let rate = 100;
   if (type == 'evic') {
-    amount1 .value= amount .value * rate;
+    amount.value= amount1.value / rate;
   } else if (type == 'usdt') {
-    amount.value = amount1 .value / rate;
+    amount1.value = amount.value * rate;
   }
 }
 function evicBalance() {
@@ -197,6 +197,7 @@ function open(command) {
     command: command
   }
   amount.value = 1;
+  amount1.value = 100;
   visible.value = true;
 }
 function handleOperate() {
@@ -241,9 +242,9 @@ function cashout() {
     return
   }
   let param = {
-    "transType": TXTYPE.evic,
+    "transType": TXTYPE.evic1,
     "fromUserId": store.state.user.id,
-    "fromAssetType": ASSETTYPE.evic1,
+    "fromAssetType": ASSETTYPE.evic,
     "fromAmount": 0 - amount1.value,
     "toUserId": store.state.user.id,
     "toAssetType": ASSETTYPE.usdt,
@@ -254,7 +255,7 @@ function cashout() {
   evicsApi.withdraw(param).then((res) => {
     visible.value = false;
     loadingHelper.hide();
-    dashboard.value.evics = dashboard.value.evics - amount.value;
+    dashboard.value.evics = dashboard.value.evics - amount1.value;
   }).catch(err => {
     loadingHelper.hide();
   })

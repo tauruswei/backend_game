@@ -292,8 +292,8 @@ async function getStakeTime(key) {
     poolId: POOL[key]
   };
   let ret;
-  await cosdApi.checkTime(data).then((res=>{
-    if(res.code == 0) ret = res.data
+  await cosdApi.checkTime(data).then((res => {
+    if (res.code == 0) ret = res.data
     else ElMessage.error(res.msg)
   }))
   return ret
@@ -304,8 +304,8 @@ async function getUnstakeTime(key) {
     poolId: POOL[key]
   }
   let ret;
-  await cosdApi.checkTimeun(data).then((res=>{
-    if(res.code == 0) ret = res.data.flag
+  await cosdApi.checkTimeun(data).then((res => {
+    if (res.code == 0) ret = res.data.flag
     else ElMessage.error(res.msg)
   }))
   return ret
@@ -319,7 +319,7 @@ async function isStakeTimeAvailable(key) {
 async function isUnStakeTimeAvailable(key) {
   let ret = false;
   ret = await getUnstakeTime(key)
-  if(!ret) ElMessage.error("Not exceeding the specified time limit!")
+  if (!ret) ElMessage.error("Not exceeding the specified time limit!")
   return ret
 }
 function getBalance(key) {
@@ -352,6 +352,8 @@ function getClubStatus() {
   }
   metaMask.getClubStatusByContract(data).then(res => {
     isClubBoss.value = res;
+    if (res) store.commit("setRole", 1)
+    else store.commit("setRole", 2)
   });
 }
 function open(command) {
