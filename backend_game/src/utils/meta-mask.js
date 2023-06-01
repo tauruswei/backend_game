@@ -41,7 +41,7 @@ provider.on('accountsChanged', (accounts) => {
   if (!accounts.length) store.commit("setMetaMask", null);
   else {
     store.commit("setMetaMask", { ...store.state.metaMask, account: accounts[0] });
-    store.commit('setUser', { ...store.state.user, account: accounts[0] })
+    isCurrentAccount()
   }
 
 })
@@ -52,6 +52,24 @@ provider.on('disconnect', () => {
   //window.location.reload()
   store.commit("setMetaMask", null);
 })
+function isCurrentAccount() {
+  if (!store.state.user.account) {
+    ElMessage({
+      duration: 5000,
+      dangerouslyUseHTMLString: true,
+      message: 'please update your wallet address! <a href="/setting/profile">click to update</a>',
+    })
+    return false
+  }
+  if (store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()) {
+    ElMessage({
+      duration: 5000,
+      dangerouslyUseHTMLString: true,
+      message: '<p><b>Not the current account!</b></p><br/> <a href="/setting/profile">click to update</a> Or switch Metamask to the current account',
+    })
+  }
+  return store.state.user.account.toLowerCase() == store.state.metaMask.account.toLowerCase();
+}
 export class MetaMask {
   constructor() {
     this.provider = provider;
@@ -64,7 +82,7 @@ export class MetaMask {
     } else {
       ret = true;
     }
-    if (this.isCurrentAccount()) ret = true;
+    if (isCurrentAccount()) ret = true;
     else ret = false;
     return ret;
   }
@@ -95,10 +113,7 @@ export class MetaMask {
       if (account) {
         store.commit("setMetaMask", { chainID: chainID, account: account });
         ElMessage.success('connected success!')
-        if (!store.state.user.account) userApi.update({ wallet: account, name: store.state.user.name }).then(res => {
-          console.log("updated")
-          store.commit('setUser', { ...store.state.user, account: account })
-        })
+        isCurrentAccount()
       }
       else {
         store.commit("setMetaMask", null);
@@ -114,22 +129,6 @@ export class MetaMask {
   isMetaMaskInstalled() {
     const { ethereum } = window;
     return Boolean(ethereum && ethereum.isMetaMask)
-  }
-  isCurrentAccount() {
-    if(!store.state.user.account){
-      ElMessage({
-        dangerouslyUseHTMLString: true,
-        message: 'please update your wallet address! <a href="/setting/profile">click to update</a>',
-      })
-      return false
-    }
-    if(store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()){
-      ElMessage({
-        dangerouslyUseHTMLString: true,
-        message: '<p><b>Not the current account!</b></p><br/> <a href="/setting/profile">click to update</a> Or switch Metamask to the current account',
-      })
-    }
-    return store.state.user.account.toLowerCase() == store.state.metaMask.account.toLowerCase();
   }
   //ETH转账
   sendTransaction(param) {
@@ -250,7 +249,7 @@ export class MetaMask {
         console.log(res)
         resolve(res)
       }).catch(err => {
-        ElMessage.error(err)
+        ElMessage.error(!err.status?"stake failed":err)
         console.log(err)
         reject(err)
       })
