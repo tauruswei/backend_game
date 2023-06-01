@@ -146,7 +146,7 @@ import busdToken from "@/abi/busdtoken.json";
 import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import { evicsApi } from '@/api/request';
 import { loadingHelper } from "@/utils/loading";
-import { ElNotification } from "element-plus";
+import { ElNotification,ElMessage } from "element-plus";
 const store = useStore();
 const dashboard = ref({ cosd: 0, nft: 0, games: 1, evics: 0 })
 const metaMask = new MetaMask();
