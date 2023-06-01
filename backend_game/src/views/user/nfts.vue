@@ -163,6 +163,9 @@ function view(data) {
     visible.value = true;
     queryRow(data.data);
   }
+  if(data.command == "updataStatus"){
+    updataStatus(data.data)
+  }
 }
 function query() {
   let data = {
