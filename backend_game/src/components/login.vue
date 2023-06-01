@@ -39,7 +39,7 @@ import { useRouter } from "vue-router";
 import { userApi } from "@/api/request";
 import PasswordCont from "@/components/reset-password.vue";
 import { loadingHelper } from "@/utils/loading";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElNotification } from "element-plus";
 const visible = ref(false);
 const store = useStore();
 const router = useRouter();
@@ -81,7 +81,7 @@ function doLogin() {
           store.commit("setRole", res.data.userType);
           store.commit("setToken", res.data.token);
           console.log(res)
-          ElMessage({
+          ElNotification({
             type: "success",
             message: "logging ..."
           })
