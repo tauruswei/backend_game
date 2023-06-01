@@ -210,7 +210,7 @@ function update() {
   }
   let data = {
     name: userData.value.name,
-    userId:store.state.user.id,
+    userId: store.state.user.id,
     walletAddress: userData.value.wallet_address
   }
   loadingHelper.show()

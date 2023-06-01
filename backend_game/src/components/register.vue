@@ -61,7 +61,7 @@ const form = ref({
   passwd: "",
   userType: 2,
   code: "",
-  inviteId: AppHelper.getURLParam('id'),
+  inviterId: AppHelper.getURLParam('id'),
 });
 const rules = ref({});
 const time = ref(0)
@@ -76,7 +76,7 @@ rules.value.email = [
   {
     validator: function (rule, value, callback) {
       if (value) {
-        userApi.checkedName(value).then(res => {
+        userApi.checkEmail(value).then(res => {
           if (res.code == 0 && !res.data) callback();
           else callback(new Error("this email has been used,please use another one"));
         })
@@ -92,6 +92,17 @@ rules.value.name = [
     required: true,
     pattern: /^[a-zA-Z]{1}([a-zA-Z0-9]|[_]){1,64}$/,
     message: "Begin with a letter, and use letters, numbers and the underscore(_)",
+    trigger: "blur",
+  },
+  {
+    validator: function (rule, value, callback) {
+      if (value) {
+        userApi.checkUser(value).then(res => {
+          if (res.code == 0 && !res.data) callback();
+          else callback(new Error("this nick name has been used,please use another one"));
+        })
+      }
+    },
     trigger: "blur",
   },
 ];
@@ -130,10 +141,6 @@ function doRegister() {
       loadingHelper.show();
       userApi.signup(form.value).then((res) => {
         if (res.code == 0 && res.msg == "success") {
-          ElNotification({
-            type: "success",
-            message: "logging ...",
-          });
           doLogin();
         }
         loadingHelper.hide();

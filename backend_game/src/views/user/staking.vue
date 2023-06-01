@@ -57,7 +57,7 @@
                       <div class="card-footer">
                         <div class="stats">
                           <i class="fa fa-cubes"></i>&nbsp;Staking pool contract address:&nbsp;&nbsp;
-                          <a target="_blank" href="#">{{contracts.sl.address}}</a>
+                          <a href="javascript:void(0);">{{contracts.sl.address}}</a>
                         </div>
                       </div>
                     </div>
@@ -90,7 +90,7 @@
                         <div class="stats">
                           <div class="">
                             <i class="fa fa-cubes"></i>&nbsp;Staking pool contract address:&nbsp;&nbsp;
-                            <a target="_blank" href="#">{{contracts.sl.address}}</a>
+                            <a href="javascript:void(0);">{{contracts.sl.address}}</a>
                           </div>
                           &nbsp;&nbsp;&nbsp;&nbsp;
                           <div class="">
@@ -114,7 +114,7 @@
                       <div class="card-footer">
                         <div class="stats">
                           <i class="fa fa-cubes"></i>&nbsp;Staking pool contract address:&nbsp;&nbsp;
-                          <a target="_blank" href="#">{{contracts.club.address}}</a>
+                          <a href="javascript:void(0);">{{contracts.club.address}}</a>
                         </div>
                       </div>
                     </div>
@@ -147,7 +147,7 @@
                         <div class="stats">
                           <div class="">
                             <i class="fa fa-cubes"></i>&nbsp;Staking pool contract address:&nbsp;&nbsp;
-                            <a target="_blank" href="#">{{contracts.club.address}}</a>
+                            <a href="javascript:void(0);">{{contracts.club.address}}</a>
                           </div>
                           &nbsp;&nbsp;&nbsp;&nbsp;
                           <div class="">
@@ -170,7 +170,7 @@
                       <div class="card-footer">
                         <div class="stats">
                           <i class="fa fa-cubes"></i>&nbsp;Staking pool contract address:&nbsp;&nbsp;
-                          <a target="_blank" href="#">{{contracts.defi.address}}</a>
+                          <a href="javascript:void(0);">{{contracts.defi.address}}</a>
                         </div>
                       </div>
                     </div>
@@ -184,6 +184,7 @@
                           You can only stake 2000 COSD (equivalent to 100 USDT).
                         </p>
                         <button class="btn btn-rose btn-round" @click="open('defistaking')">Stake</button>
+                        <button class="btn btn-success btn-round" @click="claimReward()">Claim rewards</button>
                       </div>
                     </div>
                     <div class="card card-pricing card-raised for-cosd-unstaked" v-if="balance.defi">
@@ -195,7 +196,6 @@
                         <p class="card-description">
                         </p>
                         <button class="btn btn-warning btn-round" @click="open('defiunstaking')">Stop staking</button>
-                        <button class="btn btn-success btn-round" v-if="show" @click="claimReward()">Claim rewards</button>
                       </div>
                     </div>
                   </div>
@@ -267,7 +267,6 @@ const action = ref({
 });
 const titles = ref({ buy: "Purchase COSD", "slstaking": "Staking for starlight league", "clubstaking": "Staking for club ownership", "defistaking": "Staking for earning COSD" })
 const visible = ref(false)
-const show = ref(false)
 const timeEnd = ref({ defi: 30 * 60 * 1000, sl: 60 * 60 * 1000, club: 60 * 60 * 1000 })
 const isClubBoss = ref(false)
 const needApprove = ref(true);
@@ -559,7 +558,7 @@ async function unStakingFunc(key) {
       "blockNumber": res.blockNumber
     }
     savaAfterTranscation(param)
-    if (key == 'defi') { show.value = true; getReward() }
+    if (key == 'defi') { getReward() }
     loadingHelper.hide();
     getBalance(key);
     if (key == 'club') getClubStatus()

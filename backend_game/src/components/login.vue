@@ -80,11 +80,6 @@ function doLogin() {
           store.commit("setUser", { name: res.data.userName, account: res.data.walletAddress, id: res.data.userId });
           store.commit("setRole", res.data.userType);
           store.commit("setToken", res.data.token);
-          console.log(res)
-          ElNotification({
-            type: "success",
-            message: "logging ..."
-          })
           router.push({
             path: "/plat/dashboard",
           });

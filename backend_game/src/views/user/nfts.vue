@@ -29,10 +29,13 @@
         <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
 
       </div>
-      <div class="card-body" v-if="activeName == 1||activeName == 2">
+      <div class="card-body" v-if="activeName == 1">
+        <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="view"></dynamic-table>
+        <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
+      </div>
+      <div class="card-body" v-if="activeName == 2">
         <dynamic-table :data="tableData" :header="tableHeader1" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="view"></dynamic-table>
         <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
-
       </div>
     </div>
     <template v-if="activeName =='buy'">
@@ -268,11 +271,11 @@ function nftSwap() {
       "txId": res.transactionHash,
       "transType": TXTYPE.blindbox,
       "fromUserId": store.state.user.id,
-      "fromAssetType": ASSETTYPE.nft,
+      "fromAssetType": ASSETTYPE.usdt,
       "fromAmount": amount.value,
       "toUserId": store.state.user.id,
       "toAssetType": ASSETTYPE.nft,
-      "toAmount": amount.value,
+      "toAmount": amount1.value,
       "nftVo": {
         "tokenId": res.events.DrawCardEvent.returnValues.cardId,
         "attr1": "",

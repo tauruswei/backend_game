@@ -50,7 +50,7 @@ rules.value.email = [{ required: true, message: "email is required", trigger: "b
 {
   validator: function (rule, value, callback) {
     if (value) {
-      userApi.checkedName(value).then(res => {
+      userApi.checkEmail(value).then(res => {
         if (res.code == 0 && !res.data) callback();
         else callback(new Error("this email has been used,please use another one"));
       })
