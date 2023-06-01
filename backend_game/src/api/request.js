@@ -1,4 +1,4 @@
-import { get, post, del } from "@/utils/axios";
+import { get, post, del ,uploadFile} from "@/utils/axios";
 import { toQuery } from "@/utils/toquery";
 export const userApi = {
   logout: (data) => post("/user/logout", data),
@@ -37,7 +37,9 @@ export const cosdApi = {
   stakeForSL: (data) => post("/cosd/stakeForSL", data),
   unStakeForClub: (data) => post("/cosd/unStakeForClub", data),
   unStakeForDefi: (data) => post("/cosd/unStakeForDefi", data),
-  unStakeForSL: (data) => post("/cosd/unStakeForSL", data)
+  unStakeForSL: (data) => post("/cosd/unStakeForSL", data),
+  checkTime:(data)=>uploadFile("/webTransaction/queryUserIsAbleForStake",data),
+  checkTimeun:(data)=>uploadFile("/webTransaction/queryUserIsAbleForUnStake",data)
 }
 export const nftApi = {
   list: (data) => post("/nft/queryNFTsByUserIdAndStatus", data),

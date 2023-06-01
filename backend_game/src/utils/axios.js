@@ -88,7 +88,6 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   (res) => {
     removePending(res.config);
-    loadingHelper.hide();
     //HTTP响应码是200，后端自己定义了500
     if (res.data.code !== 0) {
       //业务逻辑错误(服务器找不到，服务器错误等，http的响应码就不是200了)
@@ -103,8 +102,8 @@ axios.interceptors.response.use(
     return res.data;
   },
   (err) => {
-    loadingHelper.hide();
     if (err && err.response) {
+      loadingHelper.hide();
       let response = err.response;
       if (response.status == 504 || response.status == 404) {
         ElNotification.error({

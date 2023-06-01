@@ -248,8 +248,9 @@ import clubStaking from "@/abi/clubStaking.json";
 import defiStaking from "@/abi/stakingPool.json";
 import { chainApi } from "@/api/request";
 import { loadingHelper } from "@/utils/loading";
-import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, POOL,savaAfterTranscation } from "@/utils/meta-mask";
+import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, POOL, savaAfterTranscation } from "@/utils/meta-mask";
 import { ElMessage } from "element-plus";
+import { cosdApi } from "../../api/request";
 const store = useStore();
 const active = ref("sl");
 const balance = ref({
@@ -286,23 +287,38 @@ function translate(type) {
     action.value.amount = action.value.amount1 / rate;
   }
 }
-function setTime(key) {
-  let time = new Date().getTime();
-  let data = {};
-  data[key] = time + timeEnd.value[key];
-  store.commit("setTime", data)
+async function getStakeTime(key) {
+  let data = {
+    poolId: POOL[key]
+  };
+  let ret;
+  await cosdApi.checkTime(data).then((res=>{
+    ret = res.data
+  }))
+  return ret
 }
-function getTranscationTime() {
-  let data = {}
-  store.commit("setTime", data)
+async function getUnstakeTime(key) {
+  let data = {
+    userId: store.state.user.id,
+    poolId: POOL[key]
+  }
+  let ret;
+  await cosdApi.checkTimeun(data).then((res=>{
+    ret = res.data.flag
+  }))
+  return ret
 }
-function isTimeAvailable(key) {
+async function isStakeTimeAvailable(key) {
   let ret = false;
-  let time = new Date().getTime();
-  if (!store.state.time) return true;
-  if (!store.state.time[key] || store.state.time[key] < time) ret = true;
-  else ElMessage.error("Not exceeding the specified time limit!")
-  return ret;
+  ret = await getStakeTime(key)
+  if (!ret) ElMessage.error("Not exceeding the specified time limit!")
+  return ret
+}
+async function isUnStakeTimeAvailable(key) {
+  let ret = false;
+  ret = await getUnstakeTime(key)
+  if(!ret) ElMessage.error("Not exceeding the specified time limit!")
+  return ret
 }
 function getBalance(key) {
   let data = {
@@ -348,30 +364,42 @@ function open(command) {
   min.value = 1;
   if (command == 'buy') buttonText.value = "Buy"
   if (command == 'slstaking') {
-    needApprove.value = true; 
+    action.value.amount = 400;
+    needApprove.value = true;
     buttonText.value = "Stake";
     min.value = 400;
   }
-  if(command == 'clubunstaking') {
+  if (command == 'clubstaking') {
+    action.value.amount = 4000;
+    needApprove.value = true;
+    buttonText.value = "Stake";
+    min.value = 4000;
+  }
+  if (command == 'defistaking') {
+    action.value.amount = 1;
+    needApprove.value = true;
+    buttonText.value = "Stake";
+    min.value = 1;
+  }
+  if (command == 'clubunstaking') {
     action.value.amount = balance.value['club'];
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
-    min.value = 4000;
   }
-  if(command == 'slunstaking') {
+  if (command == 'slunstaking') {
     action.value.amount = balance.value['sl'];
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
   }
-  if(command == 'defiunstaking') {
+  if (command == 'defiunstaking') {
     action.value.amount = balance.value['defi'];
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
   }
-  if(command == 'defirewards') {
+  if (command == 'defirewards') {
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
@@ -452,7 +480,7 @@ function purchase() {
       "toAssetType": ASSETTYPE.cosd,
       "toAmount": action.value.amount1,
       "nftVo": {},
-      "blockNumber":res.blockNumber
+      "blockNumber": res.blockNumber
     }
     savaAfterTranscation(param)
     getBalance('cosd');
@@ -460,8 +488,8 @@ function purchase() {
     loadingHelper.hide();
   })
 }
-function stakingApprove(key) {
-  if (!isTimeAvailable(key)) return
+async function stakingApprove(key) {
+  if (key != 'sl' && await !isStakeTimeAvailable(key)) return
   if (!metaMask.isAvailable()) return;
   let data = { from: store.state.metaMask.account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key], abiApprove: cosdToken, approveAddress: CONTRACTS["cosd"].address }
   if (!validatorAmount('cosd')) return;
@@ -474,7 +502,6 @@ function stakingApprove(key) {
   })
 }
 function stakingFunc(key) {
-  if (!isTimeAvailable(key)) return
   if (!metaMask.isAvailable()) return;
   let data = { from: store.state.metaMask.account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key], abiApprove: cosdToken, approveAddress: CONTRACTS["cosd"].address }
   loadingHelper.show()
@@ -488,14 +515,13 @@ function stakingFunc(key) {
       "fromAssetType": ASSETTYPE.cosd,
       "fromAmount": action.value.amount,
       "toUserId": store.state.user.id,
-      "toAssetType": ASSETTYPE[key] ? ASSETTYPE[key] : ASSETTYPE.cosd,
+      "toAssetType": ASSETTYPE.cosd,
       "toAmount": action.value.amount,
       "nftVo": {},
       "poolId": POOL[key],
-      "blockNumber":res.blockNumber
+      "blockNumber": res.blockNumber
     }
     savaAfterTranscation(param)
-    setTime(key)
     getBalance(key);
     if (key == 'club') getClubStatus()
     if (key == 'defi') { getReward() }
@@ -503,8 +529,8 @@ function stakingFunc(key) {
     loadingHelper.hide();
   })
 }
-function unStakingFunc(key) {
-  if (!isTimeAvailable(key)) return
+async function unStakingFunc(key) {
+  if (key != 'sl' && await !isUnStakeTimeAvailable(key)) return
   if (!metaMask.isAvailable()) return;
   if (!validatorAmount(key)) return;
   let account = store.state.metaMask.account;
@@ -516,22 +542,22 @@ function unStakingFunc(key) {
       "txId": res.transactionHash,
       "transType": TXTYPE.unstake[key],
       "fromUserId": store.state.user.id,
-      "fromAssetType": ASSETTYPE[key] ? ASSETTYPE[key] : ASSETTYPE.cosd,
+      "fromAssetType": ASSETTYPE.cosd,
       "fromAmount": 0 - action.value.amount,
       "toUserId": store.state.user.id,
       "toAssetType": ASSETTYPE.cosd,
       "toAmount": 0 - action.value.amount,
       "nftVo": {},
       "poolId": POOL[key],
-      "blockNumber":res.blockNumber
+      "blockNumber": res.blockNumber
     }
     savaAfterTranscation(param)
     if (key == 'defi') { show.value = true; getReward() }
-    setTime(key)
     loadingHelper.hide();
     getBalance(key);
     if (key == 'club') getClubStatus()
   }).catch(err => {
+    console.log(err)
     loadingHelper.hide();
   })
 }
@@ -551,7 +577,6 @@ onMounted(() => {
     getBalance('sl')
     getBalance('club')
     getBalance('defi')
-    getTranscationTime()
     getClubStatus()
     getReward()
   }

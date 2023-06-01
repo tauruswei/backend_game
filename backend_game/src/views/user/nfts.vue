@@ -65,14 +65,20 @@
           <div class="row">
             <div class="col-md-4">
               <el-image :src="rowData.src" style="width:200px"></el-image>
-              <el-button type="primary" v-if="rowData.status == 0" @click="updataStatus(rowData)" round>use it for game</el-button>
             </div>
             <div class="col-md-8 ml-auto mr-auto">
+              <el-row :gutter="10" v-if="rowData.status == 0">
+                <el-col :span="16">use it for game?</el-col>
+                <el-col :span="8" style="text-align: right;">
+                  <el-button @click="updataStatus(rowData)" round>No</el-button>
+                  <el-button type="primary" @click="updataStatus(rowData)" round>Yes</el-button>
+                </el-col>
+              </el-row>
               <div class="table-responsive table-sales">
                 <table class="table">
                   <tbody>
                     <template v-for="(item,key) in rowData">
-                      <tr v-if="key !='src'" :key="key">
+                      <tr v-if="key !='src'&&key !='status'" :key="key">
                         <td style="text-transform: capitalize;">{{ key.replace(/\_/g," ")+":" }}</td>
                         <td>{{ item }}</td>
                       </tr>
@@ -165,8 +171,8 @@ function query() {
   }
   nftApi.list(data).then((res) => {
     if (res.data.list) {
-      tableData.value = res.data.list.map(i=>{
-        let item ={
+      tableData.value = res.data.list.map(i => {
+        let item = {
           id: i.id,
           Token_ID: i.tokenId,
           tx_id: i.txId,
@@ -175,7 +181,7 @@ function query() {
           minted_at: DateHelper.toString(i.mintedAt),
           run_out_time: DateHelper.toString(i.runOutTime),
           game_chances: i.gameChances,
-          src:`https://cosd1.s3.amazonaws.com/${i.nftType}.png'`
+          src: `https://cosd1.s3.amazonaws.com/${i.nftType}.png'`
         }
         return item
       });
@@ -192,14 +198,15 @@ function queryRow(data) {
       Token_ID: i.Token_ID,
       contract_address: CONTRACTS['blindbox'].address,
       minted_at: i.minted_at,
-      src: i.src
+      src: i.src,
+      status: activeName.value
     }
   });
   rowData.value = res[0];
 }
 function handleClick(tab) {
   activeName.value = tab;
-  if(tab == 'buy') return
+  if (tab == 'buy') return
   pageNum.value = 1;
   query();
 }
@@ -261,7 +268,7 @@ function nftSwap() {
       "toAssetType": ASSETTYPE.nft,
       "toAmount": amount.value,
       "nftVo": {
-        "tokenId":res.events.DrawCardEvent.returnValues.cardId,
+        "tokenId": res.events.DrawCardEvent.returnValues.cardId,
         "attr1": "",
         "attr2": ""
       },
@@ -296,17 +303,17 @@ function nftInfo(id) {
     savaAfterTranscation(nftParam.value);
   })
 }
-function updataStatus(row){
+function updataStatus(row) {
   let data = {
     "tokenId": row.Token_ID,
     "status": 1
   }
   loadingHelper.show()
-  nftApi.status(data).then(res=>{
-    if(res.code == 0){
+  nftApi.status(data).then(res => {
+    if (res.code == 0) {
       ElNotification({
-        type:"success",
-        message:"use it successfully"
+        type: "success",
+        message: "use it successfully"
       })
       rowData.value.status = 1
       loadingHelper.hide()
