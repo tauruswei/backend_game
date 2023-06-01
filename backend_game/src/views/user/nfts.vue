@@ -53,7 +53,7 @@
       </div>
     </template>
     <!--View NFT on Blockchain-->
-    <el-dialog v-model="visible" title="View NFT on Blockchain" width="800px" destroy-on-close>
+    <el-dialog v-model="visible" title="View NFT on Blockchain" width="800px" :before-close="handleSaveParam()" destroy-on-close>
       <div class="card ">
         <div class="card-header card-header-info card-header-icon">
           <div class="card-icon">
@@ -70,8 +70,7 @@
               <el-row :gutter="10" v-if="rowData.status == 0">
                 <el-col :span="16">use it for game?</el-col>
                 <el-col :span="8" style="text-align: right;">
-                  <el-button @click="updataStatus(rowData)" round>No</el-button>
-                  <el-button type="primary" @click="updataStatus(rowData)" round>Yes</el-button>
+                  <el-button type="primary" @click="isOnlyUpdateStatus?updataStatus(rowData):handleSaveParam(1)" round>Yes</el-button>
                 </el-col>
               </el-row>
               <div class="table-responsive table-sales">
@@ -146,6 +145,8 @@ let rowData = ref({});
 let pageNum = ref(1); let total = ref(1);
 let pageSize = ref(10);
 let blockChain = ref('Binance Smart Chain')
+const isOnlyUpdateStatus = ref(true);
+const hasUpdated = ref(true);
 const address = ref({
   channelAddress: "",
   clubAddress: "",
@@ -158,6 +159,7 @@ const disabled = ref(false)
 const nftParam = ref({})
 function view(data) {
   if (data.command == "view") {
+    isOnlyUpdateStatus.value = true;
     visible.value = true;
     queryRow(data.data);
   }
@@ -181,7 +183,7 @@ function query() {
           minted_at: DateHelper.toString(i.mintedAt),
           run_out_time: DateHelper.toString(i.runOutTime),
           game_chances: i.gameChances,
-          src: `https://cosd1.s3.amazonaws.com/${i.nftType}.png'`
+          src: `https://cosd1.s3.amazonaws.com/${i.nftType}.png`
         }
         return item
       });
@@ -260,7 +262,7 @@ function nftSwap() {
     visible1.value = false;
     nftParam.value = {
       "txId": res.transactionHash,
-      "transType": TXTYPE.usdt,
+      "transType": TXTYPE.blindbox,
       "fromUserId": store.state.user.id,
       "fromAssetType": ASSETTYPE.nft,
       "fromAmount": amount.value,
@@ -274,11 +276,8 @@ function nftSwap() {
       },
       "blockNumber": res.blockNumber
     }
-    rowData.value.blockchain = blockChain.value;
-    rowData.value.contract_address = CONTRACTS['blindbox'].address;
     let tokenid = res.events.DrawCardEvent.returnValues.cardId;
     nftInfo(tokenid)
-    rowData.value.Token_ID = tokenid;
     loadingHelper.hide()
   }).catch(err => {
     console.log(err)
@@ -296,12 +295,26 @@ function nftInfo(id) {
   metaMask.getNFTInfoByContract(param).then(res => {
     visible.value = true;
     rowData.value.src = res.uri;
-    rowData.value.game_chances = res.chances;
     rowData.value.nft_type = res.number;
+    rowData.value.game_chances = res.chances;
+    rowData.value.status = 0;
+    rowData.value.blockchain = blockChain.value;
+    rowData.value.Token_ID = nftParam.value.nftVo.tokenId;
+    rowData.value.contract_address = CONTRACTS['blindbox'].address;
     nftParam.value.nftVo.attr1 = res.number
     nftParam.value.nftVo.attr2 = res.chances
-    savaAfterTranscation(nftParam.value);
+    isOnlyUpdateStatus.value = false;
+    hasUpdated.value = false;
   })
+}
+function handleSaveParam(value) {
+  if (!hasUpdated.value && !isOnlyUpdateStatus.value) {
+    if (value) nftParam.value.nftVo.status = value;
+    savaAfterTranscation(nftParam.value)
+    hasUpdated.value = true;
+    isOnlyUpdateStatus.value = true;
+    if (value) rowData.value.status = value;
+  }
 }
 function updataStatus(row) {
   let data = {
