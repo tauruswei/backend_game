@@ -61,7 +61,7 @@ const form = ref({
   passwd: "",
   userType: 2,
   code: "",
-  inviteId: AppHelper.getURLParam('id'),
+  inviterId: AppHelper.getURLParam('id'),
 });
 const rules = ref({});
 const time = ref(0)

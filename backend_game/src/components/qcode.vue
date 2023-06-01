@@ -17,16 +17,16 @@ const props = defineProps({
     type: Number
   }
 })
-const inviteId = ref(store.state.user.id)
+const inviterId = ref(store.state.user.id)
 watch(()=>props.id,(val)=>{
   if(val) {
-    inviteId.value = val;
-    url.value = process.env.VUE_APP_MODE == "development"?(window.location.protocol+window.location.host+'/register?id=' + inviteId.value):process.env.VUE_APP_LOCAL
+    inviterId.value = val;
+    url.value = process.env.VUE_APP_MODE == "development"?(window.location.protocol+window.location.host+'/register?id=' + inviterId.value):process.env.VUE_APP_LOCAL
   }
 },{immediate:true})
 
 const url = ref(null)
-url.value = process.env.VUE_APP_MODE == "development"?(window.location.protocol+window.location.host+'/register?id=' + inviteId.value):process.env.VUE_APP_LOCAL
+url.value = process.env.VUE_APP_MODE == "development"?(window.location.protocol+window.location.host+'/register?id=' + inviterId.value):process.env.VUE_APP_LOCAL
 const size = ref(240)
 function download() {
   //获取canvas标签

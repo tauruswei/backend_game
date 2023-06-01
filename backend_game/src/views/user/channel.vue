@@ -14,7 +14,7 @@
       </div>
     </div>
     <el-dialog v-model="inviteVisible" title="Welcome to Chess of stars" width="440px">
-      <qcode-cont style="width:100%;text-align: center;" :id="inviteId"></qcode-cont>
+      <qcode-cont style="width:100%;text-align: center;" :id="inviterId"></qcode-cont>
     </el-dialog>
   </div>
 </template>
@@ -26,7 +26,7 @@ import { ElMessage, ElNotification } from "element-plus";
 
 const walletAddress = ref("")
 const inviteVisible = ref(false)
-const inviteId = ref();
+const inviterId = ref();
 function submit() {
   if (!walletAddress.value) {
     ElMessage.error("Wallet address is required!")
@@ -37,7 +37,7 @@ function submit() {
   }
   userApi.channelLeader(data).then(res => {
     if (res.code == 0) {
-      inviteId.value = res.data;
+      inviterId.value = res.data;
       inviteVisible.value = true;
     }
   })
