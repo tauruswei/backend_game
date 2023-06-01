@@ -14,15 +14,15 @@ export const CONTRACTS = {
   club: { address: "0x285B0B99C8182F344d57A4FbDa665BDe4Ff32fd3", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
   cosd: { address: "0x21c571BF05b9CE69458541f6f8ce491332158603", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
   busd: { address: "0x401084C7F44f4e2d2945F37bcad2406c24edE223", owner: "0x65B7F91FB4bDa26f712087E9152862D93b34c51d" },
-  buycosd: { address: "0xc65e7140d7FbBB86286C5eDe1c763B063703C610", owner: "0x3249F5fb49982A927A566b2b8Ad0CCf34d4f84CE" },//0xD95bbD3D7e1348827Ae5A432AA3382deC0cE9c24
+  buycosd: { address: "0x8ae240779f6c8D0f3fEEEc37b4509c36d089730E", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },//0xD95bbD3D7e1348827Ae5A432AA3382deC0cE9c24
   defi: { address: "0x548eEc700CDcb2bB899EB436CEb1b2ACF9984C75", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
   blindbox: { address: "0x7d6f6F4edBAEd3A427F20d15A81F488D65c9d0Aa", owner: "" },
   nft: { address: "0x92BB51D54e0f2865199158A840227CFaC22d55bf", owner: "" },
   evic: { address: "0xccb233A8269726c51265cff07fDC84110F5F3F4c", owner: "" }
 }
 export const TXTYPE = { buy: 0, stake: { defi: 1, sl: 2, club: 3 }, evic: 7, evic1: 8, unstake: { defi: 4, sl: 5, club: 6 }, blindbox: 9, nft: 10 }
-export const ASSETTYPE = { usdt: 0, cosd: 1, nft: 2, evic: 3 }
-export const POOL = { defi: 3, club: 2, sl: 1 }
+export const ASSETTYPE = { usdt: 0, cosd: 1, nft: 2, evic: 3, sl: 4 }
+export const POOL = { defi: 1, sl: 2, club: 3 }
 const provider = await detectEthereumProvider();
 const MMSDK = new MetaMaskSDK(option);
 const ethereum = MMSDK.getProvider();
