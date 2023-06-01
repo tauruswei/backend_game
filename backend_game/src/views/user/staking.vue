@@ -293,7 +293,8 @@ async function getStakeTime(key) {
   };
   let ret;
   await cosdApi.checkTime(data).then((res=>{
-    ret = res.data
+    if(res.code == 0) ret = res.data
+    else ElMessage.error(res.msg)
   }))
   return ret
 }
@@ -304,7 +305,8 @@ async function getUnstakeTime(key) {
   }
   let ret;
   await cosdApi.checkTimeun(data).then((res=>{
-    ret = res.data.flag
+    if(res.code == 0) ret = res.data.flag
+    else ElMessage.error(res.msg)
   }))
   return ret
 }
@@ -489,7 +491,8 @@ function purchase() {
   })
 }
 async function stakingApprove(key) {
-  if (key != 'sl' && await !isStakeTimeAvailable(key)) return
+  let isTimeAvailable = await isStakeTimeAvailable(key)
+  if (key != 'sl' && !isTimeAvailable) return;
   if (!metaMask.isAvailable()) return;
   let data = { from: store.state.metaMask.account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key], abiApprove: cosdToken, approveAddress: CONTRACTS["cosd"].address }
   if (!validatorAmount('cosd')) return;
@@ -530,9 +533,11 @@ function stakingFunc(key) {
   })
 }
 async function unStakingFunc(key) {
-  if (key != 'sl' && await !isUnStakeTimeAvailable(key)) return
+  let isTimeAvailable = await isUnStakeTimeAvailable(key);
+  if (key !== 'sl' && !isTimeAvailable) return;
   if (!metaMask.isAvailable()) return;
   if (!validatorAmount(key)) return;
+  console.log(11111)
   let account = store.state.metaMask.account;
   let data = { from: account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key] }
   loadingHelper.show()

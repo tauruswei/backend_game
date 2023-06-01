@@ -55,6 +55,7 @@ provider.on('disconnect', () => {
 function isCurrentAccount() {
   if (!store.state.user.account) {
     ElMessage({
+      duration: 5000,
       dangerouslyUseHTMLString: true,
       message: 'please update your wallet address! <a href="/setting/profile">click to update</a>',
     })
@@ -62,6 +63,7 @@ function isCurrentAccount() {
   }
   if (store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()) {
     ElMessage({
+      duration: 5000,
       dangerouslyUseHTMLString: true,
       message: '<p><b>Not the current account!</b></p><br/> <a href="/setting/profile">click to update</a> Or switch Metamask to the current account',
     })
