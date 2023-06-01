@@ -165,6 +165,7 @@ function view(data) {
   }
   if(data.command == "updataStatus"){
     updataStatus(data.data)
+    query();
   }
 }
 function query() {
