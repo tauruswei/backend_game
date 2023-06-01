@@ -183,8 +183,8 @@ function query() {
           tx_id: i.txId,
           NFT_type: i.nftType,
           blockchain: i.blockChain,
-          minted_at: DateHelper.toString(i.mintedAt),
-          run_out_time: DateHelper.toString(i.runOutTime),
+          minted_at: DateHelper.toString(i.mintedAt*1000),
+          run_out_time: DateHelper.toString(i.runOutTime*1000),
           game_chances: i.gameChances,
           src: `https://cosd1.s3.amazonaws.com/${i.nftType}.png`
         }
@@ -298,7 +298,7 @@ function nftInfo(id) {
   metaMask.getNFTInfoByContract(param).then(res => {
     visible.value = true;
     rowData.value.src = res.uri;
-    rowData.value.nft_type = res.number;
+    rowData.value.NFT_type = res.number;
     rowData.value.game_chances = res.chances;
     rowData.value.status = 0;
     rowData.value.blockchain = blockChain.value;
