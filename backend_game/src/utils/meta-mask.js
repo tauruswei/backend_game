@@ -22,7 +22,7 @@ export const CONTRACTS = {
 }
 export const TXTYPE = { buy: 0, stake: { defi: 1, sl: 2, club: 3 }, evic: 7, evic1: 8, unstake: { defi: 4, sl: 5, club: 6 }, blindbox: 9, nft: 10 }
 export const ASSETTYPE = { usdt: 0, cosd: 1, nft: 2, evic: 3, sl: 4 }
-export const POOL = { defi: 3, club: 2, sl: 1 }
+export const POOL = { defi: 1, sl: 2, club: 3 }
 const provider = await detectEthereumProvider();
 const MMSDK = new MetaMaskSDK(option);
 const ethereum = MMSDK.getProvider();
