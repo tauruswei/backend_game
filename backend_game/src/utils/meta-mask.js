@@ -32,6 +32,7 @@ provider.on('chainChanged', (chainId) => {
   if(!store.state.user) return;
   store.commit("setMetaMask", { ...store.state.metaMask, chainID: chainId });
   console.log('chainChanged', chainId)
+  window.location.reload()
 })
 provider.on('connect', (accounts) => {
   console.log('connect', accounts)
@@ -45,6 +46,7 @@ provider.on('accountsChanged', (accounts) => {
     store.commit("setMetaMask", { ...store.state.metaMask, account: accounts[0] });
     isCurrentAccount()
   }
+  window.location.reload()
 
 })
 provider.on('message', message => {
@@ -53,6 +55,7 @@ provider.on('message', message => {
 provider.on('disconnect', () => {
   //window.location.reload()
   store.commit("setMetaMask", null);
+  window.location.reload()
 })
 function isCurrentAccount() {
   if (!store.state.user.account) {
@@ -221,6 +224,12 @@ export class MetaMask {
     const myContract = this.getContract(param.abi, param.address);
     let status = await myContract.methods.isClub(param.from).call()
     return status;
+  }
+  //累计购买数量
+  async getCOSDHasBuyByContract(param) {
+    const myContract = this.getContract(param.abi, param.address);
+    let balance = await myContract.methods.cumulativePurchase(param.from).call()
+    return balance / Math.pow(10, 18);
   }
   //查询授权余额
   async getAllowanceByContract(param) {

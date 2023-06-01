@@ -110,7 +110,7 @@
 				"type": "address"
 			}
 		],
-		"name": "banlanceOf",
+		"name": "balanceOf",
 		"outputs": [
 			{
 				"internalType": "uint256",

@@ -184,7 +184,7 @@
                           You can only stake 2000 COSD (equivalent to 100 USDT).
                         </p>
                         <button class="btn btn-rose btn-round" @click="open('defistaking')">Stake</button>
-                        <button class="btn btn-success btn-round" @click="claimReward()">Claim rewards</button>
+                        <button class="btn btn-success btn-round" v-if="reward.value" @click="claimReward()">Claim rewards</button>
                       </div>
                     </div>
                     <div class="card card-pricing card-raised for-cosd-unstaked" v-if="balance.defi">
@@ -207,21 +207,42 @@
       </div>
     </div>
     <el-dialog v-model="visible" :title="action.title" width="400px" destroy-on-close>
-      <el-alert v-if="action.command == 'buy'" title="Tip: Accumulated expenses of usdt cannot exceed 100,000" type="info" style="margin-bottom:20px"></el-alert>
-      <el-row :gutter="5" style="margin-bottom:20px" v-if="action.command == 'buy'">
+      <el-row :gutter="5">
+        <el-col :span="4">
+          AMOUNT
+        </el-col>
+        <el-col :span="20">
+          <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min.value" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
+        </el-col>
+        <el-col :span="24" style="margin-top:15px" v-if="needApprove">
+          <el-button type="primary" @click="handleApproveOperate()" style="width:100%" :disabled="disabled">
+            <el-tag size="small">1</el-tag>&nbsp;Approve Spending
+          </el-button>
+        </el-col>
+        <el-col :span="24" style="margin-top:15px">
+          <el-button type="success" @click="handleTransferOperate()" style="width:100%" :disabled="!disabled">
+            <el-tag size="small" v-if="needApprove">2</el-tag>&nbsp;{{buttonText}}
+          </el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
+    <el-dialog v-model="visible1" :title="action.title" width="400px" destroy-on-close>
+      <el-alert title="Tip: Accumulated expenses of usdt cannot exceed 100,000" type="info" style="margin-bottom:20px"></el-alert>
+      <el-row :gutter="5" style="margin-bottom:20px">
         <el-col :span="4">
           COSD
         </el-col>
         <el-col :span="20">
-          <el-input-number v-model.number="action.amount1" controls-position="right" :step="1" :min="20" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
+          <el-input-number v-model.number="action.amount1" controls-position="right" :step="1" :min="20" :max="allowPurchace" placeholder="`set amount" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
+        </el-col>
+        <el-col :span="24" style="text-align: right;">
+          <el-button type="success" link @click="toMax()">Max</el-button>
         </el-col>
       </el-row>
       <el-row :gutter="5">
-        <el-col :span="4">
-          {{action.command == 'buy'?'USDT':'AMOUNT'}}
-        </el-col>
+        <el-col :span="4">USDT</el-col>
         <el-col :span="20">
-          <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min.value" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
+          <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min.value" :max="allowPurchace/20" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
         </el-col>
         <el-col :span="24" style="margin-top:15px" v-if="needApprove">
           <el-button type="primary" @click="handleApproveOperate()" style="width:100%" :disabled="disabled">
@@ -257,17 +278,18 @@ const balance = ref({
   cosd: 0,
   sl: 0, club: 0, defi: 0
 });
-const contracts = ref(CONTRACTS)
-const abis = ref({ sl: slStaking, club: clubStaking, defi: defiStaking, buy: buyToken, cosd: cosdToken, busd: busdApprove })
 const action = ref({
   amount1: 20,
   amount: 1,
   title: '',
   command: ''
 });
+const contracts = ref(CONTRACTS)
+const abis = ref({ sl: slStaking, club: clubStaking, defi: defiStaking, buy: buyToken, cosd: cosdToken, busd: busdApprove })
 const titles = ref({ buy: "Purchase COSD", "slstaking": "Staking for starlight league", "clubstaking": "Staking for club ownership", "defistaking": "Staking for earning COSD" })
-const visible = ref(false)
 const timeEnd = ref({ defi: 30 * 60 * 1000, sl: 60 * 60 * 1000, club: 60 * 60 * 1000 })
+const visible = ref(false)
+const visible1 = ref(false)
 const isClubBoss = ref(false)
 const needApprove = ref(true);
 const metaMask = new MetaMask();
@@ -275,6 +297,7 @@ const disabled = ref(false)
 const reward = ref(0)
 const buttonText = ref('Buy')
 const min = ref(1)
+const allowPurchace=ref(2000000)
 function handleClick(tab) {
   active.value = tab;
 }
@@ -285,6 +308,11 @@ function translate(type) {
   } else if (type == 'usdt') {
     action.value.amount = action.value.amount1 / rate;
   }
+}
+function toMax(){
+  console.log(balance.value.busd,allowPurchace.value)
+  action.value.amount1 = Math.min(balance.value.busd,allowPurchace.value)
+  translate('usdt')
 }
 async function getStakeTime(key) {
   let data = {
@@ -342,6 +370,17 @@ function getReward() {
     reward.value = Math.round((res) * 1000) / 1000
   });
 }
+function getAmountOfCOSDHasBuy() {
+  if (!metaMask.isAvailable()) return;
+  let data = {
+    abi: abis.value['cosd'],
+    address: CONTRACTS['cosd'].address,
+    from: store.state.metaMask.account
+  }
+  metaMask.getCOSDHasBuyByContract(data).then(res => {
+    allowPurchace.value = 2000000 - Math.round((res) * 1000) / 1000;
+  });
+}
 function getClubStatus() {
   if (!metaMask.isAvailable()) return;
   let data = {
@@ -365,49 +404,54 @@ function open(command) {
   }
   disabled.value = false;
   min.value = 1;
-  if (command == 'buy') buttonText.value = "Buy"
+  if (command == 'buy') {
+    getBalance('busd')
+    getAmountOfCOSDHasBuy()
+    buttonText.value = "Buy"
+    visible1.value = true
+  }
   if (command == 'slstaking') {
     action.value.amount = 400;
     needApprove.value = true;
     buttonText.value = "Stake";
     min.value = 400;
+    visible.value = true
   }
   if (command == 'clubstaking') {
     action.value.amount = 4000;
     needApprove.value = true;
     buttonText.value = "Stake";
     min.value = 4000;
+    visible.value = true
   }
   if (command == 'defistaking') {
     action.value.amount = 1;
     needApprove.value = true;
     buttonText.value = "Stake";
     min.value = 1;
+    visible.value = true
   }
   if (command == 'clubunstaking') {
     action.value.amount = balance.value['club'];
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
+    visible.value = true
   }
   if (command == 'slunstaking') {
     action.value.amount = balance.value['sl'];
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
+    visible.value = true
   }
   if (command == 'defiunstaking') {
     action.value.amount = balance.value['defi'];
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
+    visible.value = true
   }
-  if (command == 'defirewards') {
-    needApprove.value = false
-    buttonText.value = "Unstake"
-    disabled.value = true;
-  }
-  visible.value = true
 }
 function handleApproveOperate() {
   if (action.value.command == "buy") purchaseApprove();
@@ -527,6 +571,7 @@ function stakingFunc(key) {
     }
     savaAfterTranscation(param)
     getBalance(key);
+    getBalance('cosd');
     if (key == 'club') getClubStatus()
     if (key == 'defi') { getReward() }
   }).catch(err => {
@@ -538,7 +583,6 @@ async function unStakingFunc(key) {
   if (key !== 'sl' && !isTimeAvailable) return;
   if (!metaMask.isAvailable()) return;
   if (!validatorAmount(key)) return;
-  console.log(11111)
   let account = store.state.metaMask.account;
   let data = { from: account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key] }
   loadingHelper.show()
@@ -561,6 +605,7 @@ async function unStakingFunc(key) {
     if (key == 'defi') { getReward() }
     loadingHelper.hide();
     getBalance(key);
+    getBalance('cosd');
     if (key == 'club') getClubStatus()
   }).catch(err => {
     console.log(err)
