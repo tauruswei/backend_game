@@ -56,16 +56,18 @@ function isCurrentAccount() {
   if (!store.state.user.account) {
     ElMessage({
       duration: 5000,
+      type:"warning",
       dangerouslyUseHTMLString: true,
-      message: 'please update your wallet address! <a href="/setting/profile">click to update</a>',
+      message: 'please update your wallet address! <a href="/setting/profile"><b>click to update</b></a>',
     })
     return false
   }
   if (store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()) {
     ElMessage({
       duration: 5000,
+      type:"warning",
       dangerouslyUseHTMLString: true,
-      message: '<p><b>Not the current account!</b></p><br/> <a href="/setting/profile">click to update</a> Or switch Metamask to the current account',
+      message: '<p><b>Not the current account!</b></p><br/> <a href="/setting/profile"><b>click to update</b></a> Or switch Metamask to the current account',
     })
   }
   return store.state.user.account.toLowerCase() == store.state.metaMask.account.toLowerCase();
