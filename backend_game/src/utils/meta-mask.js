@@ -29,6 +29,7 @@ const ethereum = MMSDK.getProvider();
 const web3 = new Web3(provider)
 provider.on('chainChanged', (chainId) => {
   //window.location.reload()
+  if(!store.state.user) return;
   store.commit("setMetaMask", { ...store.state.metaMask, chainID: chainId });
   console.log('chainChanged', chainId)
 })
@@ -38,6 +39,7 @@ provider.on('connect', (accounts) => {
 provider.on('accountsChanged', (accounts) => {
   //window.location.reload()
   console.log('accountsChanged', accounts);
+  if(!store.state.user) return;
   if (!accounts.length) store.commit("setMetaMask", null);
   else {
     store.commit("setMetaMask", { ...store.state.metaMask, account: accounts[0] });

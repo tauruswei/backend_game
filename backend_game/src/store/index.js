@@ -3,7 +3,7 @@ import { createStore } from "vuex";
 const store = createStore({
     state: {
         token: "",
-        user: {},
+        user: null,
         role: null,
         roles:[{id:0,name:"admin"},{id:1,name:"user"}],
         metaMask:null,

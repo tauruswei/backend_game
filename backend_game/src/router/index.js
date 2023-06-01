@@ -192,8 +192,8 @@ router.beforeEach((to, from, next) => {
   } else {
     document.title = to.meta.title;
     //进入登录页面的时候清除 token
-    if (to.path === "/login") {
-      store.commit("setUser", {});
+    if (to.path === "/login"||to.path === "/register") {
+      store.commit("setUser", null);
       store.commit("setRole", null);
       store.commit("removeToken", "");
       store.commit("clearRequestToken");
