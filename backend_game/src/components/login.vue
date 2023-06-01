@@ -83,7 +83,7 @@ function doLogin() {
           console.log(res)
           ElMessage({
             type: "success",
-            message: "succeeded"
+            message: "logging ..."
           })
           router.push({
             path: "/plat/dashboard",
