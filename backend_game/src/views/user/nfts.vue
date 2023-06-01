@@ -53,7 +53,7 @@
       </div>
     </template>
     <!--View NFT on Blockchain-->
-    <el-dialog v-model="visible" title="View NFT on Blockchain" width="800px" :before-close="handleSaveParam()" destroy-on-close>
+    <el-dialog v-model="visible" title="View NFT on Blockchain" width="800px" @close="handleSaveParam()" destroy-on-close>
       <div class="card ">
         <div class="card-header card-header-info card-header-icon">
           <div class="card-icon">
