@@ -633,7 +633,9 @@ async function unStakingFunc(key) {
     loadingHelper.hide();
   })
 }
-function claimReward() {
+async function claimReward() {
+  let isTimeAvailable = await isUnStakeTimeAvailable('defi');
+  if (!isTimeAvailable) return;
   if (!metaMask.isAvailable()) return;
   let data = { from: store.state.metaMask.account, address: CONTRACTS['defi'].address, abi: abis.value['defi'] };
   loadingHelper.show();
