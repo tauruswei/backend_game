@@ -120,7 +120,7 @@
       <password-cont @close="()=>{visible = false}"></password-cont>
     </el-dialog>
     <el-dialog v-model="visible1" title="Change Email" width="480px" destroy-on-close>
-      <email-cont @close="()=>{visible1 = false}"></email-cont>
+      <email-cont @close="closeemail"></email-cont>
     </el-dialog>
     <el-dialog v-model="inviteVisible" title="Welcome to Chess of stars" width="440px">
       <qcode-cont style="width:100%;text-align: center;"></qcode-cont>
@@ -162,6 +162,9 @@ function handleCommand(command) {
   if (command == 'password') visible.value = true;
   if (command == 'email') visible1.value = true;
   if (command == 'profile') router.push('/setting/profile')
+}
+function closeemail(){
+  visible1.value = false
 }
 function connectWallet() {
   let metaMask = new MetaMask();

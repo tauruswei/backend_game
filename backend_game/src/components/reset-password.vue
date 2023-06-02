@@ -23,14 +23,13 @@
         <el-input v-model="form.rpassword" type="password" placeholder="enter your password again" show-password clearable />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" class="w-100" @click="submit">Save</el-button>
+        <el-button type="primary" class="w-100" @click="submit()">Save</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 <script setup>
 import { ref, defineEmits } from "vue";
-import { useStore } from "vuex"
 import { useRouter } from "vue-router";
 import { userApi } from "../api/request";
 import { loadingHelper } from "@/utils/loading";
@@ -38,7 +37,6 @@ import { ElNotification } from "element-plus";
 import CountDownTime from "@/components/count-down-time.vue"
 const emit = defineEmits(['close'])
 const router = useRouter();
-const store = useStore()
 const formRef = ref(null);
 const form = ref({
   email: "",

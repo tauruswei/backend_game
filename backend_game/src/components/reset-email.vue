@@ -17,7 +17,7 @@
         </el-row>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" class="w-100" @click="submit">Save</el-button>
+        <el-button type="primary" class="w-100" @click="submit()">Save</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -51,7 +51,7 @@ rules.value.email = [{ required: true, message: "email is required", trigger: "b
   validator: function (rule, value, callback) {
     if (value) {
       userApi.checkEmail(value).then(res => {
-        if (res.code == 0 && !res.data) callback();
+        if (!res.data) callback();
         else callback(new Error("this email has been used,please use another one"));
       })
     }
@@ -87,7 +87,7 @@ function submit() {
         userId: store.state.user.id,
       }
       userApi.email(param).then((res) => {
-        if (res.code == 200 && res.msg == "success") {
+        if (res.code == 0 && res.msg == "success") {
           ElNotification({
             type: "success",
             message: "The email has been changed successfully!"
@@ -96,6 +96,7 @@ function submit() {
           router.push({
             path: "/login",
           });
+          
         }
         loadingHelper.hide();
       })
