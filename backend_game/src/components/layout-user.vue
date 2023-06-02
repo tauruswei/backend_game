@@ -86,7 +86,7 @@
                 <span class="el-dropdown-link">
                   <el-avatar :size="32" :src="require('@/assets/img/avatar.jpg')" />
                   <span class="text-container">
-                    {{ "&nbsp;&nbsp;" + $store.state.user?$store.state.user.name:'user' }}
+                    {{ "&nbsp;&nbsp;" + ($store.state.user?$store.state.user.name:'user') }}
                     <el-icon class="el-icon--right">
                       <CaretBottom />
                     </el-icon>
