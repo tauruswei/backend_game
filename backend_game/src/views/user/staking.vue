@@ -192,7 +192,7 @@
                         <div class="card-icon icon-rose">
                           <i class="fa fa-line-chart"></i>
                         </div>
-                        <h3 class="card-title" :title="reward"> <b >{{ Math.round((reward) * 1000) / 1000 }}</b> COSD earned</h3>
+                        <h3 class="card-title"> <el-tooltip placement="top" :content="reward+''"><b >{{ Math.round((reward) * 1000) / 1000 }}</b></el-tooltip> COSD earned</h3>
                         <p class="card-description">
                           Retain 3 decimal places
                         </p>
