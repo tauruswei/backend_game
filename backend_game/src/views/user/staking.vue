@@ -184,10 +184,10 @@
                           You can only stake 2000 COSD (equivalent to 100 USDT).
                         </p>
                         <button class="btn btn-rose btn-round" @click="open('defistaking')">Stake</button>
-                        <button class="btn btn-success btn-round" @click="claimReward()">Claim rewards</button>
+                        
                       </div>
                     </div>
-                    <div class="card card-pricing card-raised for-cosd-unstaked" v-if="balance.defi">
+                    <div class="card card-pricing card-raised for-cosd-unstaked" v-if="balance.defi||reward">
                       <div class="card-body">
                         <div class="card-icon icon-rose">
                           <i class="fa fa-line-chart"></i>
@@ -195,7 +195,8 @@
                         <h3 class="card-title"> <b>{{ Math.round((reward) * 1000) / 1000 }}</b> COSD earned</h3>
                         <p class="card-description">
                         </p>
-                        <button class="btn btn-warning btn-round" @click="open('defiunstaking')">Stop staking</button>
+                        <button class="btn btn-warning btn-round" v-if="balance.defi" @click="open('defiunstaking')">Stop staking</button>
+                        <button class="btn btn-success btn-round" v-if="reward" @click="claimReward()">Claim rewards</button>
                       </div>
                     </div>
                   </div>
