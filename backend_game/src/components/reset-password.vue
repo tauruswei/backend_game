@@ -55,7 +55,17 @@ rules.value.email = [
     type: 'email',
     message: 'Please input correct email address',
     trigger: ['blur', 'change'],
-  }];
+  },{
+  validator: function (rule, value, callback) {
+    if (value) {
+      userApi.checkEmail(value).then(res => {
+        if (res.code == 0 && res.data) callback();
+        else callback(new Error("this email is not registed"));
+      })
+    }
+  },
+  trigger: "blur",
+}];
 rules.value.password = [
   { required: true, message: "Password is required", trigger: "blur" },
   { min: 8, max: 64, message: "The length between 8 and 64 character", trigger: "blur" }, 

@@ -27,7 +27,7 @@
         </el-col>
       </el-row>
     </div>
-    <el-dialog v-model="visible" title="Change Password" width="480px" destroy-on-close>
+    <el-dialog v-model="visible" title="Forget Password" width="480px" destroy-on-close>
       <password-cont @close="visible = false"></password-cont>
     </el-dialog>
   </div>
