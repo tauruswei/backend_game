@@ -171,7 +171,6 @@ function view(data) {
   }
   if(data.command == "updataStatus"){
     updataStatus(data.data)
-    query();
   }
 }
 function query() {
@@ -340,6 +339,7 @@ function updataStatus(row) {
       })
       rowData.value.status = 1
       loadingHelper.hide()
+      query();
     }
   })
 }
