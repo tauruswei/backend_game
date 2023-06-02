@@ -424,8 +424,9 @@ async function open(command) {
     await getAmountOfCOSDHasBuy()
     max.value = Math.min(marketBalance.value, allowPurchace.value, 2000000)
     buttonText.value = "Buy"
-    if(max.value<=0){
-      ElMessage.error("You cannot buy cosd!")
+    if(max.value <= 0){
+      if(!allowPurchace.value) ElMessage.error("The COSD limit is 2,000,000,there is no available quota!")
+      if(!marketBalance.value) ElMessage.error("No COSD available for purchase in the market !")
       return;
     }
     visible1.value = true
