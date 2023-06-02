@@ -76,6 +76,9 @@
                   <el-button type="primary" @click="isOnlyUpdateStatus?updataStatus(rowData):handleSaveParam(1)" round>Yes</el-button>
                 </el-col>
               </el-row>
+              <el-row :gutter="10" v-if="rowData.status == 1">
+                <el-col :span="16"><el-tag type="success">status:&nbsp;Using</el-tag></el-col>
+              </el-row>
               <div class="table-responsive table-sales">
                 <table class="table">
                   <tbody>
