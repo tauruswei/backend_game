@@ -192,7 +192,7 @@
                         <div class="card-icon icon-rose">
                           <i class="fa fa-line-chart"></i>
                         </div>
-                        <h3 class="card-title"> <b>{{ reward }}</b> COSD earned</h3>
+                        <h3 class="card-title"> <b>{{ Math.round((reward) * 1000) / 1000 }}</b> COSD earned</h3>
                         <p class="card-description">
                         </p>
                         <button class="btn btn-warning btn-round" @click="open('defiunstaking')">Stop staking</button>
@@ -233,7 +233,7 @@
           COSD
         </el-col>
         <el-col :span="20">
-          <el-input-number v-model.number="action.amount1" controls-position="right" :step="1" :min="20" :max="allowPurchace" placeholder="`set amount" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
+          <el-input-number v-model.number="action.amount1" controls-position="right" :step="1" :min="20" :max="max" placeholder="`set amount" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
         </el-col>
         <el-col :span="24" style="text-align: right;">
           <el-button type="success" link @click="toMax()">Max</el-button>
@@ -242,7 +242,7 @@
       <el-row :gutter="5">
         <el-col :span="4">USDT</el-col>
         <el-col :span="20">
-          <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min.value" :max="allowPurchace/20" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
+          <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min.value" :max="max/20" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
         </el-col>
         <el-col :span="24" style="margin-top:15px" v-if="needApprove">
           <el-button type="primary" @click="handleApproveOperate()" style="width:100%" :disabled="disabled">
@@ -297,7 +297,9 @@ const disabled = ref(false)
 const reward = ref(0)
 const buttonText = ref('Buy')
 const min = ref(1)
-const allowPurchace=ref(2000000)
+const allowPurchace = ref(2000000)
+const marketBalance = ref(10000000)
+const max = ref(2000000)
 function handleClick(tab) {
   active.value = tab;
 }
@@ -309,9 +311,9 @@ function translate(type) {
     action.value.amount = action.value.amount1 / rate;
   }
 }
-function toMax(){
-  console.log(balance.value.busd,allowPurchace.value)
-  action.value.amount1 = Math.min(balance.value.busd,allowPurchace.value)
+function toMax() {
+  console.log(marketBalance.value, allowPurchace.value)
+  action.value.amount1 = Math.min(marketBalance.value, allowPurchace.value, 2000000)
   translate('usdt')
 }
 async function getStakeTime(key) {
@@ -367,18 +369,30 @@ function getReward() {
     from: store.state.metaMask.account
   }
   metaMask.getRewardByContract(data).then(res => {
-    reward.value = Math.round((res) * 1000) / 1000
+    reward.value = res
   });
 }
-function getAmountOfCOSDHasBuy() {
+async function getAmountOfCOSDHasBuy() {
+  if (!metaMask.isAvailable()) return;
+  let data = {
+    abi: abis.value['buy'],
+    address: CONTRACTS['buycosd'].address,
+    from: store.state.metaMask.account
+  }
+  await metaMask.getCOSDHasBuyByContract(data).then(res => {
+    allowPurchace.value = 2000000 - Math.round((res) * 1000) / 1000;
+  });
+}
+async function getMarketBalance() {
   if (!metaMask.isAvailable()) return;
   let data = {
     abi: abis.value['cosd'],
     address: CONTRACTS['cosd'].address,
+    baddress: CONTRACTS['buycosd'].address,
     from: store.state.metaMask.account
   }
-  metaMask.getCOSDHasBuyByContract(data).then(res => {
-    allowPurchace.value = 2000000 - Math.round((res) * 1000) / 1000;
+  await metaMask.getMarketBalanceByContract(data).then(res => {
+    marketBalance.value = Math.round((res) * 1000) / 1000;
   });
 }
 function getClubStatus() {
@@ -394,7 +408,7 @@ function getClubStatus() {
     else store.commit("setRole", 2)
   });
 }
-function open(command) {
+async function open(command) {
   if (!metaMask.isAvailable()) return;
   action.value = {
     amount1: 20,
@@ -405,8 +419,9 @@ function open(command) {
   disabled.value = false;
   min.value = 1;
   if (command == 'buy') {
-    getBalance('busd')
-    getAmountOfCOSDHasBuy()
+    await getMarketBalance()
+    await getAmountOfCOSDHasBuy()
+    max.value = Math.min(marketBalance.value, allowPurchace.value, 2000000)
     buttonText.value = "Buy"
     visible1.value = true
   }
