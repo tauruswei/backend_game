@@ -79,7 +79,11 @@
                   </el-tooltip>
                 </el-button>
                 <el-tooltip placement="bottom" content="Invite to be channel Leader" v-if="$store.state.role == 1">
-                  <el-button type="success" @click="inviteVisible = true" round><el-icon><Share /></el-icon>&nbsp;Invite</el-button>
+                  <el-button type="success" @click="inviteVisible = true" round>
+                    <el-icon>
+                      <Share />
+                    </el-icon>&nbsp;Invite
+                  </el-button>
                 </el-tooltip>
               </div>
               <el-dropdown @command="handleCommand">
@@ -113,10 +117,10 @@
       </el-container>
     </el-container>
     <el-dialog v-model="visible" title="Change Password" width="480px" destroy-on-close>
-      <password-cont @close="visible = false"></password-cont>
+      <password-cont @close="()=>{visible = false}"></password-cont>
     </el-dialog>
-    <el-dialog v-model="visible1" title="Change Password" width="480px" destroy-on-close>
-      <email-cont @close="visible1 = false"></email-cont>
+    <el-dialog v-model="visible1" title="Change Email" width="480px" destroy-on-close>
+      <email-cont @close="()=>{visible1 = false}"></email-cont>
     </el-dialog>
     <el-dialog v-model="inviteVisible" title="Welcome to Chess of stars" width="440px">
       <qcode-cont style="width:100%;text-align: center;"></qcode-cont>
@@ -148,7 +152,7 @@ function change() {
     width.value = "240px";
   }
 }
-let isConnected= computed(() => {
+let isConnected = computed(() => {
   return store.state.metaMask ? true : false
 })
 function handleCommand(command) {

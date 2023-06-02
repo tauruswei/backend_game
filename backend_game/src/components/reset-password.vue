@@ -123,8 +123,7 @@ function submit() {
       let param = {
         email: form.value.email,
         code: form.value.code,
-        newPasswd: form.value.password,
-        userId: store.state.user.id
+        newPasswd: form.value.password
       }
       userApi.reset(param).then((res) => {
         if (res.code == 0 && res.msg == "success") {
