@@ -59,7 +59,7 @@ rules.value.email = [
     validator: function (rule, value, callback) {
       if (value) {
         userApi.checkEmail(value).then(res => {
-          if (res.code == 0 && res.data) callback();
+          if (res.code == 0 && !res.data) callback();
           else callback(new Error("this email is not registed"));
         })
       }

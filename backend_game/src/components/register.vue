@@ -77,7 +77,7 @@ rules.value.email = [
     validator: function (rule, value, callback) {
       if (value) {
         userApi.checkEmail(value).then(res => {
-          if (!res.data) callback();
+          if (res.data) callback();
           else callback(new Error("this email has been used,please use another one"));
         })
       }
