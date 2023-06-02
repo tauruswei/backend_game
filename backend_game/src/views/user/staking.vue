@@ -314,7 +314,6 @@ function translate(type) {
   }
 }
 function toMax() {
-  console.log(marketBalance.value, allowPurchace.value)
   action.value.amount1 = Math.min(marketBalance.value, allowPurchace.value, 2000000)
   translate('usdt')
 }
@@ -425,6 +424,10 @@ async function open(command) {
     await getAmountOfCOSDHasBuy()
     max.value = Math.min(marketBalance.value, allowPurchace.value, 2000000)
     buttonText.value = "Buy"
+    if(max.value<=0){
+      ElMessage.error("You cannot buy cosd!")
+      return;
+    }
     visible1.value = true
   }
   if (command == 'slstaking') {
