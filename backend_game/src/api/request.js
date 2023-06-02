@@ -4,7 +4,7 @@ export const userApi = {
   logout: (data) => post("/user/logout", data),
   login: (data) => post("/user/login", data),
   signup: (data) => post("/user/register", data),
-  checkEmail: (data) => post("/user/queryUserByEmail?email=" + data),
+  checkEmail: (data) => post("/user/validateEmailsAvailable?email=" + data),
   checkUser:(data)=>post("/user/queryUserByName?name="+data),
   roles: () => get("/role/selectList"),
   users: () => post("/user/list"),
