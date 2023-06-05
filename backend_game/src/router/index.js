@@ -201,6 +201,7 @@ router.beforeEach((to, from, next) => {
       sessionStorage.clear();
     }
     if (to.meta.requireAuth) {
+      next();
       // 判断该路由是否需要登录权限
       if (store.state.token !== "" && store.state.token !== null) {
           next();
