@@ -73,14 +73,29 @@
               <div style="margin-top:5px;margin-right:10px;display:inline-block">
                 <el-button :type="isConnected?'success':'primary'" @click="connectWallet" :disabled="isConnected?true:false" round>
                   <span v-if="!isConnected"><i class="fa fa-btc"></i>&nbsp;&nbsp;Connect Wallet</span>
-                  <el-tooltip v-if="isConnected" placement="bottom" :content="$store.state.metaMask.account">
-                    <span>
-                      <el-icon>
-                        <SuccessFilled />
-                      </el-icon>
-                      <b style="display:inline-block;vertical-align: top;font-weight:400">&nbsp;&nbsp;{{$store.state.metaMask.account.substring(0,12)+'...'}}</b>
-                    </span>
-                  </el-tooltip>
+                  <el-popover v-if="isConnected" placement="top" :width="300" trigger="hover">
+                    <template #reference>
+                      <span>
+                        <i class="fa fa-bullseye"></i>
+                        <b style="display:inline-block;vertical-align: top;font-weight:400">&nbsp;&nbsp;{{$store.state.metaMask.account.substring(0,12)+'...'}}</b>
+                      </span>
+                    </template>
+                    <template #default>
+                      <div style="text-align: center;">
+                          <el-image :src="require('@/assets/metamask-fox.svg')"></el-image>
+                          <p style="width:60%;margin:5px auto"><small>{{ $store.state.metaMask.account }}</small></p>
+                          <el-row :gutter="10" style="margin-top:10px">
+                            <el-col :span="12">
+                              <el-tag type="success" round><i class="fa fa-bullseye" style="font-size:12px;"></i> &nbsp;connected</el-tag>
+                            </el-col>
+                            <el-col :span="12" style="text-align: right;">
+                              bsc network
+                            </el-col>
+                          </el-row>
+                      </div>
+                      
+                    </template>
+                  </el-popover>
                 </el-button>
                 <!---->
                 <el-tooltip placement="bottom" content="Invite to be channel Leader" v-if="$store.state.role == 1">

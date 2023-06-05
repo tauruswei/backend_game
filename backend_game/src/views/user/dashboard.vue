@@ -112,7 +112,7 @@
               <div>Current Evics: <b>{{ dashboard.evics }}</b></div>
               <div>
                 <button class="btn btn-warning btn-round" @click="open('buy')">purchase</button>
-                <button class="btn btn-success btn-round" style="margin-left:10px;" :disabled="!dashboard.evics" @click="open('cashout')">withdraw</button>
+                <button class="btn btn-success btn-round" style="margin-left:10px;" :disabled="!dashboard.evics" @click="open('withdraw')">withdraw</button>
               </div>
             </div>
           </div>
@@ -125,7 +125,7 @@
       <el-row :gutter="10">
         <el-col :span="6">EVIC</el-col>
         <el-col :span="18">
-          <el-input-number v-model.number="amount1" controls-position="right" :step="100" :min="100" :max="dashboard.evics" style="width:100%" @change="translate('evic')" clearable></el-input-number>
+          <el-input-number v-model.number="amount1" controls-position="right" :step="100" :min="100" :max="max" style="width:100%" @change="translate('evic')" clearable></el-input-number>
         </el-col>
         <el-col :span="6" style="margin-top:10px">USDT</el-col>
         <el-col :span="18" style="margin-top:10px">
@@ -157,6 +157,7 @@ const amount = ref(0)
 const amount1 = ref(0)
 const visible = ref(false)
 const action = ref({ title: "", btn: "" })
+const max=ref(100000)
 function isEmpty() {
   if (!amount.value) {
     ElMessage.error("amount is required!")
@@ -198,13 +199,15 @@ function open(command) {
     title: "Evics Transcation",
     command: command
   }
+  if(command == "withdraw") max.value = dashboard.value.evics;
+  else max.value = 100000
   amount.value = 1;
   amount1.value = 100;
   visible.value = true;
 }
 function handleOperate() {
   if (action.value.command == 'buy') purchase()
-  if (action.value.command == 'cashout') cashout()
+  if (action.value.command == 'withdraw') withdraw()
 }
 function purchase() {
   if (!metaMask.isAvailable()) return;
@@ -237,7 +240,7 @@ function purchase() {
     loadingHelper.hide();
   })
 }
-function cashout() {
+function withdraw() {
   if (!amount1.value) return;
   if (amount1.value > dashboard.value.evics) {
     ElMessage.error("cannot exceed the balance!")

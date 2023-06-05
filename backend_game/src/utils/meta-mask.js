@@ -135,7 +135,7 @@ export class MetaMask {
       const account = accounts[0];
       if (account) {
         store.commit("setMetaMask", { chainID: chainID, account: account });
-        ElMessage.success('connected success!')
+        ElMessage.success('Connected!')
         isCurrentAccount()
       }
       else {
