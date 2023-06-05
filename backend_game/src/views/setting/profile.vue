@@ -47,7 +47,7 @@
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card card-profile for-channel-only">
+          <!--<div class="card card-profile for-channel-only">
             <div class="card-avatar">
               <a href="#pablo">
                 <img class="img" :src="require('@/assets/img/channel-providers.jpg')" />
@@ -61,7 +61,7 @@
               </p>
               <a target="_blank" href="https://chess-of-stars.gitbook.io/whitepaper/4.-community-construction" class="btn btn-rose btn-round">Learn more</a>
             </div>
-          </div>
+          </div>-->
 
           <div class="card card-profile for-clubadmin-only">
             <div class="card-avatar">
@@ -79,7 +79,7 @@
             </div>
           </div>
 
-          <div class="card card-profile for-clubmember-only">
+          <!--<div class="card card-profile for-clubmember-only">
             <div class="card-avatar">
               <a href="#pablo">
                 <img class="img" :src="require('@/assets/img/club-member.jpg')" />
@@ -93,7 +93,7 @@
               </p>
               <a target="_blank" href="https://chess-of-stars.gitbook.io/whitepaper/4.-community-construction" class="btn btn-rose btn-round">Learn more</a>
             </div>
-          </div>
+          </div>-->
         </div>
       </div>
       <div class="row" v-if="$store.state.role == 3">

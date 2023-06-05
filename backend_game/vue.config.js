@@ -3,7 +3,7 @@ const Timestamp = new Date().getTime();
 module.exports = defineConfig({
   transpileDependencies: true,
   lintOnSave: false, //关闭eslint
-  publicPath: "./",
+  publicPath: "/",
   outputDir: "dist",
   assetsDir: "static",
   indexPath: "index.html",
