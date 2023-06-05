@@ -14,7 +14,6 @@
     "core-js": "^3.8.3",
     "cropperjs": "^1.5.13",
     "crypto-js": "^4.1.1",
-    "cryptojs": "^2.5.3",
     "element-plus": "^2.2.26",
     "font-awesome": "^4.7.0",
     "node-sass": "^8.0.0",

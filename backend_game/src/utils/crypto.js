@@ -1,4 +1,4 @@
-import CryptoJS from "cryptojs";
+import CryptoJS from "crypto-js";
 
 
 export function encryptAES(word) {
