@@ -2,9 +2,9 @@
   <div>
     <el-form ref="formRef" :rules="rules" label-position="top" label-width="100px" :model="form">
       <el-form-item label="Email" prop="email">
-        <el-input v-model="form.email" placeholder="enter your email" clearable />
+        <el-input v-model="form.email" placeholder="enter your email" clearable :readonly="btndisabled"/>
       </el-form-item>
-      <el-form-item label="verify code" prop="code">
+      <el-form-item label="Verify code" prop="code">
         <el-row :gutter="10" style="width:100%">
           <el-col :span="20">
             <el-input v-model="form.code" placeholder="enter your verify code" clearable />

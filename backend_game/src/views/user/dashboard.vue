@@ -122,16 +122,17 @@
     </div>
   </div>
   <el-dialog v-model="visible" :title="action.title" width="400px" destroy-on-close>
+    <el-alert title="TIP: 1 USDT = 100 EVIC" type="info" style="margin-bottom:20px"></el-alert>
     <el-row :gutter="10">
       <el-col :span="6">EVIC</el-col>
       <el-col :span="18">
-        <el-input-number v-model.number="amount1" controls-position="right" :step="100" :min="100" :max="100000" style="width:100%" @change="translate('evic')" clearable></el-input-number>
+        <el-input-number v-model.number="amount1" controls-position="right" :step="100" :min="100" :max="10000000" style="width:100%" @change="translate('evic')" clearable></el-input-number>
       </el-col>
       <el-col :span="6" style="margin-top:10px">USDT</el-col>
       <el-col :span="18" style="margin-top:10px">
         <el-input-number v-model.number="amount" controls-position="right" :step="1" :min="1" :max="100000" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
       </el-col>
-      <el-col :span="24" style="margin-top:15px;">
+      <el-col :span="24" style="margin-top:30px;">
         <el-button type="success" style="width:100%" @click="handleOperate">{{ action.btn }}</el-button>
       </el-col>
     </el-row>

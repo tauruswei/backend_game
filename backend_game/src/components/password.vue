@@ -22,6 +22,7 @@ import { useStore } from "vuex"
 import { useRouter } from "vue-router";
 import { userApi } from "../api/request";
 import { loadingHelper } from "@/utils/loading";
+import { encryptAES } from "@/utils/crypto";
 import { ElNotification } from "element-plus";
 const emit = defineEmits(['close'])
 const store = useStore();
@@ -88,8 +89,8 @@ function submit() {
     if (valid) {
       loadingHelper.show();
       let param = {
-        oldPasswd: form.value.oldPassword,
-        newPasswd: form.value.newPassword,
+        oldPasswd: encryptAES(form.value.oldPassword),
+        newPasswd: encryptAES(form.value.newPassword),
         userId: store.state.user.id
       }
       userApi.password(param).then((res) => {

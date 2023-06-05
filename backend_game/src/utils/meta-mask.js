@@ -3,12 +3,14 @@ import MetaMaskOnboarding from '@metamask/onboarding'
 import detectEthereumProvider from '@metamask/detect-provider';
 import Web3 from 'web3'
 import store from "@/store/index";
-import { ElMessage, ElNotification } from "element-plus"
+import router from "@/router/index";
+import { ElMessage,ElMessageBox, ElNotification } from "element-plus"
 import { userApi, chainApi } from '@/api/request';
 let option = {
   injectProvider: false,
   communicationLayerPreference: 'webrtc',
 }
+const CHAINID = "0x61";
 export const CONTRACTS = {
   sl: { address: "0x2795bA76b7f6665669FcBE3dA0B5e4e5FBdA634c", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
   club: { address: "0x285B0B99C8182F344d57A4FbDa665BDe4Ff32fd3", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
@@ -31,7 +33,7 @@ provider.on('chainChanged', (chainId) => {
   //window.location.reload()
   if(!store.state.user) return;
   store.commit("setMetaMask", { ...store.state.metaMask, chainID: chainId });
-  console.log('chainChanged', chainId)
+  ElMessage.success("You have changed the chain!")
   window.location.reload()
 })
 provider.on('connect', (accounts) => {
@@ -58,24 +60,35 @@ provider.on('disconnect', () => {
   window.location.reload()
 })
 function isCurrentAccount() {
-  if (!store.state.user.account) {
-    ElMessage({
-      duration: 5000,
-      type:"warning",
-      dangerouslyUseHTMLString: true,
-      message: 'please update your wallet address! <a href="/setting/profile"><b>click to update</b></a>',
-    })
-    return false
-  }
-  if (store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()) {
-    ElMessage({
-      duration: 5000,
-      type:"warning",
-      dangerouslyUseHTMLString: true,
-      message: '<p><b>Not the current account!</b></p><br/> <a href="/setting/profile"><b>click to update</b></a> Or switch Metamask to the current account',
-    })
+  if (!store.state.user.account  || store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()) {
+    ElMessageBox.confirm(
+      'Not the current account,would you like to update the wallet address?',
+      'Warning',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      }
+    )
+      .then(() => {
+        router.push("/setting/profile")
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: 'Delete canceled',
+        })
+      })
   }
   return store.state.user.account.toLowerCase() == store.state.metaMask.account.toLowerCase();
+}
+function isCurrentChain(id){
+  if(id != CHAINID) {
+    ElMessage.err("Not the same chain!")
+    return false;
+  }else{
+    return true
+  }
 }
 export class MetaMask {
   constructor() {
@@ -89,6 +102,7 @@ export class MetaMask {
     } else {
       ret = true;
     }
+    if(!isCurrentChain(store.state.metaMask.chainID)) return false;
     if (isCurrentAccount()) ret = true;
     else ret = false;
     return ret;

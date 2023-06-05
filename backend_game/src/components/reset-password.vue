@@ -2,9 +2,9 @@
   <div>
     <el-form ref="formRef" :rules="rules" label-position="top" label-width="100px" :model="form">
       <el-form-item label="Email" prop="email">
-        <el-input v-model="form.email" placeholder="enter your email" clearable />
+        <el-input v-model="form.email" placeholder="enter your email" clearable :readonly="btndisabled"/>
       </el-form-item>
-      <el-form-item label="verify code" prop="code">
+      <el-form-item label="Verify code" prop="code">
         <el-row :gutter="10" style="width:100%">
           <el-col :span="20">
             <el-input v-model="form.code" type="text" placeholder="enter your verify code" clearable />
@@ -33,6 +33,7 @@ import { ref, defineEmits } from "vue";
 import { useRouter } from "vue-router";
 import { userApi } from "../api/request";
 import { loadingHelper } from "@/utils/loading";
+import { encryptAES } from "@/utils/crypto";
 import { ElNotification } from "element-plus";
 import CountDownTime from "@/components/count-down-time.vue"
 const emit = defineEmits(['close'])
@@ -121,7 +122,7 @@ function submit() {
       let param = {
         email: form.value.email,
         code: form.value.code,
-        newPasswd: form.value.password
+        newPasswd: encryptAES(form.value.password)
       }
       userApi.reset(param).then((res) => {
         if (res.code == 0 && res.msg == "success") {

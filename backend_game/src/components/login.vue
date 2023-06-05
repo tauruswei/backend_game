@@ -8,10 +8,10 @@
       <h3 class="title-des wtext-xl">Welcome !</h3>
       <p class="text-muted"><small>have a nice time^^</small></p>
       <el-form ref="formRef" :rules="rules" label-position="top" label-width="100px" :model="form" style="padding-top: 40px">
-        <el-form-item label="email" prop="email">
+        <el-form-item label="Email" prop="email">
           <el-input v-model="form.email" placeholder="enter your email" clearable />
         </el-form-item>
-        <el-form-item label="password" prop="password">
+        <el-form-item label="Password" prop="password">
           <el-input v-model="form.password" type="password" placeholder="enter your password" show-password clearable />
         </el-form-item>
         <el-form-item>
@@ -23,7 +23,7 @@
           <span @click="visible=true" style="color:#fff;font-size: 13px;cursor: pointer;">Forgot Password?</span>
         </el-col>
         <el-col :span="24" style="margin-top:40px">
-          <span class="text-muted">Hasn't account？</span><a href="/register">Sign Up</a>
+          <span class="text-muted">No account？</span><a href="/register">Sign Up</a>
         </el-col>
       </el-row>
     </div>
@@ -39,6 +39,7 @@ import { useRouter } from "vue-router";
 import { userApi } from "@/api/request";
 import PasswordCont from "@/components/reset-password.vue";
 import { loadingHelper } from "@/utils/loading";
+import { encryptAES } from "@/utils/crypto";
 import { ElMessage, ElNotification } from "element-plus";
 const visible = ref(false);
 const store = useStore();
@@ -83,7 +84,7 @@ function doLogin() {
       loadingHelper.show();
       let data = {
         email: form.value.email,
-        passwd: form.value.password,
+        passwd: encryptAES(form.value.password),
       };
       userApi.login(data).then((res) => {
         if (res.code == 0 && res.msg == "success") {

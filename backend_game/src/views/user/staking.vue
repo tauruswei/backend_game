@@ -53,6 +53,7 @@
                         <p class="card-category">Current staking COSD</p>
                         <h3 class="card-title">{{ balance.sl }}</h3>
                         <span class="badge badge-pill" :class="balance.sl<400?' badge-default':' badge-success'">Starlight League Unqualified</span>
+                        <button class="btn btn-warning btn-round" v-if="balance.sl" @click="open('slunstaking')">Stop staking</button>
                       </div>
                       <div class="card-footer">
                         <div class="stats">
@@ -76,29 +77,6 @@
                         <button class="btn btn-rose btn-round" @click="open('slstaking')">Stake</button>
                       </div>
                     </div>
-                    <div class="card card-stats for-qualified" v-if="balance.sl">
-                      <div class="card-header card-header-warning card-header-icon">
-                        <div class="card-icon">
-                          <i class="fa fa-asterisk"></i>
-                        </div>
-                        <p class="card-category">Current staking COSD</p>
-                        <h3 class="card-title">{{ balance.sl }}</h3>
-                        <span class="badge badge-pill" :class="balance.sl<400?' badge-default':' badge-success'">Starlight League Qualified</span><br /><br />
-                        <button class="btn btn-warning btn-round" @click="open('slunstaking')">Stop staking</button>
-                      </div>
-                      <div class="card-footer">
-                        <div class="stats">
-                          <div class="">
-                            <i class="fa fa-cubes"></i>&nbsp;Staking pool contract address:&nbsp;&nbsp;
-                            <a href="javascript:void(0);">{{contracts.sl.address}}</a>
-                          </div>
-                          &nbsp;&nbsp;&nbsp;&nbsp;
-                          <div class="">
-                            <span>You need to stake enough COSD to get a qualification for Starlight League.</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                   <!--Club ownership-->
                   <div class="tab-pane" :class="active=='club'?' active show':''" id="tab-staking-club">
@@ -110,6 +88,7 @@
                         <p class="card-category">Current staking COSD</p>
                         <h3 class="card-title">{{ balance.club }}</h3>
                         <span class="badge badge-pill" :class="isClubBoss?' badge-success':' badge-default'">Club ownership Unqualified</span>
+                        <button class="btn btn-warning btn-round" v-if="balance.club" @click="open('clubunstaking')">Stop staking</button>
                       </div>
                       <div class="card-footer">
                         <div class="stats">
@@ -131,29 +110,6 @@
                           You need to stake 4000 COSD (equivalent to 200 USDT) to get a qualification for a club ownership.
                         </p>
                         <a href="javascript:void(0);" class="btn btn-rose btn-round" @click="open('clubstaking')">Stake</a>
-                      </div>
-                    </div>
-                    <div class="card card-stats for-qualified" v-if="balance.club">
-                      <div class="card-header card-header-warning card-header-icon">
-                        <div class="card-icon">
-                          <i class="fa fa-group"></i>
-                        </div>
-                        <p class="card-category">Current staking COSD</p>
-                        <h3 class="card-title">{{ balance.club }}</h3>
-                        <span class="badge badge-pill badge" :class="isClubBoss?' badge-success':' badge-default'">Club ownership Qualified</span><br /><br />
-                        <button class="btn btn-warning btn-round" @click="open('clubunstaking')">Stop staking</button>
-                      </div>
-                      <div class="card-footer">
-                        <div class="stats">
-                          <div class="">
-                            <i class="fa fa-cubes"></i>&nbsp;Staking pool contract address:&nbsp;&nbsp;
-                            <a href="javascript:void(0);">{{contracts.club.address}}</a>
-                          </div>
-                          &nbsp;&nbsp;&nbsp;&nbsp;
-                          <div class="">
-                            <span>You need to stake enough COSD to get a qualification for a club ownership.</span>
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -192,7 +148,7 @@
                         <div class="card-icon icon-rose">
                           <i class="fa fa-line-chart"></i>
                         </div>
-                        <h3 class="card-title"> <el-tooltip placement="top" :content="reward+''"><b >{{ Math.round((reward) * 1000) / 1000 }}</b></el-tooltip> COSD earned</h3>
+                        <h3 class="card-title"> <el-tooltip placement="top" :content="reward+''"><b >{{ Math.round((reward) * 1000) / 1000 }}</b></el-tooltip> COSD will be earned</h3>
                         <p class="card-description">
                           Retain 3 decimal places
                         </p>
@@ -229,7 +185,7 @@
       </el-row>
     </el-dialog>
     <el-dialog v-model="visible1" :title="action.title" width="400px" destroy-on-close>
-      <el-alert title="Tip: Accumulated expenses of usdt cannot exceed 100,000" type="info" style="margin-bottom:20px"></el-alert>
+      <el-alert title="TIP: Accumulated expenses of usdt cannot exceed 100,000" type="info" style="margin-bottom:20px"></el-alert>
       <el-row :gutter="5" style="margin-bottom:20px">
         <el-col :span="4">
           COSD

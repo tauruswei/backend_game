@@ -19,7 +19,7 @@
                     <div class="col-md-12">
                       <div class="form-group">
                         <label class="bmd-label-floating">Nick Name</label>
-                        <input type="text" class="form-control" v-model="userData.name">
+                        <input type="text" class="form-control" v-model="userData.name" readonly>
                       </div>
                     </div>
                   </div>
@@ -28,10 +28,13 @@
                       <div class="form-group">
                         <label class="bmd-label-floating">Wallet Adress</label>
                         <div class="input-group no-border">
-                          <input type="text" class="form-control" v-model="userData.wallet_address">
-                          <button class="btn btn-sm btn-info btn-round btn-just-icon" @click="getAddress" title="View address on blockchain">
-                            <i class="fa fa-external-link"></i>
+                          <input type="text" class="form-control" v-model="userData.wallet_address" readonly>
+                          <button class="btn btn-sm btn-warning btn-round btn-just-icon" @click="getAddress" title="get current wallet address">
+                            <i class="fa level-down"></i>
                           </button>
+                          <a class="btn btn-sm btn-info btn-round btn-just-icon" :href="`${userData.wallet_address}`" title="View address on blockchain">
+                            <i class="fa fa-external-link"></i>
+                          </a>
                         </div>
                       </div>
                     </div>

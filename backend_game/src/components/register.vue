@@ -8,10 +8,10 @@
       <h3 class="title-des wtext-xl">Welcome !</h3>
       <p class="text-muted"><small>register your own account^^</small></p>
       <el-form ref="formRef" :rules="rules" label-position="top" label-width="100px" :model="form" style="padding-top: 40px">
-        <el-form-item label="email" prop="email">
-          <el-input v-model="form.email" placeholder="enter your email" clearable />
+        <el-form-item label="Email" prop="email">
+          <el-input v-model="form.email" placeholder="enter your email" clearable :readonly="btndisabled" />
         </el-form-item>
-        <el-form-item label="verify code" prop="code">
+        <el-form-item label="Verify code" prop="code">
           <el-row :gutter="10" style="width:100%">
             <el-col :span="18">
               <el-input v-model="form.code" type="text" placeholder="enter your verify code" clearable />
@@ -26,8 +26,11 @@
         <el-form-item label="Nick name" prop="name">
           <el-input v-model="form.name" placeholder="enter your nick name" clearable />
         </el-form-item>
-        <el-form-item label="password" prop="passwd">
+        <el-form-item label="Password" prop="passwd">
           <el-input v-model="form.passwd" type="password" placeholder="enter your password" show-password clearable />
+        </el-form-item>
+        <el-form-item label="Repeat password" prop="rpassword">
+          <el-input v-model="form.rpassword" type="password" placeholder="enter your password again" show-password clearable />
         </el-form-item>
         <!--<el-form-item label="type">
           <el-select v-model="form.userType" placeholder="select" style="width: 100%" clearable>
@@ -49,19 +52,22 @@ import { useRouter } from "vue-router";
 import { userApi } from "@/api/request";
 import { AppHelper } from "@/utils/helper";
 import { loadingHelper } from "@/utils/loading";
+import { encryptAES, decryptAES } from "@/utils/crypto";
 import { ElNotification, ElMessage } from "element-plus";
 import CountDownTime from "@/components/count-down-time.vue"
 const store = useStore();
 const router = useRouter();
 const roleList = ref([{ id: 0, name: 'channel leader' }, { id: 1, name: 'club boss' }, { id: 2, name: 'user' }]);//0-渠道商 1-俱乐部老板 2 普通用户
 const formRef = ref(null);
+let id = AppHelper.getURLParam('id');
 const form = ref({
   email: "",
   name: "",
   passwd: "",
   userType: 2,
   code: "",
-  inviterId: AppHelper.getURLParam('id'),
+  rpassword: "",
+  inviterId: id?decryptAES(id):null,
 });
 const rules = ref({});
 const time = ref(0)
@@ -117,6 +123,27 @@ rules.value.passwd = [
   }
 ];
 rules.value.code = [{ required: true, message: "Verify code is required", trigger: "blur" }];
+rules.value.rpassword = [
+  { required: true, message: "password is required", trigger: "blur" },
+  { min: 8, max: 64, message: "The length between 8 and 64 character", trigger: "blur" },
+  {
+    required: true,
+    pattern: /^(?!^\d+$)(?!^[a-z]+$)(?!^[A-Z]+$)(?!^[^a-z0-9]+$)(?!^[^A-Z0-9]+$)(?!^.*[\u4E00-\u9FA5].*$)^\S*$/,
+    message: "Contains at least two types of numbers, uppercase and lowercase letters, and special characters",
+    trigger: "blur",
+  },
+  {
+    validator: function (rule, value, callback) {
+      if (value != form.value.passwd) {
+        callback(new Error("The passwords are inconsistent, please re-enter "));
+      } else {
+        //校验通过
+        callback();
+      }
+    },
+    trigger: "blur",
+  },
+];
 function getVerifyCode() {
   formRef.value.validateField(['email'], (valid) => {
     if (valid) {
@@ -139,7 +166,15 @@ function doRegister() {
   formRef.value.validate((valid) => {
     if (valid) {
       loadingHelper.show();
-      userApi.signup(form.value).then((res) => {
+      let data = {
+        email: form.value.email,
+        name: form.value.name,
+        passwd: encryptAES(form.value.passwd),
+        userType: form.value.userType,
+        code: form.value.code,
+        inviterId: form.value.inviterId
+      }
+      userApi.signup(data).then((res) => {
         if (res.code == 0 && res.msg == "success") {
           doLogin();
         }

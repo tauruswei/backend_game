@@ -13,6 +13,16 @@
             </el-icon>
             <span>Dashboard</span>
           </el-menu-item>
+          <el-sub-menu index="2-4">
+            <template #title>
+              <el-icon>
+                <Setting />
+              </el-icon> Setting
+            </template>
+            <el-menu-item index="/setting/profile">
+              <span style="padding-left:10px">Profile</span>
+            </el-menu-item>
+          </el-sub-menu>
           <el-menu-item index="/plat/staking-rewards" v-if="$store.state.role == 3">
             <el-icon>
               <MessageBox />
@@ -49,12 +59,6 @@
             </el-icon>
             <span>Staking</span>
           </el-menu-item>
-          <el-menu-item index="/setting/profile">
-            <el-icon>
-              <Setting />
-            </el-icon>
-            <span>Profile</span>
-          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>
@@ -78,7 +82,8 @@
                     </span>
                   </el-tooltip>
                 </el-button>
-                <el-tooltip placement="bottom" content="Invite to be channel Leader" v-if="$store.state.role == 1">
+                <!-- v-if="$store.state.role == 1"-->
+                <el-tooltip placement="bottom" content="Invite to be channel Leader">
                   <el-button type="success" @click="inviteVisible = true" round>
                     <el-icon>
                       <Share />
@@ -163,7 +168,7 @@ function handleCommand(command) {
   if (command == 'email') visible1.value = true;
   if (command == 'profile') router.push('/setting/profile')
 }
-function closeemail(){
+function closeemail() {
   visible1.value = false
 }
 function connectWallet() {
