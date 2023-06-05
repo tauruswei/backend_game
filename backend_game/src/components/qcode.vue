@@ -29,12 +29,12 @@ const inviterId = ref(store.state.user ? store.state.user.id : '')
 watch(() => props.id, (val) => {
   if (val) {
     inviterId.value = val;
-    url.value = process.env.VUE_APP_MODE == "development" ? (window.location.protocol + window.location.host + '/register?id=' + inviterId.value) : process.env.VUE_APP_LOCAL
+    url.value = process.env.VUE_APP_MODE == "development" ? (window.location.protocol + window.location.host + '/register?id=' + encryptAES(inviterId.value)) : (process.env.VUE_APP_LOCAL+'/register?id=' + encryptAES(inviterId.value))
   }
 }, { immediate: true })
 
 const url = ref(null)
-url.value = process.env.VUE_APP_MODE == "development" ? (window.location.protocol + window.location.host + '/register?id=' + encryptAES(inviterId.value)) : process.env.VUE_APP_LOCAL
+url.value = process.env.VUE_APP_MODE == "development" ? (window.location.protocol + window.location.host + '/register?id=' + encryptAES(inviterId.value)) : (process.env.VUE_APP_LOCAL+'/register?id=' + encryptAES(inviterId.value))
 const size = ref(240)
 function download() {
   let canvas = document.getElementById('qcode').getElementsByTagName('canvas')

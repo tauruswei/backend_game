@@ -9,7 +9,7 @@
       <p class="text-muted"><small>register your own account^^</small></p>
       <el-form ref="formRef" :rules="rules" label-position="top" label-width="100px" :model="form" style="padding-top: 40px">
         <el-form-item label="Email" prop="email">
-          <el-input v-model="form.email" placeholder="enter your email" clearable :readonly="btndisabled" />
+          <el-input v-model="form.email" placeholder="enter your email" clearable :disabled="btndisabled" />
         </el-form-item>
         <el-form-item label="Verify code" prop="code">
           <el-row :gutter="10" style="width:100%">
