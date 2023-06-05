@@ -60,7 +60,8 @@ provider.on('disconnect', () => {
   window.location.reload()
 })
 function isCurrentAccount() {
-  if (!store.state.user.account  || store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()) {
+  console.log(store.state.user.account,store.state.metaMask.account)
+  if (!store.state.user.account || store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()) {
     ElMessageBox.confirm(
       'Not the current account,would you like to update the wallet address?',
       'Warning',
@@ -80,6 +81,7 @@ function isCurrentAccount() {
         })
       })
   }
+  if(!store.state.user.account) return false;
   return store.state.user.account.toLowerCase() == store.state.metaMask.account.toLowerCase();
 }
 function isCurrentChain(id){
@@ -345,7 +347,7 @@ export class MetaMask {
         from: param.from
       }).then(res => {
         console.log(res)
-        ElNotification({ type: "success", message: "transcation successfully" })
+        ElNotification({ type: "success", message: "it will take a few minutes,please refresh later" })
         resolve(res)
       }).catch(err => {
         console.log(err)

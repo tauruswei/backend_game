@@ -30,9 +30,9 @@
                         <div class="input-group no-border">
                           <input type="text" class="form-control" v-model="userData.wallet_address" readonly>
                           <button class="btn btn-sm btn-warning btn-round btn-just-icon" @click="getAddress" title="get current wallet address">
-                            <i class="fa level-down"></i>
+                            <i class="fa fa-level-down"></i>
                           </button>
-                          <a class="btn btn-sm btn-info btn-round btn-just-icon" :href="`${userData.wallet_address}`" title="View address on blockchain">
+                          <a class="btn btn-sm btn-info btn-round btn-just-icon" :href="`${url}${userData.wallet_address}`" target="_blank" title="View address on blockchain">
                             <i class="fa fa-external-link"></i>
                           </a>
                         </div>
@@ -189,6 +189,7 @@ import { userApi } from "@/api/request"
 import { loadingHelper } from "@/utils/loading";
 import { ElMessage, ElNotification } from "element-plus";
 const store = useStore();
+const url = ref('https://testnet.bscscan.com/address/');
 const userData = ref({
   wallet_address_nft: "gueryiy",
   wallet_address_sl: "gueryiy",

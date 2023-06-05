@@ -26,16 +26,16 @@
       <page-title :option="title" v-if="activeName !=='buy'"></page-title>
       <div class="card-body" v-if="activeName == 0">
         <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations" @commands="view"></dynamic-table>
-        <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
+        <el-pagination background layout="prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
 
       </div>
       <div class="card-body" v-if="activeName == 1">
         <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="view"></dynamic-table>
-        <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
+        <el-pagination background layout="prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
       </div>
       <div class="card-body" v-if="activeName == 2">
         <dynamic-table :data="tableData" :header="tableHeader1" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="view"></dynamic-table>
-        <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
+        <el-pagination background layout="prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
       </div>
     </div>
     <template v-if="activeName =='buy'">
@@ -101,11 +101,11 @@
       <el-row>
         <el-col :span="4">USDT</el-col>
         <el-col :span="20">
-          <el-input-number v-model.number="amount" controls-position="right" :step="20" :min="20" :max="100000" placeholder="`set amount" @change="translate('usdt')" style="width:100%" clearable></el-input-number>
+          <el-input-number v-model.number="amount" controls-position="right" :step="20" :min="20" :max="100000" placeholder="`set amount" disabled @change="translate('usdt')" style="width:100%" clearable></el-input-number>
         </el-col>
         <el-col :span="4" style="margin-top:10px;">NFT</el-col>
         <el-col :span="20" style="margin-top:10px;">
-          <el-input-number v-model.number="amount1" controls-position="right" :step="1" :min="1" :max="100000" placeholder="`set amount" @change="translate('nft')" style="width:100%" clearable></el-input-number>
+          <el-input-number v-model.number="amount1" controls-position="right" :step="1" :min="1" :max="100000" placeholder="`set amount" disabled @change="translate('nft')" style="width:100%" clearable></el-input-number>
         </el-col>
         <el-col :span="24" style="margin-top:15px">
           <el-button type="primary" @click="nftApprove()" style="width:100%" :disabled="disabled">

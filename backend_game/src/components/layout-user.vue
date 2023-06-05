@@ -176,8 +176,8 @@ function connectWallet() {
   if (!isConnected.value) metaMask.connectMetaMask()
 }
 </script>
-<style scoped>
-/deep/ .el-avatar {
+<style lang="scss" scoped>
+:deep(.el-avatar) {
   box-shadow: 0 2px 8px 0 rgba(83, 102, 203, 0.4);
 }
 </style>
