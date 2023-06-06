@@ -140,18 +140,19 @@
 
 </template>
  <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted,getCurrentInstance } from 'vue'
 import { useStore } from "vuex";
 import cosdToken from "@/abi/cosdtoken.json";
 import nftToken from "@/abi/nft.json";
 import busdToken from "@/abi/busdtoken.json";
-import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
+import { CONTRACTS, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/web3model";
 import { evicsApi } from '@/api/request';
 import { loadingHelper } from "@/utils/loading";
 import { ElNotification, ElMessage } from "element-plus";
+const { proxy } = getCurrentInstance() 
 const store = useStore();
 const dashboard = ref({ cosd: 0, nft: 0, games: 1, evics: 0 })
-const metaMask = new MetaMask();
+const metaMask = proxy.web3ModalManager;
 const abis = ref({ cosd: cosdToken, nft: nftToken, busd: busdToken })
 const amount = ref(0)
 const amount1 = ref(0)

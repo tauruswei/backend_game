@@ -217,7 +217,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref, onMounted,getCurrentInstance } from "vue"
 import { useStore } from "vuex"
 import buyToken from "@/abi/buytoken.json";
 import cosdToken from "@/abi/cosdtoken.json";
@@ -225,11 +225,11 @@ import busdApprove from "@/abi/busdtoken.json";
 import slStaking from "@/abi/slStaking.json";
 import clubStaking from "@/abi/clubStaking.json";
 import defiStaking from "@/abi/stakingPool.json";
-import { chainApi } from "@/api/request";
 import { loadingHelper } from "@/utils/loading";
-import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, POOL, savaAfterTranscation } from "@/utils/meta-mask";
+import { CONTRACTS, ASSETTYPE, TXTYPE, POOL, savaAfterTranscation } from "@/utils/web3model";
 import { ElMessage } from "element-plus";
 import { cosdApi } from "../../api/request";
+const { proxy } = getCurrentInstance() 
 const store = useStore();
 const active = ref("sl");
 const balance = ref({
@@ -250,7 +250,7 @@ const visible = ref(false)
 const visible1 = ref(false)
 const isClubBoss = ref(false)
 const needApprove = ref(true);
-const metaMask = new MetaMask();
+const metaMask = proxy.web3ModalManager;
 const disabled = ref(false)
 const reward = ref(0)
 const buttonText = ref('Buy')

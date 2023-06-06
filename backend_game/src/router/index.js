@@ -20,6 +20,15 @@ const routes = [
     }
   },
   {
+    path: "/test",
+    name: "test",
+    component: () => import("../components/wallet-connection.vue"),
+    meta: {
+      title: "登录",
+      route: "/test",
+    }
+  },
+  {
     path: "/register",
     name: "register",
     component: () => import("../components/register.vue"),
@@ -60,10 +69,10 @@ const routes = [
       {
         path: "dashboard",
         name: "dashboard",
-        component: (store.state.role == 0 ? adminDash : userDash),
+        component: (store.state.role == 3 ? adminDash : userDash),
         meta: {
           route: "/plat/dashboard",
-          permission: (store.state.role == 0 ? "admin" : "user"),
+          permission: '(store.state.role == 3 ? "admin" : "user")',
           title: "dashboard",
           name: "dashboard",
           requireAuth: true,

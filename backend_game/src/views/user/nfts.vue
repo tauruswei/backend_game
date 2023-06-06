@@ -122,7 +122,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted, reactive,getCurrentInstance } from "vue";
 import { useStore } from "vuex";
 import { nftApi, userApi } from "@/api/request";
 import { chainApi } from "@/api/request";
@@ -133,8 +133,9 @@ import PageTitle from "@/components/page-title.vue";
 import DynamicTable from "@/components/dynamic-table.vue";
 import { loadingHelper } from "@/utils/loading";
 import { DateHelper } from "@/utils/helper";
-import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
+import { CONTRACTS, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/web3model";
 import { ElMessage, ElNotification } from "element-plus";
+const { proxy } = getCurrentInstance() 
 const store = useStore()
 const TYPES = reactive({ buy: 0, used: 1, expire: 2 })
 let activeName = ref(0);
@@ -160,7 +161,7 @@ const address = ref({
 })
 const amount = ref(20);
 const amount1 = ref(1);
-const metaMask = new MetaMask();
+const metaMask = proxy.web3ModalManager;
 const disabled = ref(false)
 const nftParam = ref({})
 function view(data) {

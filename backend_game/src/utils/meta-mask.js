@@ -10,7 +10,7 @@ let option = {
   injectProvider: false,
   communicationLayerPreference: 'webrtc',
 }
-const CHAINID = "0x61";
+const CHAINID = process.env.VUE_APP_CHAINID;
 export const CONTRACTS = {
   sl: { address: "0x2795bA76b7f6665669FcBE3dA0B5e4e5FBdA634c", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
   club: { address: "0x285B0B99C8182F344d57A4FbDa665BDe4Ff32fd3", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
@@ -60,7 +60,6 @@ provider.on('disconnect', () => {
   window.location.reload()
 })
 function isCurrentAccount() {
-  console.log(store.state.user.account,store.state.metaMask.account)
   if (!store.state.user.account || store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()) {
     ElMessageBox.confirm(
       'Not the current account,would you like to update the wallet address?',
@@ -85,17 +84,16 @@ function isCurrentAccount() {
   return store.state.user.account.toLowerCase() == store.state.metaMask.account.toLowerCase();
 }
 function isCurrentChain(id){
+  console.log(id,CHAINID)
   if(id != CHAINID) {
-    ElMessage.err("Not the same chain!")
+    ElMessage.error("Not the same chain!")
     return false;
   }else{
     return true
   }
 }
 export class MetaMask {
-  constructor() {
-    this.provider = provider;
-  }
+  constructor() {}
   isAvailable() {
     let ret = false;
     if (!store.state.metaMask) {
@@ -206,6 +204,7 @@ export class MetaMask {
     return contract
   }
   toHex(num) {
+    console.log(web3.utils.toHex(num + '000000000000000000'))
     return web3.utils.toHex(num + '000000000000000000');
   }
   //直接转账充币地址

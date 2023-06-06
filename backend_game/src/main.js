@@ -4,8 +4,7 @@ import App from "./App.vue";
 import { createApp } from "vue";
 import 'font-awesome/css/font-awesome.min.css'
 import installElementPlus from "./plugins/element";
-//import "./assets/font/iconfont.css";
-//require("../mock/index.js");
+import { Web3ModalManager } from '@/utils/web3model'
 
 const app = createApp(App);
 installElementPlus(app);
@@ -16,4 +15,5 @@ app.config.errorHandler = (err, vm, info) => {
 app.config.warnHandler = (msg, instance, trace) => {
     console.log(msg)
 }
+app.config.globalProperties.web3ModalManager = new Web3ModalManager();
 

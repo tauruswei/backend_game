@@ -70,33 +70,8 @@
               </el-icon>
             </el-col>
             <el-col :span="20" style="text-align: right;">
-              <div style="margin-top:5px;margin-right:10px;display:inline-block">
-                <el-button :type="isConnected?'success':'primary'" @click="connectWallet" :disabled="isConnected?true:false" round>
-                  <span v-if="!isConnected"><i class="fa fa-btc"></i>&nbsp;&nbsp;Connect Wallet</span>
-                  <el-popover v-if="isConnected" placement="top" :width="300" trigger="hover">
-                    <template #reference>
-                      <span>
-                        <i class="fa fa-bullseye"></i>
-                        <b style="display:inline-block;vertical-align: top;font-weight:400">&nbsp;&nbsp;{{$store.state.metaMask.account.substring(0,12)+'...'}}</b>
-                      </span>
-                    </template>
-                    <template #default>
-                      <div style="text-align: center;">
-                          <el-image :src="require('@/assets/metamask-fox.svg')"></el-image>
-                          <p style="width:60%;margin:5px auto"><small>{{ $store.state.metaMask.account }}</small></p>
-                          <el-row :gutter="10" style="margin-top:10px">
-                            <el-col :span="12">
-                              <el-tag type="success" round><i class="fa fa-bullseye" style="font-size:12px;"></i> &nbsp;connected</el-tag>
-                            </el-col>
-                            <el-col :span="12" style="text-align: right;">
-                              bsc network
-                            </el-col>
-                          </el-row>
-                      </div>
-                      
-                    </template>
-                  </el-popover>
-                </el-button>
+              <div style="margin-right:10px;display:inline-block">
+                <wallet-connection></wallet-connection>
                 <!---->
                 <el-tooltip placement="bottom" content="Invite to be channel Leader" v-if="$store.state.role == 1">
                   <el-button type="success" @click="inviteVisible = true" round>
@@ -110,7 +85,7 @@
                 <span class="el-dropdown-link">
                   <el-avatar :size="32" :src="require('@/assets/img/avatar.jpg')" />
                   <span class="text-container">
-                    {{ "&nbsp;&nbsp;" + ($store.state.user?$store.state.user.name:'user') }}
+                    {{ "&nbsp;&nbsp;" + ($store.state.user?.name) }}
                     <el-icon class="el-icon--right">
                       <CaretBottom />
                     </el-icon>
@@ -148,7 +123,7 @@
   </div>
 </template>
 <script setup>
-import { ref, computed } from "vue";
+import { ref, getCurrentInstance } from "vue";
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
 import { logout } from "@/utils/logout";
@@ -156,27 +131,18 @@ import LayoutFooter from "@/components/footer.vue"
 import PasswordCont from "@/components/password.vue";
 import EmailCont from "@/components/reset-email.vue";
 import QcodeCont from "@/components/qcode.vue";
-import { MetaMask } from "@/utils/meta-mask";
+import WalletConnection from "@/components/wallet-connection.vue";
+const { proxy } = getCurrentInstance()
 const store = useStore();
 const router = useRouter()
-const isCollapse = ref(false);
+const isCollapse = ref(false)
 const width = ref("240px");
 const visible = ref(false);
 const visible1 = ref(false);
 const inviteVisible = ref(false)
-function change() {
-  isCollapse.value = !isCollapse.value;
-  if (isCollapse.value) {
-    width.value = "70px";
-  } else {
-    width.value = "240px";
-  }
-}
-let isConnected = computed(() => {
-  return store.state.metaMask ? true : false
-})
 function handleCommand(command) {
   if (command == "logout") {
+    proxy.web3ModalManager.disconnect()
     router.push("/login")
   }
   if (command == 'password') visible.value = true;
@@ -185,10 +151,6 @@ function handleCommand(command) {
 }
 function closeemail() {
   visible1.value = false
-}
-function connectWallet() {
-  let metaMask = new MetaMask();
-  if (!isConnected.value) metaMask.connectMetaMask()
 }
 </script>
 <style lang="scss" scoped>
