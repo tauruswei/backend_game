@@ -49,7 +49,7 @@ const routes = [
   {
     path: "/plat",
     component: LayoutUser,
-    redirect: "/plat/dashboard",
+    redirect: "/plat/home",
     meta: {
       permission: "admin",
       title: "页面",
@@ -58,64 +58,20 @@ const routes = [
     },
     children: [
       {
-        path: "dashboard",
-        name: "dashboard",
-        component: (store.state.role == 0 ? adminDash : userDash),
+        path: "home",
+        name: "home",
+        component: userDash,
         meta: {
-          route: "/plat/dashboard",
-          permission: (store.state.role == 0 ? "admin" : "user"),
-          title: "dashboard",
-          name: "dashboard",
-          requireAuth: true,
-        },
-      }, {
-        path: "staking-rewards",
-        name: "staking-rewards",
-        component: () => import("../views/admin/staking-rewards.vue"),
-        meta: {
-          route: "/plat/staking-rewards",
-          permission: "admin",
-          title: "staking-rewards",
-          name: "staking-rewards",
-          requireAuth: true,
-        },
-      }, {
-        path: "promotion-rewards",
-        name: "promotion-rewards",
-        component: () => import("../views/admin/promotion-rewards.vue"),
-        meta: {
-          route: "/plat/promotion-rewards",
-          permission: "admin",
-          title: "promotion-rewards",
-          name: "promotion-rewards",
-          requireAuth: true,
-        },
-      }, {
-        path: "logs",
-        name: "logs",
-        component: () => import("../views/admin/logs.vue"),
-        meta: {
-          route: "/plat/logs",
-          permission: "admin",
-          title: "logs",
-          name: "logs",
-          requireAuth: true,
-        },
-      }, {
-        path: "blog",
-        name: "blog",
-        component: () => import("../views/admin/blog.vue"),
-        meta: {
-          route: "/plat/blog",
-          permission: "admin",
-          title: "blog",
-          name: "blog",
+          route: "/plat/home",
+          permission: "user",
+          title: "home",
+          name: "home",
           requireAuth: true,
         },
       }, {
         path: "nfts",
         name: "nfts",
-        component: () => import("../views/user/nfts.vue"),
+        component: () => import("@/views/user/nfts.vue"),
         meta: {
           route: "/plat/nfts",
           permission: "user",
@@ -126,7 +82,7 @@ const routes = [
       }, {
         path: "staking",
         name: "staking",
-        component: () => import("../views/user/staking.vue"),
+        component: () => import("@/views/user/staking.vue"),
         meta: {
           route: "/plat/staking",
           permission: "user",
@@ -138,9 +94,78 @@ const routes = [
     ],
   },
   {
+    path: "/admin",
+    component: LayoutUser,
+    redirect: "/admin/home",
+    meta: {
+      permission: "admin",
+      title: "页面",
+      name: "home",
+      requireAuth: false,
+    },
+    children: [
+      {
+        path: "home",
+        name: "home",
+        component: adminDash,
+        meta: {
+          route: "/admin/home",
+          permission: "admin",
+          title: "home",
+          name: "home",
+          requireAuth: true,
+        },
+      }, {
+        path: "staking-rewards",
+        name: "staking-rewards",
+        component: () => import("@/views/admin/staking-rewards.vue"),
+        meta: {
+          route: "/admin/staking-rewards",
+          permission: "admin",
+          title: "staking-rewards",
+          name: "staking-rewards",
+          requireAuth: true,
+        },
+      }, {
+        path: "promotion-rewards",
+        name: "promotion-rewards",
+        component: () => import("@/views/admin/promotion-rewards.vue"),
+        meta: {
+          route: "/admin/promotion-rewards",
+          permission: "admin",
+          title: "promotion-rewards",
+          name: "promotion-rewards",
+          requireAuth: true,
+        },
+      }, {
+        path: "logs",
+        name: "logs",
+        component: () => import("@/views/admin/logs.vue"),
+        meta: {
+          route: "/admin/logs",
+          permission: "admin",
+          title: "logs",
+          name: "logs",
+          requireAuth: true,
+        },
+      }, {
+        path: "blog",
+        name: "blog",
+        component: () => import("@/views/admin/blog.vue"),
+        meta: {
+          route: "/admin/blog",
+          permission: "admin",
+          title: "blog",
+          name: "blog",
+          requireAuth: true,
+        },
+      }, 
+    ],
+  },
+  {
     path: "/channel",
     name: "channel",
-    component: () => import("../views/user/channel.vue"),
+    component: () => import("@/views/user/channel.vue"),
     meta: {
       route: "/channel",
       permission: "user",
@@ -163,7 +188,7 @@ const routes = [
       {
         path: "profile",
         name: "profile",
-        component: () => import("../views/setting/profile.vue"),
+        component: () => import("@/views/setting/profile.vue"),
         meta: {
           route: "/setting/profile",
           permission: "admin",

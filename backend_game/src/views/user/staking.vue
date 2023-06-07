@@ -492,7 +492,7 @@ function purchase() {
   }
   loadingHelper.show()
   metaMask.transferByContract(data).then((res) => {
-    visible.value = false;
+    visible1.value = false;
     loadingHelper.hide();
     let param = {
       "txId": res.transactionHash,

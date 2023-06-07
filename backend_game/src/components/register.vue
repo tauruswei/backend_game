@@ -195,7 +195,7 @@ function doLogin() {
       store.commit("setRole", res.data.userType);
       store.commit("setToken", res.data.token);
       router.push({
-        path: "/plat/dashboard",
+        path: "/plat/home",
       });
     }
     loadingHelper.hide();

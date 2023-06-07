@@ -7,11 +7,11 @@
           <span class="wtext-l">Chess Of Stars</span>
         </div>
         <el-menu class="menu" :default-active="$route.meta.route" :collapse="isCollapse" router>
-          <el-menu-item index="/plat/dashboard">
+          <el-menu-item index="/plat/home">
             <el-icon>
               <Odometer />
             </el-icon>
-            <span>Dashboard</span>
+            <span>Assets</span>
           </el-menu-item>
           <el-sub-menu index="2-4">
             <template #title>
@@ -23,25 +23,31 @@
               <span style="padding-left:10px">Profile</span>
             </el-menu-item>
           </el-sub-menu>
-          <el-menu-item index="/plat/staking-rewards" v-if="$store.state.role == 3">
+          <el-menu-item index="/admin/home" v-if="$store.state.role == 3">
+            <el-icon>
+              <Odometer />
+            </el-icon>
+            <span>Dashboard</span>
+          </el-menu-item>
+          <el-menu-item index="/admin/staking-rewards" v-if="$store.state.role == 3">
             <el-icon>
               <MessageBox />
             </el-icon>
             <span>Staking Rewards</span>
           </el-menu-item>
-          <el-menu-item index="/plat/promotion-rewards" v-if="$store.state.role == 3">
+          <el-menu-item index="/admin/promotion-rewards" v-if="$store.state.role == 3">
             <el-icon>
               <Present />
             </el-icon>
             <span>Promotion Rewards</span>
           </el-menu-item>
-          <el-menu-item index="/plat/blog" v-if="$store.state.role == 3">
+          <el-menu-item index="/admin/blog" v-if="$store.state.role == 3">
             <el-icon>
               <Memo />
             </el-icon>
             <span>Blog</span>
           </el-menu-item>
-          <el-menu-item index="/plat/logs" v-if="$store.state.role == 3">
+          <el-menu-item index="/admin/logs" v-if="$store.state.role == 3">
             <el-icon>
               <Document />
             </el-icon>
@@ -70,7 +76,7 @@
               </el-icon>
             </el-col>
             <el-col :span="20" style="text-align: right;">
-              <div style="margin-top:5px;margin-right:10px;display:inline-block">
+              <div style="margin-top:5px;margin-right:10px;display:inline-block" v-if="$store.state.role !== 3">
                 <el-button :type="isConnected?'success':'primary'" @click="connectWallet" :disabled="isConnected?true:false" round>
                   <span v-if="!isConnected"><i class="fa fa-btc"></i>&nbsp;&nbsp;Connect Wallet</span>
                   <el-popover v-if="isConnected" placement="top" :width="300" trigger="hover">
