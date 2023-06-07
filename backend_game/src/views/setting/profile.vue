@@ -189,7 +189,7 @@ import { userApi } from "@/api/request"
 import { loadingHelper } from "@/utils/loading";
 import { ElMessage, ElNotification } from "element-plus";
 const store = useStore();
-const url = ref('https://testnet.bscscan.com/address/');
+const url = ref(store.state.metaMask.url);
 const userData = ref({
   wallet_address_nft: "gueryiy",
   wallet_address_sl: "gueryiy",

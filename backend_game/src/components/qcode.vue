@@ -5,12 +5,12 @@
     <p>share the image to invite user</p>
     <el-button type="primary" @click="download()" id="download" round>Download</el-button>
     <div style="width:80%;margin:20px auto;">
-        <el-input v-model="url">
-          <template #append>
-            <el-button type="primary" @click="copyClick">Copy</el-button>
-          </template>
-        </el-input>
-      </div>
+      <el-input v-model="url">
+        <template #append>
+          <el-button type="primary" @click="copyClick">Copy</el-button>
+        </template>
+      </el-input>
+    </div>
   </div>
 </template>
 <script setup>
@@ -21,19 +21,19 @@ import { ref, defineProps, watch } from "vue"
 const store = useStore();
 const props = defineProps({
   id: {
-    type: [Number,String]
+    type: [Number, String]
   }
 })
 const inviterId = ref(store.state.user ? store.state.user.id : '')
 watch(() => props.id, (val) => {
   if (val) {
     inviterId.value = val;
-    url.value = process.env.VUE_APP_MODE == "development" ? (window.location.protocol + window.location.host + '/register?id=' + inviterId.value) : (process.env.VUE_APP_LOCAL+'/register?id=' + inviterId.value)
+    url.value = process.env.VUE_APP_MODE == "development" ? (window.location.protocol + window.location.host + '/register?id=' + inviterId.value) : (process.env.VUE_APP_LOCAL + '/register?id=' + inviterId.value)
   }
 }, { immediate: true })
 
 const url = ref(null)
-url.value = process.env.VUE_APP_MODE == "development" ? (window.location.protocol + window.location.host + '/register?id=' + inviterId.value) : (process.env.VUE_APP_LOCAL+'/register?id=' + inviterId.value)
+url.value = process.env.VUE_APP_MODE == "development" ? (window.location.protocol + window.location.host + '/register?id=' + inviterId.value) : (process.env.VUE_APP_LOCAL + '/register?id=' + inviterId.value)
 const size = ref(240)
 function download() {
   let canvas = document.getElementById('qcode').getElementsByTagName('canvas')

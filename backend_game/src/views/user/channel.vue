@@ -22,7 +22,7 @@
 import { ref } from "vue";
 import QcodeCont from "@/components/qcode.vue";
 import { userApi } from "@/api/request";
-import { ElMessage, ElNotification } from "element-plus";
+import { ElMessage } from "element-plus";
 
 const walletAddress = ref("")
 const inviteVisible = ref(false)

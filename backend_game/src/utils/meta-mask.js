@@ -5,7 +5,7 @@ import Web3 from 'web3'
 import store from "@/store/index";
 import router from "@/router/index";
 import { ElMessage,ElMessageBox, ElNotification } from "element-plus"
-import { userApi, chainApi } from '@/api/request';
+import { chainApi } from '@/api/request';
 let option = {
   injectProvider: false,
   communicationLayerPreference: 'webrtc',
@@ -32,7 +32,10 @@ const web3 = new Web3(provider)
 provider.on('chainChanged', (chainId) => {
   //window.location.reload()
   if(!store.state.user) return;
-  store.commit("setMetaMask", { ...store.state.metaMask, chainID: chainId });
+  chainApi.getWalletUrl(chainId).then(res=>{
+    if(res.code==0) store.commit("setMetaMask", { ...store.state.metaMask, chainID: chainId, url:res.data });
+  })
+  
   ElMessage.success("You have changed the chain!")
   window.location.reload()
 })
@@ -134,7 +137,9 @@ export class MetaMask {
       const chainID = await provider.request({ method: 'eth_chainId' });
       const account = accounts[0];
       if (account) {
-        store.commit("setMetaMask", { chainID: chainID, account: account });
+        chainApi.getWalletUrl(chainID).then(res=>{
+          if(res.code==0) store.commit("setMetaMask", { chainID: chainID, account: account, url:res.data });
+        })
         ElMessage.success('Connected!')
         isCurrentAccount()
       }
