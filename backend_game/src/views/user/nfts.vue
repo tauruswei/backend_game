@@ -40,23 +40,23 @@
     </div>
     <template v-if="activeName =='buy'">
       <div class="card card-pricing card-raised">
-        <div class="card-body">
-          <h6 class="card-category">Get a NFT in the blind box</h6>
-          <div class="card-icon icon-rose">
-            <i class="fa fa-gift"></i>
+        <div class="card-body" style="background-color: #fef5ff;">
+          <div>
+            <el-image style="width:300px" :src="require('@/assets/img/blindbox.png')"></el-image>
           </div>
+          <h6 class="card-category">Get a NFT in the blind box</h6>
           <h3 class="card-title">20 USDT</h3>
           <span style="text-decoration:line-through!important;">99 USDT</span>
           <p class="card-description">
             Each blind box contains a NFT, which may be one of the
             <a target="_blank" href="https://chessofstars.io/nftlist">NFTs here</a>.
           </p>
-          <button class="btn btn-rose btn-round" @click="getCard()">Try your luck</button>
+          <button class="btn btn-primary btn-round" @click="getCard()">Try your luck</button>
         </div>
       </div>
     </template>
     <!--View NFT on Blockchain-->
-    <el-dialog v-model="visible" title="View NFT on Blockchain" width="800px" @close="handleSaveParam()" destroy-on-close>
+    <el-dialog v-model="visible" title="View NFT on Blockchain" width="800px" @close="handleSaveParam()" :open-delay="delay" destroy-on-close>
       <div class="card ">
         <div class="card-header card-header-info card-header-icon">
           <div class="card-icon">
@@ -113,7 +113,7 @@
           </el-button>
         </el-col>
         <el-col :span="24" style="margin-top:15px;">
-          <el-button type="success" @click="nftSwap()" style="width:100%" :disabled="!disabled">
+          <el-button type="success" @click="nftSwap($event)" style="width:100%" :disabled="!disabled">
             <el-tag size="small">2</el-tag>&nbsp;Buy
           </el-button>
         </el-col>
@@ -135,6 +135,7 @@ import { loadingHelper } from "@/utils/loading";
 import { DateHelper } from "@/utils/helper";
 import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import { ElMessage, ElNotification } from "element-plus";
+import confetti from 'canvas-confetti';
 const store = useStore()
 const TYPES = reactive({ buy: 0, used: 1, expire: 2 })
 let activeName = ref(0);
@@ -158,6 +159,7 @@ const address = ref({
   clubAddress: "",
   userAddress: ""
 })
+const delay=ref(0)
 const amount = ref(20);
 const amount1 = ref(1);
 const metaMask = new MetaMask();
@@ -165,6 +167,7 @@ const disabled = ref(false)
 const nftParam = ref({})
 function view(data) {
   if (data.command == "view") {
+    delay.value = 0
     isOnlyUpdateStatus.value = true;
     visible.value = true;
     queryRow(data.data);
@@ -262,13 +265,15 @@ function nftApprove() {
     loadingHelper.hide();
   })
 }
-function nftSwap() {
+function nftSwap(event) {
   if (!metaMask.isAvailable()) return;
   if (isEmpty()) return;
   let data = { from: store.state.metaMask.account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: blindBox, club: address.value.clubAddress, channel: address.value.channelAddress }
   loadingHelper.show()
   metaMask.nftBlindBoxByContract(data).then((res) => {
     visible1.value = false;
+    delay.value = 1000
+    anomation(event,true)
     nftParam.value = {
       "txId": res.transactionHash,
       "transType": TXTYPE.blindbox,
@@ -342,6 +347,24 @@ function updataStatus(row) {
       query();
     }
   })
+}
+function anomation(evt,hard){
+  let lastX = 0;
+  const direction = Math.sign(lastX - evt.clientX);
+	lastX = evt.clientX;
+	const particleCount = hard ? r(122, 245) : r(2, 15);
+	confetti({
+		particleCount,
+		angle: r(90, 90 + direction * 30),
+		spread: r(45, 80),
+		origin: {
+			x: evt.clientX / window.innerWidth,
+			y: evt.clientY / window.innerHeight
+		}
+	});
+}
+function r(mi, ma) {
+	return parseInt(Math.random() * (ma - mi) + mi);
 }
 onMounted(() => {
   query();

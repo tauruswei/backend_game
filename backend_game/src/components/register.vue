@@ -52,7 +52,7 @@ import { useRouter } from "vue-router";
 import { userApi } from "@/api/request";
 import { AppHelper } from "@/utils/helper";
 import { loadingHelper } from "@/utils/loading";
-import { encryptAES, decryptAES } from "@/utils/crypto";
+import { encryptAES } from "@/utils/crypto";
 import { ElNotification, ElMessage } from "element-plus";
 import CountDownTime from "@/components/count-down-time.vue"
 const store = useStore();
@@ -67,7 +67,7 @@ const form = ref({
   userType: 2,
   code: "",
   rpassword: "",
-  inviterId: id?decryptAES(id):null,
+  inviterId: id?id:null,
 });
 const rules = ref({});
 const time = ref(0)
@@ -194,9 +194,7 @@ function doLogin() {
       store.commit("setUser", { name: res.data.userName, account: res.data.walletAddress, id: res.data.userId });
       store.commit("setRole", res.data.userType);
       store.commit("setToken", res.data.token);
-      router.push({
-        path: "/plat/home",
-      });
+      router.push("/plat")
     }
     loadingHelper.hide();
   });

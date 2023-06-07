@@ -12,7 +12,7 @@
               </el-col>
               <el-col :span="8" style="font-size:18px;line-height: 32px;">current balance:&nbsp;<b>{{ balance.cosd }}</b></el-col>
               <el-col :span="4" style="text-align: right;">
-                <el-button type="primary" @click="open('buy')" round>Purchase COSD</el-button>
+                <purchase-cosd @balance="getBalance('cosd')"></purchase-cosd>
               </el-col>
             </el-row>
           </div>
@@ -170,37 +170,7 @@
           AMOUNT
         </el-col>
         <el-col :span="20">
-          <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min.value" :max="100000" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
-        </el-col>
-        <el-col :span="24" style="margin-top:15px" v-if="needApprove">
-          <el-button type="primary" @click="handleApproveOperate()" style="width:100%" :disabled="disabled">
-            <el-tag size="small">1</el-tag>&nbsp;Approve Spending
-          </el-button>
-        </el-col>
-        <el-col :span="24" style="margin-top:15px">
-          <el-button type="success" @click="handleTransferOperate()" style="width:100%" :disabled="!disabled">
-            <el-tag size="small" v-if="needApprove">2</el-tag>&nbsp;{{buttonText}}
-          </el-button>
-        </el-col>
-      </el-row>
-    </el-dialog>
-    <el-dialog v-model="visible1" :title="action.title" width="400px" destroy-on-close>
-      <el-alert title="TIP: Accumulated expenses of usdt cannot exceed 100,000" type="info" style="margin-bottom:20px"></el-alert>
-      <el-row :gutter="5" style="margin-bottom:20px">
-        <el-col :span="4">
-          COSD
-        </el-col>
-        <el-col :span="20">
-          <el-input-number v-model.number="action.amount1" controls-position="right" :step="1" :min="20" :max="max" placeholder="`set amount" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
-        </el-col>
-        <el-col :span="24" style="text-align: right;">
-          <el-button type="success" link @click="toMax()">Max</el-button>
-        </el-col>
-      </el-row>
-      <el-row :gutter="5">
-        <el-col :span="4">USDT</el-col>
-        <el-col :span="20">
-          <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min.value" :max="max/20" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
+          <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min.value" :max="100000" placeholder="`set amount" style="width:100%" clearable></el-input-number>
         </el-col>
         <el-col :span="24" style="margin-top:15px" v-if="needApprove">
           <el-button type="primary" @click="handleApproveOperate()" style="width:100%" :disabled="disabled">
@@ -229,7 +199,8 @@ import { chainApi } from "@/api/request";
 import { loadingHelper } from "@/utils/loading";
 import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, POOL, savaAfterTranscation } from "@/utils/meta-mask";
 import { ElMessage } from "element-plus";
-import { cosdApi } from "../../api/request";
+import { cosdApi } from "@/api/request";
+import PurchaseCosd from "@/components/purchase-cosd.vue";
 const store = useStore();
 const active = ref("sl");
 const balance = ref({
@@ -245,9 +216,7 @@ const action = ref({
 const contracts = ref(CONTRACTS)
 const abis = ref({ sl: slStaking, club: clubStaking, defi: defiStaking, buy: buyToken, cosd: cosdToken, busd: busdApprove })
 const titles = ref({ buy: "Purchase COSD", "slstaking": "Staking for starlight league", "clubstaking": "Staking for club ownership", "defistaking": "Staking for earning COSD" })
-const timeEnd = ref({ defi: 30 * 60 * 1000, sl: 60 * 60 * 1000, club: 60 * 60 * 1000 })
 const visible = ref(false)
-const visible1 = ref(false)
 const isClubBoss = ref(false)
 const needApprove = ref(true);
 const metaMask = new MetaMask();
@@ -255,23 +224,8 @@ const disabled = ref(false)
 const reward = ref(0)
 const buttonText = ref('Buy')
 const min = ref(1)
-const allowPurchace = ref(2000000)
-const marketBalance = ref(10000000)
-const max = ref(2000000)
 function handleClick(tab) {
   active.value = tab;
-}
-function translate(type) {
-  let rate = 20;
-  if (type == 'cosd') {
-    action.value.amount1 = action.value.amount * rate;
-  } else if (type == 'usdt') {
-    action.value.amount = action.value.amount1 / rate;
-  }
-}
-function toMax() {
-  action.value.amount1 = Math.min(marketBalance.value, allowPurchace.value, 2000000)
-  translate('usdt')
 }
 async function getStakeTime(key) {
   let data = {
@@ -329,29 +283,6 @@ function getReward() {
     reward.value = res
   });
 }
-async function getAmountOfCOSDHasBuy() {
-  if (!metaMask.isAvailable()) return;
-  let data = {
-    abi: abis.value['buy'],
-    address: CONTRACTS['buycosd'].address,
-    from: store.state.metaMask.account
-  }
-  await metaMask.getCOSDHasBuyByContract(data).then(res => {
-    allowPurchace.value = 2000000 - Math.round((res) * 1000) / 1000;
-  });
-}
-async function getMarketBalance() {
-  if (!metaMask.isAvailable()) return;
-  let data = {
-    abi: abis.value['cosd'],
-    address: CONTRACTS['cosd'].address,
-    baddress: CONTRACTS['buycosd'].address,
-    from: store.state.metaMask.account
-  }
-  await metaMask.getMarketBalanceByContract(data).then(res => {
-    marketBalance.value = Math.round((res) * 1000) / 1000;
-  });
-}
 function getClubStatus() {
   if (!metaMask.isAvailable()) return;
   let data = {
@@ -375,18 +306,6 @@ async function open(command) {
   }
   disabled.value = false;
   min.value = 1;
-  if (command == 'buy') {
-    await getMarketBalance()
-    await getAmountOfCOSDHasBuy()
-    max.value = Math.min(marketBalance.value, allowPurchace.value, 2000000)
-    buttonText.value = "Buy"
-    if(max.value <= 0){
-      if(!allowPurchace.value) ElMessage.error("The COSD limit is 2,000,000,there is no available quota!")
-      if(!marketBalance.value) ElMessage.error("No COSD available for purchase in the market !")
-      return;
-    }
-    visible1.value = true
-  }
   if (command == 'slstaking') {
     action.value.amount = 400;
     needApprove.value = true;
@@ -431,13 +350,11 @@ async function open(command) {
   }
 }
 function handleApproveOperate() {
-  if (action.value.command == "buy") purchaseApprove();
   if (action.value.command == "slstaking") stakingApprove('sl');
   if (action.value.command == "clubstaking") stakingApprove('club');
   if (action.value.command == "defistaking") stakingApprove('defi');
 }
 function handleTransferOperate() {
-  if (action.value.command == "buy") purchase();
   if (action.value.command == "slstaking") stakingFunc('sl');
   if (action.value.command == "clubstaking") stakingFunc('club');
   if (action.value.command == "defistaking") stakingFunc('defi');
@@ -459,58 +376,6 @@ function validatorAmount(key) {
   } else {
     return true;
   }
-}
-function purchaseApprove() {
-  if (!metaMask.isAvailable()) return;
-  let data = {
-    from: store.state.metaMask.account,
-    address: CONTRACTS["buycosd"].address,
-    money: action.value.amount,
-    abi: abis.value.buy,
-    approveAddress: CONTRACTS["busd"].address,
-    abiApprove: busdApprove
-  }
-  if (isEmpty()) return;
-  loadingHelper.show()
-  metaMask.approveByContract(data).then(() => {
-    loadingHelper.hide();
-    disabled.value = true;
-  }).catch(err => {
-    loadingHelper.hide();
-  })
-}
-function purchase() {
-  if (!metaMask.isAvailable()) return;
-  if (isEmpty()) return;
-  let data = {
-    from: store.state.metaMask.account,
-    address: CONTRACTS["buycosd"].address,
-    money: action.value.amount,
-    abi: abis.value.buy,
-    approveAddress: CONTRACTS["busd"].address,
-    abiApprove: busdApprove
-  }
-  loadingHelper.show()
-  metaMask.transferByContract(data).then((res) => {
-    visible1.value = false;
-    loadingHelper.hide();
-    let param = {
-      "txId": res.transactionHash,
-      "transType": TXTYPE.buy,
-      "fromUserId": store.state.user.id,
-      "fromAssetType": ASSETTYPE.usdt,
-      "fromAmount": action.value.amount,
-      "toUserId": store.state.user.id,
-      "toAssetType": ASSETTYPE.cosd,
-      "toAmount": action.value.amount1,
-      "nftVo": {},
-      "blockNumber": res.blockNumber
-    }
-    savaAfterTranscation(param)
-    getBalance('cosd');
-  }).catch(err => {
-    loadingHelper.hide();
-  })
 }
 async function stakingApprove(key) {
   let isTimeAvailable = await isStakeTimeAvailable(key)

@@ -7,7 +7,7 @@
           <span class="wtext-l">Chess Of Stars</span>
         </div>
         <el-menu class="menu" :default-active="$route.meta.route" :collapse="isCollapse" router>
-          <el-menu-item index="/plat/home">
+          <el-menu-item index="/plat/assets" v-if="$store.state.role != 3">
             <el-icon>
               <Odometer />
             </el-icon>

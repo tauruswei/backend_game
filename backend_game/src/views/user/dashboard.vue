@@ -105,16 +105,20 @@
           </div>
         </div>
       </div>-->
-      <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12">
-          <div class="card">
-            <div style="display:flex;align-items: center;justify-content: space-between;padding:10px;">
-              <div>Current Evics: <b>{{ dashboard.evics }}</b></div>
-              <div>
-                <button class="btn btn-warning btn-round" @click="open('buy')">purchase</button>
-                <button class="btn btn-success btn-round" style="margin-left:10px;" :disabled="!dashboard.evics" @click="open('withdraw')">withdraw</button>
-              </div>
-            </div>
+      <div class="card">
+        <div style="display:flex;align-items: center;justify-content: space-between;padding:10px;">
+          <div>Current Evics: <b>{{ dashboard.evics }}</b></div>
+          <div>
+            <el-button type="primary" @click="open('buy')" round>Purchase</el-button>
+            <el-button type='success' style="margin-left:10px;" :disabled="!dashboard.evics" @click="open('withdraw')" round>Withdraw</el-button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items: center;justify-content: space-between;padding:10px;">
+          <div>Current COSD: <b>{{ dashboard.cosd }}</b></div>
+          <div>
+            <purchase-cosd @balance="getBalance('cosd')"></purchase-cosd>
           </div>
         </div>
       </div>
@@ -125,11 +129,11 @@
       <el-row :gutter="10">
         <el-col :span="6">EVIC</el-col>
         <el-col :span="18">
-          <el-input-number v-model.number="amount1" controls-position="right" :step="100" :min="100" :max="max" style="width:100%" @change="translate('evic')" clearable></el-input-number>
+          <el-input-number v-model.number="amount1" controls-position="right" :step="100" :min="min" :max="max" style="width:100%" @change="translate('evic')" clearable></el-input-number>
         </el-col>
         <el-col :span="6" style="margin-top:10px">USDT</el-col>
         <el-col :span="18" style="margin-top:10px">
-          <el-input-number v-model.number="amount" controls-position="right" :step="1" :min="1" :max="100000" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
+          <el-input-number v-model.number="amount" controls-position="right" :step="1" :min="min/100" :max="max/100" style="width:100%" @change="translate('usdt')" clearable></el-input-number>
         </el-col>
         <el-col :span="24" style="margin-top:30px;">
           <el-button type="success" style="width:100%" @click="handleOperate">{{ action.btn }}</el-button>
@@ -149,6 +153,7 @@ import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/
 import { evicsApi } from '@/api/request';
 import { loadingHelper } from "@/utils/loading";
 import { ElNotification, ElMessage } from "element-plus";
+import PurchaseCosd from "@/components/purchase-cosd.vue";
 const store = useStore();
 const dashboard = ref({ cosd: 0, nft: 0, games: 1, evics: 0 })
 const metaMask = new MetaMask();
@@ -157,7 +162,8 @@ const amount = ref(0)
 const amount1 = ref(0)
 const visible = ref(false)
 const action = ref({ title: "", btn: "" })
-const max=ref(100000)
+const max = ref(Infinity)
+const min = ref(100)
 function isEmpty() {
   if (!amount.value) {
     ElMessage.error("amount is required!")
@@ -199,10 +205,21 @@ function open(command) {
     title: "Evics Transcation",
     command: command
   }
-  if(command == "withdraw") max.value = dashboard.value.evics;
-  else max.value = 100000
-  amount.value = 1;
-  amount1.value = 100;
+  if (command == "withdraw") {
+    max.value = dashboard.value.evics;
+    min.value = 1000;
+    if (dashboard.value.evics < 1000) {
+      ElMessage.warning("Lower limit of withdrawal 1000 evic!");
+      return;
+    }
+    amount.value = 10;
+    amount1.value = 1000;
+  } else {
+    max.value = Infinity
+    min.value = 100
+    amount.value = 1;
+    amount1.value = 100;
+  }
   visible.value = true;
 }
 function handleOperate() {

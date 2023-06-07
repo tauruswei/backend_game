@@ -1,10 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
-import store from "../store/index";
+import store from "@/store/index";
 import LayoutUser from "@/components/layout-user.vue";
-import Login from "../components/login.vue";
-import Notfound from "@/components/404";
+import Login from "@/components/login.vue";
+import Notfound from "@/components/404.vue";
 import adminDash from "@/views/admin/dashboard.vue";
-import userDash from "@/views/user/dashboard.vue";
 const routes = [
   {
     path: "/",
@@ -22,7 +21,7 @@ const routes = [
   {
     path: "/register",
     name: "register",
-    component: () => import("../components/register.vue"),
+    component: () => import("@/components/register.vue"),
     meta: {
       title: "注册",
       route: "/register",
@@ -31,14 +30,14 @@ const routes = [
   {
     path: "/password",
     name: "password",
-    component: () => import("../components/password.vue"),
+    component: () => import("@/components/password.vue"),
     meta: {
       title: "修改密码",
       route: "/password",
     }
   },
   {
-    path: "/404",
+    path: "/:catchAll(.*)",
     name: "404",
     component: Notfound,
     meta: {
@@ -49,26 +48,29 @@ const routes = [
   {
     path: "/plat",
     component: LayoutUser,
-    redirect: "/plat/home",
+    redirect: "/plat/assets",
+    name: "plat",
     meta: {
-      permission: "admin",
+      route: "/plat",
+      permission: "user",
       title: "页面",
-      name: "home",
+      name: "plat",
       requireAuth: false,
     },
     children: [
       {
-        path: "home",
-        name: "home",
-        component: userDash,
+        path: "assets",
+        name: "assets",
+        component: () => import("@/views/user/dashboard.vue"),
         meta: {
-          route: "/plat/home",
+          route: "/plat/assets",
           permission: "user",
-          title: "home",
-          name: "home",
+          title: "assets",
+          name: "assets",
           requireAuth: true,
         },
-      }, {
+      }, 
+      {
         path: "nfts",
         name: "nfts",
         component: () => import("@/views/user/nfts.vue"),
@@ -79,7 +81,8 @@ const routes = [
           name: "nfts",
           requireAuth: true,
         },
-      }, {
+      }, 
+      {
         path: "staking",
         name: "staking",
         component: () => import("@/views/user/staking.vue"),
@@ -100,7 +103,7 @@ const routes = [
     meta: {
       permission: "admin",
       title: "页面",
-      name: "home",
+      name: "admin",
       requireAuth: false,
     },
     children: [
@@ -159,7 +162,7 @@ const routes = [
           name: "blog",
           requireAuth: true,
         },
-      }, 
+      },
     ],
   },
   {
@@ -207,17 +210,9 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.length === 0) {
-    //匹配前往的路由不存在
-    from.name
-      ? next({
-        name: from.name,
-      })
-      : next("/404"); //判断此跳转路由的来源路由是否存在，存在的情况跳转到来源路由，否则跳转到404页面
-  } else {
     document.title = to.meta.title;
     //进入登录页面的时候清除 token
-    if (to.path == "/login"|| to.path == "/register") {
+    if (to.path == "/login" || to.path == "/register") {
       store.commit("setUser", null);
       store.commit("setRole", null);
       store.commit("removeToken", "");
@@ -228,7 +223,7 @@ router.beforeEach((to, from, next) => {
     if (to.meta.requireAuth) {
       // 判断该路由是否需要登录权限
       if (store.state.token !== "" && store.state.token !== null) {
-          next();
+        next();
       } else {
         next({
           path: "/login",
@@ -237,7 +232,6 @@ router.beforeEach((to, from, next) => {
     } else {
       next();
     }
-  }
 });
 
 export default router;
