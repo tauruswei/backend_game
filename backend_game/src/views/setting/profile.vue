@@ -39,7 +39,7 @@
                       </div>
                     </div>
                   </div>
-                  <button class="btn btn-warning pull-right" @click="update()"><i class="fa fa-edit"></i>&nbsp;&nbsp;Update</button>
+                  <button class="btn btn-warning pull-right" @click="updateInfo()"><i class="fa fa-edit"></i>&nbsp;&nbsp;Update</button>
                   <div class="clearfix"></div>
                 </div>
               </div>
@@ -203,7 +203,7 @@ function getAddress() {
   }
   userData.value.wallet_address = store.state.metaMask.account
 }
-function update() {
+function updateInfo() {
   if (!userData.value.name) {
     ElMessage.error("username is required")
     return

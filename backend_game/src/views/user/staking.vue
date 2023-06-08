@@ -2,6 +2,7 @@
   <div class="content">
     <div class="container-fluid">
       <div class="row">
+        <!--Purchase cosd-->
         <div class="card" style="margin-bottom:0;margin-top:10px">
           <div class="card-header" style="display:flex;align-items: center;justify-content: space-between;padding:10px;">
             <div>Current COSD: <b>{{ balance.cosd }}</b></div>
@@ -144,7 +145,7 @@
                         <div class="card-icon icon-rose">
                           <i class="fa fa-line-chart"></i>
                         </div>
-                        <h3 class="card-title"> <el-tooltip placement="top" :content="reward+''"><b>{{ Math.round((reward) * 1000) / 1000 }}</b></el-tooltip> COSD will be earned</h3>
+                        <h3 class="card-title"> <el-tooltip placement="top" :content="reward+''"><b>{{ Math.round((reward) * 1000) / 1000 }}</b></el-tooltip> COSD will be rewarded</h3>
                         <p class="card-description">
                           Retain 3 decimal places
                         </p>
@@ -160,6 +161,7 @@
         </div>
       </div>
     </div>
+    <!--Staking && UnStaking-->
     <el-dialog v-model="visible" :title="action.title" width="400px" destroy-on-close>
       <el-row :gutter="5">
         <el-col :span="4">
@@ -223,6 +225,131 @@ const min = ref(1)
 function handleClick(tab) {
   active.value = tab;
 }
+
+function getBalance(key) {
+  let data = {
+    abi: abis.value[key],
+    address: CONTRACTS[key].address,
+    from: store.state.metaMask.account
+  }
+  metaMask.getBalanceByContract(data).then(res => {
+    balance.value[key] = Math.round((res) * 1000) / 1000;
+  });
+}
+function getRewardBalance() {
+  if (!metaMask.isAvailable()) return;
+  let data = {
+    abi: abis.value['defi'],
+    address: CONTRACTS['defi'].address,
+    from: store.state.metaMask.account
+  }
+  metaMask.getRewardByContract(data).then(res => {
+    reward.value = res
+  });
+}
+function getClubStatus() {
+  if (!metaMask.isAvailable()) return;
+  let data = {
+    abi: abis.value['club'],
+    address: CONTRACTS['club'].address,
+    from: store.state.metaMask.account
+  }
+  metaMask.getClubStatusByContract(data).then(res => {
+    isClubBoss.value = res;
+    if (res) store.commit("setRole", 1)
+    else store.commit("setRole", 2)
+  });
+}
+async function open(command) {
+  if (!metaMask.isAvailable()) return;
+  action.value = {
+    amount1: 20,
+    amount: 1,
+    title: titles.value[command],
+    command: command
+  }
+  disabled.value = false;
+  min.value = 1;
+  openHandler[command];
+}
+const openHandler = {
+  slstaking:()=>{
+    action.value.amount = 400;
+    needApprove.value = true;
+    buttonText.value = "Stake";
+    min.value = 400;
+    visible.value = true
+  },
+  clubstaking:()=>{
+    action.value.amount = 4000;
+    needApprove.value = true;
+    buttonText.value = "Stake";
+    min.value = 4000;
+    visible.value = true
+  },
+  defistaking:()=>{
+    action.value.amount = 1;
+    needApprove.value = true;
+    buttonText.value = "Stake";
+    min.value = 1;
+    visible.value = true
+  },
+  slunstaking:()=>{
+    action.value.amount = balance.value['sl'];
+    needApprove.value = false
+    buttonText.value = "Unstake"
+    disabled.value = true;
+    visible.value = true
+  },
+  clubunstaking:()=>{
+    action.value.amount = balance.value['club'];
+    needApprove.value = false
+    buttonText.value = "Unstake"
+    disabled.value = true;
+    visible.value = true
+  },
+  defiunstaking:()=>{
+    action.value.amount = balance.value['defi'];
+    needApprove.value = false
+    buttonText.value = "Unstake"
+    disabled.value = true;
+    visible.value = true
+  }
+}
+const approveHandler = {
+  slstaking:stakingApprove('sl'),
+  clubstaking:stakingApprove('club'),
+  defistaking:stakingApprove('defi')
+}
+const transferHandler = {
+  slstaking: stakingTransfer('sl'),
+  clubstaking: stakingTransfer('club'),
+  defistaking: stakingTransfer('defi'),
+  slunstaking: unstakingTransfer('sl'),
+  clubunstaking: unstakingTransfer('club'),
+  defiunstaking: unstakingTransfer('defi')
+}
+function handleApproveOperate() {
+  approveHandler[action.value.command];
+}
+function handleTransferOperate() {
+  transferHandler[action.value.command];
+}
+function isEmpty() {
+  if (!action.value.amount) {
+    ElMessage.error("amount is required!")
+  }
+  return action.value.amount ? false : true;
+}
+function validatorAmount(key) {
+  if (isEmpty()) return false;
+  if (action.value.amount > balance.value[key]) {
+    ElMessage.error("Cannot exceed the balance value!")
+    return false
+  } else {
+    return true;
+  }
+}
 async function getStakeTime(key) {
   let data = {
     poolId: POOL[key]
@@ -258,121 +385,6 @@ async function isUnStakeTimeAvailable(key) {
   if (!ret) ElMessage.error("Not exceeding the specified time limit!")
   return ret
 }
-function getBalance(key) {
-  let data = {
-    abi: abis.value[key],
-    address: CONTRACTS[key].address,
-    from: store.state.metaMask.account
-  }
-  metaMask.getBalanceByContract(data).then(res => {
-    balance.value[key] = Math.round((res) * 1000) / 1000;
-  });
-}
-function getReward() {
-  if (!metaMask.isAvailable()) return;
-  let data = {
-    abi: abis.value['defi'],
-    address: CONTRACTS['defi'].address,
-    from: store.state.metaMask.account
-  }
-  metaMask.getRewardByContract(data).then(res => {
-    reward.value = res
-  });
-}
-function getClubStatus() {
-  if (!metaMask.isAvailable()) return;
-  let data = {
-    abi: abis.value['club'],
-    address: CONTRACTS['club'].address,
-    from: store.state.metaMask.account
-  }
-  metaMask.getClubStatusByContract(data).then(res => {
-    isClubBoss.value = res;
-    if (res) store.commit("setRole", 1)
-    else store.commit("setRole", 2)
-  });
-}
-async function open(command) {
-  if (!metaMask.isAvailable()) return;
-  action.value = {
-    amount1: 20,
-    amount: 1,
-    title: titles.value[command],
-    command: command
-  }
-  disabled.value = false;
-  min.value = 1;
-  if (command == 'slstaking') {
-    action.value.amount = 400;
-    needApprove.value = true;
-    buttonText.value = "Stake";
-    min.value = 400;
-    visible.value = true
-  }
-  if (command == 'clubstaking') {
-    action.value.amount = 4000;
-    needApprove.value = true;
-    buttonText.value = "Stake";
-    min.value = 4000;
-    visible.value = true
-  }
-  if (command == 'defistaking') {
-    action.value.amount = 1;
-    needApprove.value = true;
-    buttonText.value = "Stake";
-    min.value = 1;
-    visible.value = true
-  }
-  if (command == 'clubunstaking') {
-    action.value.amount = balance.value['club'];
-    needApprove.value = false
-    buttonText.value = "Unstake"
-    disabled.value = true;
-    visible.value = true
-  }
-  if (command == 'slunstaking') {
-    action.value.amount = balance.value['sl'];
-    needApprove.value = false
-    buttonText.value = "Unstake"
-    disabled.value = true;
-    visible.value = true
-  }
-  if (command == 'defiunstaking') {
-    action.value.amount = balance.value['defi'];
-    needApprove.value = false
-    buttonText.value = "Unstake"
-    disabled.value = true;
-    visible.value = true
-  }
-}
-function handleApproveOperate() {
-  if (action.value.command == "slstaking") stakingApprove('sl');
-  if (action.value.command == "clubstaking") stakingApprove('club');
-  if (action.value.command == "defistaking") stakingApprove('defi');
-}
-function handleTransferOperate() {
-  if (action.value.command == "slstaking") stakingFunc('sl');
-  if (action.value.command == "clubstaking") stakingFunc('club');
-  if (action.value.command == "defistaking") stakingFunc('defi');
-  if (action.value.command == "slunstaking") unStakingFunc('sl');
-  if (action.value.command == "clubunstaking") unStakingFunc('club');
-  if (action.value.command == "defiunstaking") unStakingFunc('defi');
-}
-function isEmpty() {
-  if (!action.value.amount) {
-    ElMessage.error("amount is required!")
-  }
-  return action.value.amount ? false : true;
-}
-function validatorAmount(key) {
-  if (isEmpty()) return false;
-  if (action.value.amount > balance.value[key]) {
-    ElMessage.error("Cannot exceed the balance value!")
-    return false
-  } else {
-    return true;
-  }
-}
 async function stakingApprove(key) {
   let isTimeAvailable = await isStakeTimeAvailable(key)
   if (key != 'sl' && !isTimeAvailable) return;
@@ -387,7 +399,7 @@ async function stakingApprove(key) {
     loadingHelper.hide();
   })
 }
-function stakingFunc(key) {
+function stakingTransfer(key) {
   if (!metaMask.isAvailable()) return;
   let data = { from: store.state.metaMask.account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key], abiApprove: cosdToken, approveAddress: CONTRACTS["cosd"].address }
   loadingHelper.show()
@@ -411,12 +423,12 @@ function stakingFunc(key) {
     getBalance(key);
     getBalance('cosd');
     if (key == 'club') getClubStatus()
-    if (key == 'defi') { getReward() }
+    if (key == 'defi') { getRewardBalance() }
   }).catch(err => {
     loadingHelper.hide();
   })
 }
-async function unStakingFunc(key) {
+async function unstakingTransfer(key) {
   let isTimeAvailable = await isUnStakeTimeAvailable(key);
   if (key !== 'sl' && !isTimeAvailable) return;
   if (!metaMask.isAvailable()) return;
@@ -440,7 +452,7 @@ async function unStakingFunc(key) {
       "blockNumber": res.blockNumber
     }
     savaAfterTranscation(param)
-    if (key == 'defi') { getReward() }
+    if (key == 'defi') { getRewardBalance() }
     loadingHelper.hide();
     getBalance(key);
     getBalance('cosd');
@@ -469,7 +481,7 @@ onMounted(() => {
     getBalance('club')
     getBalance('defi')
     getClubStatus()
-    getReward()
+    getRewardBalance()
   }
 })
 </script>

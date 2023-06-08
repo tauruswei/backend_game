@@ -205,7 +205,14 @@ function open(command) {
     title: "Evics Transcation",
     command: command
   }
-  if (command == "withdraw") {
+  openHandler[command];
+  visible.value = true;
+}
+function handleOperate() {
+  evicHandler[action.value.command]
+}
+const openHandler = {
+  withdraw: () => {
     max.value = dashboard.value.evics;
     min.value = 1000;
     if (dashboard.value.evics < 1000) {
@@ -214,75 +221,74 @@ function open(command) {
     }
     amount.value = 10;
     amount1.value = 1000;
-  } else {
+  },
+  buy: () => {
     max.value = Infinity
     min.value = 100
     amount.value = 1;
     amount1.value = 100;
   }
-  visible.value = true;
 }
-function handleOperate() {
-  if (action.value.command == 'buy') purchase()
-  if (action.value.command == 'withdraw') withdraw()
-}
-function purchase() {
-  if (!metaMask.isAvailable()) return;
-  if (isEmpty()) return;
-  let data = {
-    from: store.state.metaMask.account,
-    to: CONTRACTS['evic'].address,
-    address: CONTRACTS["busd"].address,
-    money: amount.value,
-    abi: abis.value.busd
-  }
-  loadingHelper.show()
-  metaMask.transferEvicByContract(data).then((res) => {
-    visible.value = false;
-    loadingHelper.hide();
-    let param = {
-      "txId": res.transactionHash,
-      "transType": TXTYPE.evic,
-      "fromUserId": store.state.user.id,
-      "fromAssetType": ASSETTYPE.usdt,
-      "fromAmount": amount.value,
-      "toUserId": store.state.user.id,
-      "toAssetType": ASSETTYPE.evic,
-      "toAmount": amount1.value,
-      "nftVo": {},
+const evicHandler = {
+  buy: () => {
+    if (!metaMask.isAvailable()) return;
+    if (isEmpty()) return;
+    let data = {
+      from: store.state.metaMask.account,
+      to: CONTRACTS['evic'].address,
+      address: CONTRACTS["busd"].address,
+      money: amount.value,
+      abi: abis.value.busd
     }
-    savaAfterTranscation(param)
-    dashboard.value.evics = dashboard.value.evics + amount.value * 100;
-  }).catch(err => {
-    loadingHelper.hide();
-  })
-}
-function withdraw() {
-  if (!amount1.value) return;
-  if (amount1.value > dashboard.value.evics) {
-    ElMessage.error("cannot exceed the balance!")
-    return
+    loadingHelper.show()
+    metaMask.transferEvicByContract(data).then((res) => {
+      visible.value = false;
+      loadingHelper.hide();
+      let param = {
+        "txId": res.transactionHash,
+        "transType": TXTYPE.evic,
+        "fromUserId": store.state.user.id,
+        "fromAssetType": ASSETTYPE.usdt,
+        "fromAmount": amount.value,
+        "toUserId": store.state.user.id,
+        "toAssetType": ASSETTYPE.evic,
+        "toAmount": amount1.value,
+        "nftVo": {},
+      }
+      savaAfterTranscation(param)
+      dashboard.value.evics = dashboard.value.evics + amount.value * 100;
+    }).catch(err => {
+      loadingHelper.hide();
+    })
+  },
+  withdraw: () => {
+    if (!amount1.value) return;
+    if (amount1.value > dashboard.value.evics) {
+      ElMessage.error("cannot exceed the balance!")
+      return
+    }
+    let param = {
+      "transType": TXTYPE.evic1,
+      "fromUserId": store.state.user.id,
+      "fromAssetType": ASSETTYPE.evic,
+      "fromAmount": 0 - amount1.value,
+      "toUserId": store.state.user.id,
+      "toAssetType": ASSETTYPE.usdt,
+      "toAmount": 0 - amount.value,
+      "nftVo": {}
+    }
+    loadingHelper.show()
+    evicsApi.withdraw(param).then((res) => {
+      visible.value = false;
+      loadingHelper.hide();
+      ElNotification({ type: "success", message: "it will take a few minutes,please refresh later" })
+      dashboard.value.evics = dashboard.value.evics - amount1.value;
+    }).catch(err => {
+      loadingHelper.hide();
+    })
   }
-  let param = {
-    "transType": TXTYPE.evic1,
-    "fromUserId": store.state.user.id,
-    "fromAssetType": ASSETTYPE.evic,
-    "fromAmount": 0 - amount1.value,
-    "toUserId": store.state.user.id,
-    "toAssetType": ASSETTYPE.usdt,
-    "toAmount": 0 - amount.value,
-    "nftVo": {}
-  }
-  loadingHelper.show()
-  evicsApi.withdraw(param).then((res) => {
-    visible.value = false;
-    loadingHelper.hide();
-    ElNotification({ type: "success", message: "it will take a few minutes,please refresh later" })
-    dashboard.value.evics = dashboard.value.evics - amount1.value;
-  }).catch(err => {
-    loadingHelper.hide();
-  })
 }
+
 onMounted(() => {
   evicBalance()
   if (metaMask.isAvailable()) {

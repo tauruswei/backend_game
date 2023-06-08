@@ -1,44 +1,44 @@
 <template>
   <div>
     <ul class="nav nav-pills nav-pills-warning nav-pills-icons justify-content-center" role="tablist">
-      <li class="nav-item" @click="handleClick(0)">
-        <a class="nav-link" :class="activeName==0?' active':''" href="javascript:void(0);" role="tablist">
+      <li class="nav-item" @click="handleTabClick(TYPES.active)">
+        <a class="nav-link" :class="activeName==TYPES.active?' active':''" href="javascript:void(0);" role="tablist">
           <i class="fa fa-fire"></i> Active
         </a>
       </li>
-      <li class="nav-item" @click="handleClick(1)">
-        <a class="nav-link" :class="activeName==1?' active':''" href="javascript:void(0);" role="tablist">
+      <li class="nav-item" @click="handleTabClick(TYPES.using)">
+        <a class="nav-link" :class="activeName==TYPES.using?' active':''" href="javascript:void(0);" role="tablist">
           <i class="fa fa-clock-o"></i> Using
         </a>
       </li>
-      <li class="nav-item" @click="handleClick(2)">
-        <a class="nav-link" :class="activeName==2?' active':''" href="javascript:void(0);" role="tablist">
+      <li class="nav-item" @click="handleTabClick(TYPES.used)">
+        <a class="nav-link" :class="activeName==TYPES.used?' active':''" href="javascript:void(0);" role="tablist">
           <i class="fa fa-ban"></i> Used
         </a>
       </li>
-      <li class="nav-item" @click="handleClick('buy')">
-        <a class="nav-link" :class="activeName=='buy'?' active':''" href="javascript:void(0);" role="tablist">
+      <li class="nav-item" @click="handleTabClick(TYPES.buy)">
+        <a class="nav-link" :class="activeName==TYPES.buy?' active':''" href="javascript:void(0);" role="tablist">
           <i class="fa fa-gift"></i> Buy
         </a>
       </li>
     </ul>
     <div class="card">
-      <page-title :option="title" v-if="activeName !=='buy'"></page-title>
-      <div class="card-body" v-if="activeName == 0">
-        <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations" @commands="view"></dynamic-table>
+      <page-title :option="title" v-if="activeName !==TYPES.buy"></page-title>
+      <div class="card-body" v-if="activeName == TYPES.active">
+        <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations" @commands="handlerActions"></dynamic-table>
         <el-pagination background layout="prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
 
       </div>
-      <div class="card-body" v-if="activeName == 1">
-        <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="view"></dynamic-table>
+      <div class="card-body" v-if="activeName == TYPES.using">
+        <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="handlerActions"></dynamic-table>
         <el-pagination background layout="prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
       </div>
-      <div class="card-body" v-if="activeName == 2">
-        <dynamic-table :data="tableData" :header="tableHeader1" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="view"></dynamic-table>
+      <div class="card-body" v-if="activeName == TYPES.used">
+        <dynamic-table :data="tableData" :header="tableHeader1" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="handlerActions"></dynamic-table>
         <el-pagination background layout="prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
       </div>
     </div>
-    <template v-if="activeName =='buy'">
+    <template v-if="activeName ==TYPES.buy">
       <div class="card card-pricing card-raised">
         <div class="card-body" style="background-color: #fef5ff;">
           <div>
@@ -56,7 +56,7 @@
       </div>
     </template>
     <!--View NFT on Blockchain-->
-    <el-dialog v-model="visible" title="View NFT on Blockchain" width="800px" @close="handleSaveParam()" :open-delay="delay" destroy-on-close>
+    <el-dialog v-model="visible" title="View NFT on Blockchain" width="800px" @close="handleSaveParamAfterTransfer()" :open-delay="delay" destroy-on-close>
       <div class="card ">
         <div class="card-header card-header-info card-header-icon">
           <div class="card-icon">
@@ -73,7 +73,7 @@
               <el-row :gutter="10" v-if="rowData.status == 0">
                 <el-col :span="16">use it for game?</el-col>
                 <el-col :span="8" style="text-align: right;">
-                  <el-button type="primary" @click="isOnlyUpdateStatus?updataStatus(rowData):handleSaveParam(1)" round>Yes</el-button>
+                  <el-button type="primary" @click="isOnlyUpdateStatus?updateStatus(rowData):handleSaveParamAfterTransfer(1)" round>Yes</el-button>
                 </el-col>
               </el-row>
               <el-row :gutter="10" v-if="rowData.status == 1">
@@ -96,7 +96,7 @@
         </div>
       </div>
     </el-dialog>
-    <!--View NFT on Blockchain-->
+    <!--blind box-->
     <el-dialog v-model="visible1" title="Get a NFT in the blind box" width="400px" destroy-on-close>
       <el-row>
         <el-col :span="4">USDT</el-col>
@@ -122,10 +122,9 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, reactive, nextTick } from "vue";
+import { ref, onMounted, reactive } from "vue";
 import { useStore } from "vuex";
 import { nftApi, userApi } from "@/api/request";
-import { chainApi } from "@/api/request";
 import blindBox from "@/abi/blindBox.json";
 import busdToken from "@/abi/busdtoken.json";
 import nftToken from "@/abi/nft.json";
@@ -137,14 +136,14 @@ import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/
 import { ElMessage, ElNotification } from "element-plus";
 import confetti from 'canvas-confetti';
 const store = useStore()
-const TYPES = reactive({ buy: 0, used: 1, expire: 2 })
-let activeName = ref(0);
+const TYPES = ref({ buy: 3, used: 2, active: 0, using: 1 })
+let activeName = ref(TYPES.value.active);
 let title = ref({ type: "warning", title: "NFTs", desc: "All NFTs for points competitions which come from blind boxes" })
 let tableData = ref([])
 let tableHeader = ref(["id", "NFT_type", "blockchain", "minted_at", "game_chances"])
 let tableHeader1 = ref(["id", "NFT_type", "blockchain", "minted_at", "run_out_time"])
 let operations = ref([{ id: 1, type: 'success', icon: "fa fa-external-link", name: "View NFT on Blockchain", event: 'view' },
-{ id: 2, type: 'primary', icon: "fa fa-gamepad", name: "use it for game", event: 'updataStatus' },])
+{ id: 2, type: 'primary', icon: "fa fa-gamepad", name: "Use it for game", event: 'updateStatus' },])
 let operations1 = ref([{ id: 1, type: 'success', icon: "fa fa-external-link", name: "View NFT on Blockchain", event: 'view' },])
 let visible = ref(false);
 let visible1 = ref(false);
@@ -154,26 +153,22 @@ let pageSize = ref(10);
 let blockChain = ref('Binance Smart Chain')
 const isOnlyUpdateStatus = ref(true);
 const hasUpdated = ref(true);
-const address = ref({
-  channelAddress: "",
-  clubAddress: "",
-  userAddress: ""
-})
-const delay=ref(0)
+const address = ref({ channelAddress: "", clubAddress: "", userAddress: "" });
+const delay = ref(0);
 const amount = ref(20);
 const amount1 = ref(1);
 const metaMask = new MetaMask();
 const disabled = ref(false)
 const nftParam = ref({})
-function view(data) {
+function handlerActions(data) {
   if (data.command == "view") {
     delay.value = 0
     isOnlyUpdateStatus.value = true;
     visible.value = true;
-    queryRow(data.data);
+    setRowdata(data.data);
   }
-  if(data.command == "updataStatus"){
-    updataStatus(data.data)
+  if (data.command == "updateStatus") {
+    updateNFTStatus(data.data)
   }
 }
 function query() {
@@ -192,8 +187,8 @@ function query() {
           tx_id: i.txId,
           NFT_type: i.nftType,
           blockchain: i.blockChain,
-          minted_at: DateHelper.toString(i.mintedAt*1000),
-          run_out_time: DateHelper.toString(i.runOutTime*1000),
+          minted_at: DateHelper.toString(i.mintedAt * 1000),
+          run_out_time: DateHelper.toString(i.runOutTime * 1000),
           game_chances: i.gameChances,
           src: `https://cosd1.s3.amazonaws.com/${i.nftType}.png`
         }
@@ -203,7 +198,7 @@ function query() {
     }
   })
 }
-function queryRow(data) {
+function setRowdata(data) {
   let res = [data].map(i => {
     return {
       NFT_type: i.NFT_type,
@@ -218,9 +213,9 @@ function queryRow(data) {
   });
   rowData.value = res[0];
 }
-function handleClick(tab) {
+function handleTabClick(tab) {
   activeName.value = tab;
-  if (tab == 'buy') return
+  if (tab == TYPES.value.buy) return
   pageNum.value = 1;
   query();
 }
@@ -273,7 +268,7 @@ function nftSwap(event) {
   metaMask.nftBlindBoxByContract(data).then((res) => {
     visible1.value = false;
     delay.value = 1000
-    anomation(event,true)
+    animation(event, true)
     nftParam.value = {
       "txId": res.transactionHash,
       "transType": TXTYPE.blindbox,
@@ -291,15 +286,15 @@ function nftSwap(event) {
       "blockNumber": res.blockNumber
     }
     let tokenid = res.events.DrawCardEvent.returnValues.cardId;
-    nftInfo(tokenid,event)
-    
+    getNFTnfoFromChain(tokenid)
+
     loadingHelper.hide()
   }).catch(err => {
     console.log(err)
     loadingHelper.hide();
   })
 }
-function nftInfo(id,event) {
+function getNFTnfoFromChain(id) {
   if (!metaMask.isAvailable()) return;
   let param = {
     abi: nftToken,
@@ -320,10 +315,10 @@ function nftInfo(id,event) {
     nftParam.value.nftVo.attr2 = res.chances
     isOnlyUpdateStatus.value = false;
     hasUpdated.value = false;
-    
+
   })
 }
-function handleSaveParam(value) {
+function handleSaveParamAfterTransfer(value) {
   if (!hasUpdated.value && !isOnlyUpdateStatus.value) {
     if (value) nftParam.value.nftVo.status = value;
     savaAfterTranscation(nftParam.value)
@@ -332,7 +327,7 @@ function handleSaveParam(value) {
     if (value) rowData.value.status = value;
   }
 }
-function updataStatus(row) {
+function updateNFTStatus(row) {
   let data = {
     "tokenId": row.Token_ID,
     "status": 1
@@ -350,24 +345,24 @@ function updataStatus(row) {
     }
   })
 }
-function anomation(evt,hard){
+function animation(evt, hard) {
   let lastX = 0;
   const direction = Math.sign(lastX - evt.clientX);
-	lastX = evt.clientX;
-	const particleCount = hard ? r(122, 245) : r(2, 15);
-	confetti({
-		particleCount,
-    gravity:0.5,
-		angle: r(90, 90 + direction * 30),
-		spread: r(45, 80),
-		origin: {
-			x: evt.clientX / window.innerWidth,
-			y: evt.clientY / window.innerHeight
-		}
-	});
+  lastX = evt.clientX;
+  const particleCount = hard ? r(122, 245) : r(2, 15);
+  confetti({
+    particleCount,
+    gravity: 0.5,
+    angle: r(90, 90 + direction * 30),
+    spread: r(45, 80),
+    origin: {
+      x: evt.clientX / window.innerWidth,
+      y: evt.clientY / window.innerHeight
+    }
+  });
 }
 function r(mi, ma) {
-	return parseInt(Math.random() * (ma - mi) + mi);
+  return parseInt(Math.random() * (ma - mi) + mi);
 }
 onMounted(() => {
   query();
