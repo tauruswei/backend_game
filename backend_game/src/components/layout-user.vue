@@ -13,16 +13,12 @@
             </el-icon>
             <span>Assets</span>
           </el-menu-item>
-          <el-sub-menu index="2-4">
-            <template #title>
-              <el-icon>
-                <Setting />
-              </el-icon> Setting
-            </template>
-            <el-menu-item index="/setting/profile">
-              <span style="padding-left:10px">Profile</span>
-            </el-menu-item>
-          </el-sub-menu>
+          <el-menu-item index="/setting/profile">
+            <el-icon>
+              <Setting />
+            </el-icon>
+            <span>Profile</span>
+          </el-menu-item>
           <el-menu-item index="/admin/home" v-if="$store.state.role == 3">
             <el-icon>
               <Odometer />
@@ -88,18 +84,18 @@
                     </template>
                     <template #default>
                       <div style="text-align: center;">
-                          <el-image :src="require('@/assets/metamask-fox.svg')"></el-image>
-                          <p style="width:60%;margin:5px auto"><small>{{ $store.state.metaMask.account }}</small></p>
-                          <el-row :gutter="10" style="margin-top:10px">
-                            <el-col :span="12">
-                              <el-tag type="success" round><i class="fa fa-bullseye" style="font-size:12px;"></i> &nbsp;connected</el-tag>
-                            </el-col>
-                            <el-col :span="12" style="text-align: right;">
-                              bsc network
-                            </el-col>
-                          </el-row>
+                        <el-image :src="require('@/assets/metamask-fox.svg')"></el-image>
+                        <p style="width:60%;margin:5px auto"><small>{{ $store.state.metaMask.account }}</small></p>
+                        <el-row :gutter="10" style="margin-top:10px">
+                          <el-col :span="12">
+                            <el-tag type="success" round><i class="fa fa-bullseye" style="font-size:12px;"></i> &nbsp;connected</el-tag>
+                          </el-col>
+                          <el-col :span="12" style="text-align: right;">
+                            bsc network
+                          </el-col>
+                        </el-row>
                       </div>
-                      
+
                     </template>
                   </el-popover>
                 </el-button>

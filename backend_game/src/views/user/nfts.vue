@@ -122,7 +122,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted, reactive, nextTick } from "vue";
 import { useStore } from "vuex";
 import { nftApi, userApi } from "@/api/request";
 import { chainApi } from "@/api/request";
@@ -291,14 +291,15 @@ function nftSwap(event) {
       "blockNumber": res.blockNumber
     }
     let tokenid = res.events.DrawCardEvent.returnValues.cardId;
-    nftInfo(tokenid)
+    nftInfo(tokenid,event)
+    
     loadingHelper.hide()
   }).catch(err => {
     console.log(err)
     loadingHelper.hide();
   })
 }
-function nftInfo(id) {
+function nftInfo(id,event) {
   if (!metaMask.isAvailable()) return;
   let param = {
     abi: nftToken,
@@ -319,6 +320,7 @@ function nftInfo(id) {
     nftParam.value.nftVo.attr2 = res.chances
     isOnlyUpdateStatus.value = false;
     hasUpdated.value = false;
+    
   })
 }
 function handleSaveParam(value) {
@@ -355,6 +357,7 @@ function anomation(evt,hard){
 	const particleCount = hard ? r(122, 245) : r(2, 15);
 	confetti({
 		particleCount,
+    gravity:0.5,
 		angle: r(90, 90 + direction * 30),
 		spread: r(45, 80),
 		origin: {

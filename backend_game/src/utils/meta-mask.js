@@ -4,7 +4,8 @@ import detectEthereumProvider from '@metamask/detect-provider';
 import Web3 from 'web3'
 import store from "@/store/index";
 import router from "@/router/index";
-import { ElMessage,ElMessageBox, ElNotification } from "element-plus"
+import { messageHelper } from "@/utils/message-box";
+import { ElMessage, ElNotification } from "element-plus"
 import { chainApi } from '@/api/request';
 let option = {
   injectProvider: false,
@@ -30,74 +31,60 @@ const MMSDK = new MetaMaskSDK(option);
 const ethereum = MMSDK.getProvider();
 const web3 = new Web3(provider)
 provider.on('chainChanged', (chainId) => {
-  //window.location.reload()
-  if(!store.state.user) return;
-  chainApi.getWalletUrl(chainId).then(res=>{
-    if(res.code==0) store.commit("setMetaMask", { ...store.state.metaMask, chainID: chainId, url:res.data });
-  })
-  
-  ElMessage.success("You have changed the chain!")
-  window.location.reload()
+  if (!store.state.user) return;
+  console.log(chainId)
+  if (store.state.metaMask) {
+    chainApi.getWalletUrl(chainId).then(res => {
+      if (res.code == 0) {
+        store.commit("setMetaMask", { account: store.state.user.account, chainID: chainId, url: res.data });
+      }
+    })
+    ElMessage.success("You have changed the chain!")
+  }
 })
 provider.on('connect', (accounts) => {
   console.log('connect', accounts)
 })
 provider.on('accountsChanged', (accounts) => {
-  //window.location.reload()
   console.log('accountsChanged', accounts);
-  if(!store.state.user) return;
+  if (!store.state.user) return;
   if (!accounts.length) store.commit("setMetaMask", null);
   else {
-    store.commit("setMetaMask", { ...store.state.metaMask, account: accounts[0] });
-    isCurrentAccount()
+    if (store.state.metaMask) {
+      store.commit("setMetaMask", { chainID: store.state.metaMask.chainID, url: store.state.metaMask.url, account: accounts[0] });
+      if(!isCurrentAccount()) currentAccountTips()
+    }
   }
-  window.location.reload()
-
 })
 provider.on('message', message => {
   console.log('message', message)
 })
 provider.on('disconnect', () => {
+  console.log('disconnect')
+  store.commit("setMetaMask", null)
   //window.location.reload()
-  store.commit("setMetaMask", null);
-  window.location.reload()
 })
 function isCurrentAccount() {
-  console.log(store.state.user.account,store.state.metaMask.account)
-  if (!store.state.user.account || store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()) {
-    ElMessageBox.confirm(
-      'Not the current account,would you like to update the wallet address?',
-      'Warning',
-      {
-        confirmButtonText: 'OK',
-        cancelButtonText: 'Cancel',
-        type: 'warning',
-      }
-    )
-      .then(() => {
-        router.push("/setting/profile")
-      })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: 'Delete canceled',
-        })
-      })
-  }
-  if(!store.state.user.account) return false;
+  if (!store.state.user.account) return false;
   return store.state.user.account.toLowerCase() == store.state.metaMask.account.toLowerCase();
 }
-function isCurrentChain(id){
-  if(id != CHAINID) {
-    ElMessage.err("Not the same chain!")
-    return false;
-  }else{
-    return true
-  }
+function currentAccountTips() {
+  messageHelper.show('The wallet address you connected is inconsistent with the wallet address bounded to user,would you like to update the wallet address?',
+    'Warning', () => {
+      router.push("/setting/profile")
+    })
 }
 export class MetaMask {
   constructor() {
     this.provider = provider;
+  }
+  isCurrentChain(id) {
+    if (id != CHAINID) {
+      ElMessage.err("Not the same chain!")
+      return false;
+    } else {
+      return true
+    }
   }
   isAvailable() {
     let ret = false;
@@ -107,9 +94,12 @@ export class MetaMask {
     } else {
       ret = true;
     }
-    if(!isCurrentChain(store.state.metaMask.chainID)) return false;
+    if (!this.isCurrentChain(store.state.metaMask.chainID)) return false;
     if (isCurrentAccount()) ret = true;
-    else ret = false;
+    else {
+      ret = false;
+      currentAccountTips()
+    }
     return ret;
   }
   async connectMetaMask() {
@@ -137,11 +127,13 @@ export class MetaMask {
       const chainID = await provider.request({ method: 'eth_chainId' });
       const account = accounts[0];
       if (account) {
-        chainApi.getWalletUrl(chainID).then(res=>{
-          if(res.code==0) store.commit("setMetaMask", { chainID: chainID, account: account, url:res.data });
+        chainApi.getWalletUrl(chainID).then(res => {
+          if (res.code == 0) {
+            store.commit("setMetaMask", { chainID: chainID, account: account, url: res.data });
+            ElMessage.success('Connected!')
+            if(!isCurrentAccount()) currentAccountTips()
+          }
         })
-        ElMessage.success('Connected!')
-        isCurrentAccount()
       }
       else {
         store.commit("setMetaMask", null);
@@ -150,7 +142,6 @@ export class MetaMask {
     } catch (error) {
       console.log(error)
       store.commit("setMetaMask", null);
-      ElMessage.error(error)
       return false
     }
   }
@@ -288,7 +279,7 @@ export class MetaMask {
         console.log(res)
         resolve(res)
       }).catch(err => {
-        ElMessage.error(!err.status?"stake failed":err)
+        ElMessage.error(!err.status ? "stake failed" : err)
         console.log(err)
         reject(err)
       })

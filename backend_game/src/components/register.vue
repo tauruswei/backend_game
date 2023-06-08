@@ -41,7 +41,7 @@
           <el-button type="primary" class="w-100 shadow" @click="doRegister()">Sign Up</el-button>
         </el-form-item>
       </el-form>
-      <div style="margin-top: 60px; font-size: 14px"><span class="text-muted">Has account？</span><a href="/login">Sign In</a></div>
+      <div style="margin-top: 60px; font-size: 14px"><span class="text-muted">Already have an account？</span><a href="/login">Sign In</a></div>
     </div>
   </div>
 </template>
@@ -187,7 +187,7 @@ function doLogin() {
   loadingHelper.show();
   let data = {
     email: form.value.email,
-    passwd: form.value.passwd,
+    passwd: encryptAES(form.value.passwd),
   };
   userApi.login(data).then((res) => {
     if (res.code == 0 && res.msg == "success") {

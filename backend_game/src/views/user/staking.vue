@@ -2,25 +2,22 @@
   <div class="content">
     <div class="container-fluid">
       <div class="row">
-        <div class="card ">
+        <div class="card" style="margin-bottom:0;margin-top:10px">
+          <div class="card-header" style="display:flex;align-items: center;justify-content: space-between;padding:10px;">
+            <div>Current COSD: <b>{{ balance.cosd }}</b></div>
+            <div>
+              <purchase-cosd @balance="getBalance('cosd')"></purchase-cosd>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:15px">
           <div class="card-header ">
-            <el-row :gutter="10">
-              <el-col :span="12">
-                <h4 class="card-title">COSD Staking
-                  <small class="description">Please choose purpose</small>
-                </h4>
-              </el-col>
-              <el-col :span="8" style="font-size:18px;line-height: 32px;">current balance:&nbsp;<b>{{ balance.cosd }}</b></el-col>
-              <el-col :span="4" style="text-align: right;">
-                <purchase-cosd @balance="getBalance('cosd')"></purchase-cosd>
-              </el-col>
-            </el-row>
+            <h4 class="card-title">COSD Staking
+              <small class="description">Please choose purpose</small>
+            </h4>
           </div>
           <div class="card-body ">
-            <div class="alert alert-warning">
-              <span>Reminder: BSC(Binance smart chain) chain supported only, we'll support various chains soon.</span>
-            </div>
-
+            <el-alert type="warning" style="margin-bottom:20px" title="Reminder: BSC(Binance smart chain) chain supported only, we'll support various chains soon."></el-alert>
             <div class="row">
               <div class="col-md-3">
                 <ul class="nav nav-pills nav-pills-warning nav-pills-icons flex-column" role="tablist">
@@ -53,7 +50,6 @@
                         <p class="card-category">Current staking COSD</p>
                         <h3 class="card-title">{{ balance.sl }}</h3>
                         <span class="badge badge-pill" :class="balance.sl<400?' badge-default':' badge-success'">Starlight League Unqualified</span>
-                        <button class="btn btn-warning btn-round" v-if="balance.sl" @click="open('slunstaking')">Stop staking</button>
                       </div>
                       <div class="card-footer">
                         <div class="stats">
@@ -75,6 +71,7 @@
                           You need to stake 400 COSD (equivalent to 20 USDT) to get a qualification for Starlight League.
                         </p>
                         <button class="btn btn-rose btn-round" @click="open('slstaking')">Stake</button>
+                        <button class="btn btn-warning btn-round" v-if="balance.sl" @click="open('slunstaking')">Stop staking</button>
                       </div>
                     </div>
                   </div>
@@ -88,7 +85,6 @@
                         <p class="card-category">Current staking COSD</p>
                         <h3 class="card-title">{{ balance.club }}</h3>
                         <span class="badge badge-pill" :class="isClubBoss?' badge-success':' badge-default'">Club ownership Unqualified</span>
-                        <button class="btn btn-warning btn-round" v-if="balance.club" @click="open('clubunstaking')">Stop staking</button>
                       </div>
                       <div class="card-footer">
                         <div class="stats">
@@ -110,6 +106,7 @@
                           You need to stake 4000 COSD (equivalent to 200 USDT) to get a qualification for a club ownership.
                         </p>
                         <a href="javascript:void(0);" class="btn btn-rose btn-round" @click="open('clubstaking')">Stake</a>
+                        <button class="btn btn-warning btn-round" v-if="balance.club" @click="open('clubunstaking')">Stop staking</button>
                       </div>
                     </div>
                   </div>
@@ -140,7 +137,6 @@
                           You can only stake 2000 COSD (equivalent to 100 USDT).
                         </p>
                         <button class="btn btn-rose btn-round" @click="open('defistaking')">Stake</button>
-                        
                       </div>
                     </div>
                     <div class="card card-pricing card-raised for-cosd-unstaked" v-if="balance.defi||reward">
@@ -148,7 +144,7 @@
                         <div class="card-icon icon-rose">
                           <i class="fa fa-line-chart"></i>
                         </div>
-                        <h3 class="card-title"> <el-tooltip placement="top" :content="reward+''"><b >{{ Math.round((reward) * 1000) / 1000 }}</b></el-tooltip> COSD will be earned</h3>
+                        <h3 class="card-title"> <el-tooltip placement="top" :content="reward+''"><b>{{ Math.round((reward) * 1000) / 1000 }}</b></el-tooltip> COSD will be earned</h3>
                         <p class="card-description">
                           Retain 3 decimal places
                         </p>
