@@ -23,7 +23,7 @@
                 <ul class="nav nav-pills nav-pills-warning nav-pills-icons flex-column" role="tablist">
                   <li class="nav-item">
                     <a class="nav-link" :class="active=='sl'?' active show':''" data-toggle="tab" @click="handleClick('sl')" role="tablist">
-                      <i class="fa fa-asterisk"></i> Staking for <br />starlight league
+                      <i class="fa fa-connectdevelop"></i> Staking for <br />starlight league
                     </a>
                   </li>
                   <li class="nav-item">
@@ -45,7 +45,7 @@
                     <div class="card card-stats for-unqualified">
                       <div class="card-header card-header-warning card-header-icon">
                         <div class="card-icon">
-                          <i class="fa fa-asterisk"></i>
+                          <i class="fa fa-connectdevelop"></i>
                         </div>
                         <p class="card-category">Current staking COSD</p>
                         <h3 class="card-title">{{ balance.sl }}</h3>
@@ -61,7 +61,7 @@
                     <div class="card card-pricing card-raised for-unqualified">
                       <div class="card-body">
                         <div class="card-icon icon-rose">
-                          <i class="fa fa-asterisk"></i>
+                          <i class="fa fa-connectdevelop"></i>
                         </div>
                         <h3 class="card-title" style="color: rgb(188, 0, 0);font-weight:bold;"> 400 COSD = 20 USDT</h3>
                         <div style="font-weight: bold;color:rgb(66, 66, 66);">
