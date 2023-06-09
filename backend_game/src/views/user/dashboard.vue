@@ -204,11 +204,11 @@ function open(command) {
     title: "Evics Transcation",
     command: command
   }
-  openHandler[command];
+  openHandler[command]();
   visible.value = true;
 }
 function handleOperate() {
-  evicHandler[action.value.command]
+  evicHandler[action.value.command]()
 }
 const openHandler = {
   withdraw: () => {
@@ -280,8 +280,10 @@ const evicHandler = {
     evicsApi.withdraw(param).then((res) => {
       visible.value = false;
       loadingHelper.hide();
-      ElNotification({ type: "success", message: "it will take a few minutes,please refresh later" })
-      dashboard.value.evics = dashboard.value.evics - amount1.value;
+      if (res.code == 0) {
+        ElNotification({ type: "success", message: "it will take a few minutes,please refresh later" })
+        dashboard.value.evics = dashboard.value.evics - amount1.value;
+      }
     }).catch(err => {
       loadingHelper.hide();
     })

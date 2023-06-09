@@ -79,7 +79,7 @@ export class MetaMask {
   }
   isCurrentChain(id) {
     if (id != CHAINID) {
-      ElMessage.error("Currently, Binance Smart Chain is only supported. Please switch to the Binance Smart Chain Mainnet network!")
+      messageHelper.error("Currently, Binance Smart Chain is only supported. Please switch to the Binance Smart Chain Mainnet network!")
       return false;
     } else {
       return true
@@ -88,7 +88,7 @@ export class MetaMask {
   isAvailable() {
     let ret = false;
     if (!store.state.metaMask) {
-      ElMessage.error("please connect wallet")
+      messageHelper.error("please connect wallet")
       return false;
     } else {
       ret = true;
@@ -112,7 +112,7 @@ export class MetaMask {
       return
     }
     if (!provider) {
-      ElMessage.error('Please install MetaMask!');
+      messageHelper.error('Please install MetaMask!');
       return
     }
     if (provider !== window.ethereum) {

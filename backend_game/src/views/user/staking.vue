@@ -269,7 +269,7 @@ async function open(command) {
   }
   disabled.value = false;
   min.value = 1;
-  openHandler[command];
+  openHandler[command]();
 }
 const openHandler = {
   slstaking:()=>{
@@ -316,23 +316,23 @@ const openHandler = {
   }
 }
 const approveHandler = {
-  slstaking:stakingApprove('sl'),
-  clubstaking:stakingApprove('club'),
-  defistaking:stakingApprove('defi')
+  slstaking: stakingApprove.bind(this,'sl'),
+  clubstaking: stakingApprove.bind(this,'club'),
+  defistaking: stakingApprove.bind(this,'defi')
 }
 const transferHandler = {
-  slstaking: stakingTransfer('sl'),
-  clubstaking: stakingTransfer('club'),
-  defistaking: stakingTransfer('defi'),
-  slunstaking: unstakingTransfer('sl'),
-  clubunstaking: unstakingTransfer('club'),
-  defiunstaking: unstakingTransfer('defi')
+  slstaking: stakingTransfer.bind(this,'sl'),
+  clubstaking: stakingTransfer.bind(this,'club'),
+  defistaking: stakingTransfer.bind(this,'defi'),
+  slunstaking: unstakingTransfer.bind(this,'sl'),
+  clubunstaking: unstakingTransfer.bind(this,'club'),
+  defiunstaking: unstakingTransfer.bind(this,'defi')
 }
 function handleApproveOperate() {
-  approveHandler[action.value.command];
+  approveHandler[action.value.command]();
 }
 function handleTransferOperate() {
-  transferHandler[action.value.command];
+  transferHandler[action.value.command]();
 }
 function isEmpty() {
   if (!action.value.amount) {
@@ -356,7 +356,6 @@ async function getStakeTime(key) {
   let ret;
   await cosdApi.checkTime(data).then((res => {
     if (res.code == 0) ret = res.data
-    else ElMessage.error(res.msg)
   }))
   return ret
 }
@@ -368,7 +367,6 @@ async function getUnstakeTime(key) {
   let ret;
   await cosdApi.checkTimeun(data).then((res => {
     if (res.code == 0) ret = res.data.flag
-    else ElMessage.error(res.msg)
   }))
   return ret
 }
@@ -385,6 +383,7 @@ async function isUnStakeTimeAvailable(key) {
   return ret
 }
 async function stakingApprove(key) {
+  console.log(11111)
   let isTimeAvailable = await isStakeTimeAvailable(key)
   if (key != 'sl' && !isTimeAvailable) return;
   if (!metaMask.isAvailable()) return;

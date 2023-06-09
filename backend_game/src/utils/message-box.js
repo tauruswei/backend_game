@@ -1,9 +1,10 @@
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox,ElMessage } from 'element-plus';
 //全局只有一次的message
-let count = 0;
+let count = 0,countMessage = 0;
+let messagebox;
 let message;
 const start = function (msg, title, success, error) {
-    message = ElMessageBox.confirm(msg, title,
+    messagebox = ElMessageBox.confirm(msg, title,
         {
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
@@ -17,7 +18,13 @@ const start = function (msg, title, success, error) {
             error ? error() : null
         })
 }
+const startMessage = function (msg) {
+    messagebox = ElMessage.error(msg)
+}
 const stop = () => {
+    messagebox.close();
+};
+const stopMessage = () => {
     message.close();
 };
 export const messageHelper = {
@@ -26,5 +33,11 @@ export const messageHelper = {
             start(msg, title, success, error);
         }
         count += 1;
+    },
+    error:(msg)=>{
+        if (countMessage === 0) {
+            startMessage(msg);
+        }
+        countMessage += 1;
     }
 }
