@@ -11,7 +11,7 @@
             <i class="fa fa-dashboard"></i>
             <span>Assets</span>
           </el-menu-item>
-          <el-menu-item index="/setting/profile">
+          <el-menu-item index="/setting/profile" v-if="$store.state.role == 3">
             <i class="fa fa-user"></i>
             <span>Profile</span>
           </el-menu-item>

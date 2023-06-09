@@ -383,7 +383,6 @@ async function isUnStakeTimeAvailable(key) {
   return ret
 }
 async function stakingApprove(key) {
-  console.log(11111)
   let isTimeAvailable = await isStakeTimeAvailable(key)
   if (key != 'sl' && !isTimeAvailable) return;
   if (!metaMask.isAvailable()) return;
