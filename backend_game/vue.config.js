@@ -4,6 +4,7 @@ const Timestamp = new Date().getTime();
 const AutoImport = require('unplugin-auto-import/webpack')
 const Components = require('unplugin-vue-components/webpack')
 const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = defineConfig({
   transpileDependencies: true,
@@ -45,6 +46,9 @@ module.exports = defineConfig({
     },
     externals: {
       fs: "var fs",
+      echarts: "echarts",
+      tinymce: "Tinymce",
+      web3: "Web3"
     },
     optimization: {
       minimize:true,
@@ -67,6 +71,7 @@ module.exports = defineConfig({
         threshold: 10240, // 对超过10k的数据压缩
         deleteOriginalAssets: false, // 是否删除未压缩的源文件，谨慎设置，如果希望提供非gzip的资源，可不设置或者设置为false（比如删除打包后的gz后还可以加载到原始资源文件）
       }),
+      new BundleAnalyzerPlugin()
     ],
   },
 });

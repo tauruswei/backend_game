@@ -8,57 +8,39 @@
         </div>
         <el-menu class="menu" :default-active="$route.meta.route" :collapse="isCollapse" router>
           <el-menu-item index="/plat/assets" v-if="$store.state.role != 3">
-            <el-icon>
-              <Odometer />
-            </el-icon>
+            <i class="fa fa-dashboard"></i>
             <span>Assets</span>
           </el-menu-item>
           <el-menu-item index="/setting/profile">
-            <el-icon>
-              <Setting />
-            </el-icon>
+            <i class="fa fa-user"></i>
             <span>Profile</span>
           </el-menu-item>
           <el-menu-item index="/admin/home" v-if="$store.state.role == 3">
-            <el-icon>
-              <Odometer />
-            </el-icon>
+            <i class="fa fa-dashboard"></i>
             <span>Dashboard</span>
           </el-menu-item>
           <el-menu-item index="/admin/staking-rewards" v-if="$store.state.role == 3">
-            <el-icon>
-              <MessageBox />
-            </el-icon>
+            <i class="fa fa-hdd-o"></i>
             <span>Staking Rewards</span>
           </el-menu-item>
           <el-menu-item index="/admin/promotion-rewards" v-if="$store.state.role == 3">
-            <el-icon>
-              <Present />
-            </el-icon>
+            <i class="fa fa-share-alt"></i>
             <span>Promotion Rewards</span>
           </el-menu-item>
           <el-menu-item index="/admin/blog" v-if="$store.state.role == 3">
-            <el-icon>
-              <Memo />
-            </el-icon>
+            <i class="fa fa-file-image-o"></i>
             <span>Blog</span>
           </el-menu-item>
           <el-menu-item index="/admin/logs" v-if="$store.state.role == 3">
-            <el-icon>
-              <Document />
-            </el-icon>
+            <i class="fa fa-file-text-o"></i>
             <span>Logs</span>
           </el-menu-item>
           <el-menu-item index="/plat/nfts" v-if="$store.state.role == 2||$store.state.role == 1">
-            <el-icon>
-              <Coin />
-            </el-icon>
+            <i class="fa fa-ticket"></i>
             <span>NFTs</span>
           </el-menu-item>
           <el-menu-item index="/plat/staking" v-if="$store.state.role == 2||$store.state.role == 1">
-            <el-icon>
-              <MessageBox />
-            </el-icon>
+            <i class="fa fa-hdd-o"></i>
             <span>Staking</span>
           </el-menu-item>
         </el-menu>
@@ -67,9 +49,7 @@
         <el-header class="header">
           <el-row justify="space-between" style="height: 40px">
             <el-col :span="4">
-              <el-icon class="el-icon--right header-icon" @click="change()">
-                <Expand />
-              </el-icon>
+              <i class="el-icon--right header-icon fa fa-navicon" @click="change()"></i>
             </el-col>
             <el-col :span="20" style="text-align: right;">
               <div style="margin-top:5px;margin-right:10px;display:inline-block" v-if="$store.state.role !== 3">
@@ -102,9 +82,7 @@
                 <!---->
                 <el-tooltip placement="bottom" content="Invite to be channel Leader" v-if="$store.state.role == 1">
                   <el-button type="success" @click="inviteVisible = true" round>
-                    <el-icon>
-                      <Share />
-                    </el-icon>&nbsp;Invite
+                    <i class="fa fa-link"></i>&nbsp;Invite
                   </el-button>
                 </el-tooltip>
               </div>
@@ -113,9 +91,7 @@
                   <el-avatar :size="32" :src="require('@/assets/img/avatar.webp')" />
                   <span class="text-container">
                     {{ "&nbsp;&nbsp;" + ($store.state.user?$store.state.user.name:'user') }}
-                    <el-icon class="el-icon--right">
-                      <CaretBottom />
-                    </el-icon>
+                    <i class="el-icon--right fa fa-caret-down"></i>
                   </span>
                 </span>
                 <template #dropdown>
