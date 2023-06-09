@@ -74,4 +74,7 @@ module.exports = defineConfig({
       new BundleAnalyzerPlugin()
     ],
   },
+  devServer:{
+    port:1521
+  }
 });
