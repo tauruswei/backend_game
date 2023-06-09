@@ -26,7 +26,6 @@ import { blogApi } from "@/api/request";
 import Tinymce from "@/components/tinymce/tinymce.vue";
 import CropeImg from "@/components/crope-img.vue"
 import { loadingHelper } from "@/utils/loading";
-import { ElNotification } from "element-plus"
 const props = defineProps({
   visible: { type: Boolean, default: false },
   title: { type: String, default: 'New Vlog' },

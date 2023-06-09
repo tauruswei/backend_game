@@ -5,7 +5,6 @@ import Web3 from 'web3'
 import store from "@/store/index";
 import router from "@/router/index";
 import { messageHelper } from "@/utils/message-box";
-import { ElMessage, ElNotification } from "element-plus"
 import { chainApi } from '@/api/request';
 let option = {
   injectProvider: false,
@@ -80,7 +79,7 @@ export class MetaMask {
   }
   isCurrentChain(id) {
     if (id != CHAINID) {
-      ElMessage.err("Not the same chain!")
+      ElMessage.error("Not the same chain!")
       return false;
     } else {
       return true

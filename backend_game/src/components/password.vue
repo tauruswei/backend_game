@@ -23,7 +23,6 @@ import { useRouter } from "vue-router";
 import { userApi } from "../api/request";
 import { loadingHelper } from "@/utils/loading";
 import { encryptAES } from "@/utils/crypto";
-import { ElNotification } from "element-plus";
 const emit = defineEmits(['close'])
 const store = useStore();
 const router = useRouter();

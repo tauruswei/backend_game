@@ -152,7 +152,6 @@ import busdToken from "@/abi/busdtoken.json";
 import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import { evicsApi } from '@/api/request';
 import { loadingHelper } from "@/utils/loading";
-import { ElNotification, ElMessage } from "element-plus";
 import PurchaseCosd from "@/components/purchase-cosd.vue";
 const store = useStore();
 const dashboard = ref({ cosd: 0, nft: 0, games: 1, evics: 0 })

@@ -1,7 +1,6 @@
 import router from "../router/index";
 import store from "../store/index";
 import { userApi } from "../api/request";
-import { ElNotification } from "element-plus";
 
 export const logout = function () {
     (async () => {

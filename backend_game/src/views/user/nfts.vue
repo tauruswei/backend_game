@@ -133,7 +133,6 @@ import DynamicTable from "@/components/dynamic-table.vue";
 import { loadingHelper } from "@/utils/loading";
 import { DateHelper } from "@/utils/helper";
 import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
-import { ElMessage, ElNotification } from "element-plus";
 import confetti from 'canvas-confetti';
 const store = useStore()
 const TYPES = ref({ buy: 3, used: 2, active: 0, using: 1 })

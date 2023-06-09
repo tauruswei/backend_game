@@ -40,7 +40,6 @@ import { userApi } from "@/api/request";
 import PasswordCont from "@/components/reset-password.vue";
 import { loadingHelper } from "@/utils/loading";
 import { encryptAES } from "@/utils/crypto";
-import { ElMessage, ElNotification } from "element-plus";
 const visible = ref(false);
 const store = useStore();
 const router = useRouter();

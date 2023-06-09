@@ -187,7 +187,6 @@ import { ref } from "vue";
 import { useStore } from "vuex";
 import { userApi } from "@/api/request"
 import { loadingHelper } from "@/utils/loading";
-import { ElMessage, ElNotification } from "element-plus";
 const store = useStore();
 const url = ref(store.state.metaMask.url);
 const userData = ref({

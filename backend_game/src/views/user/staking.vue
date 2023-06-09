@@ -196,7 +196,6 @@ import defiStaking from "@/abi/stakingPool.json";
 import { chainApi } from "@/api/request";
 import { loadingHelper } from "@/utils/loading";
 import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, POOL, savaAfterTranscation } from "@/utils/meta-mask";
-import { ElMessage } from "element-plus";
 import { cosdApi } from "@/api/request";
 import PurchaseCosd from "@/components/purchase-cosd.vue";
 const store = useStore();

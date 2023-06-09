@@ -2,7 +2,6 @@ import axios from "axios";
 import router from "../router/index";
 import store from "../store/index";
 import Qs from "qs";
-import { ElNotification } from "element-plus";
 import { loadingHelper } from "./loading";
 
 //配置了两个拦截器

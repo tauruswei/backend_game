@@ -34,7 +34,6 @@ import { useRouter } from "vue-router";
 import { userApi } from "../api/request";
 import { loadingHelper } from "@/utils/loading";
 import { encryptAES } from "@/utils/crypto";
-import { ElNotification } from "element-plus";
 import CountDownTime from "@/components/count-down-time.vue"
 const emit = defineEmits(['close'])
 const router = useRouter();

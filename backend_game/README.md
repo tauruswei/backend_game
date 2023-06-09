@@ -40,3 +40,11 @@ npm install node-sass@6.0.1 --legacy-peer-deps
 
 npm install echarts -D
 ```
+
+
+```
+@web3modal/html
+@web3modal/ethereum
+@walletconnect/web3-provider
+@wagmi/core
+```

@@ -40,7 +40,6 @@ import buyToken from "@/abi/buytoken.json";
 import cosdToken from "@/abi/cosdtoken.json";
 import busdApprove from "@/abi/busdtoken.json";
 import { loadingHelper } from "@/utils/loading";
-import { ElMessage } from "element-plus";
 import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 const store = useStore()
 const emit = defineEmits(['balance'])

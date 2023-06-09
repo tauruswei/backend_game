@@ -16,7 +16,6 @@
 <script setup>
 import QrcodeVue from 'qrcode.vue'
 import { useStore } from "vuex"
-import { ElMessage } from "element-plus";
 import { ref, defineProps, watch } from "vue"
 const store = useStore();
 const props = defineProps({
