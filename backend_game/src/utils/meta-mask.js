@@ -79,7 +79,7 @@ export class MetaMask {
   }
   isCurrentChain(id) {
     if (id != CHAINID) {
-      ElMessage.error("Not the same chain!")
+      ElMessage.error("Currently, Binance Smart Chain is only supported. Please switch to the Binance Smart Chain Mainnet network!")
       return false;
     } else {
       return true
@@ -130,7 +130,7 @@ export class MetaMask {
           if (res.code == 0) {
             store.commit("setMetaMask", { chainID: chainID, account: account, url: res.data });
             ElMessage.success('Connected!')
-            if(!isCurrentAccount()) currentAccountTips()
+            isAvailable()
           }
         })
       }

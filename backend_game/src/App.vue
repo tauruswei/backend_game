@@ -8,7 +8,6 @@
 
 <style lang="scss">
 @import "@/style/common.scss";
-@import "@/style/material-dashboard.min.css";
 </style>
 <script>
 export default {

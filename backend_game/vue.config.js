@@ -47,7 +47,7 @@ module.exports = defineConfig({
     externals: {
       fs: "var fs",
       echarts: "echarts",
-      tinymce: "Tinymce",
+      "tinymce/tinymce": "tinymce",
       web3: "Web3"
     },
     optimization: {
