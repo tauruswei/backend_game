@@ -1,13 +1,13 @@
 <template>
-  <el-table :data="tableData" fit>
-    <el-table-column label="No." :width="50">
+  <el-table :data="tableData" style="width: 100%;min-height:360px">
+    <el-table-column label="No." min-width="50">
       <template #default="scope">
         {{ scope.$index + preNum+1 }}
       </template>
     </el-table-column>
-    <el-table-column v-for="(item, index) in tableHeader" :key="index" :label="item.value" :prop="item.key">
+    <el-table-column v-for="(item, index) in tableHeader" :key="index" :label="item.value" :prop="item.key" min-width="120">
     </el-table-column>
-    <el-table-column label="Operations" width="120" v-if="operationsData">
+    <el-table-column label="Operations" min-width="120" v-if="operationsData">
       <template #default="scope">
         <span v-for="item in operationsData" :key="item.id" style="padding-left:5px;padding-right:5px;">
           <el-tooltip :content="item.name" placement="top">

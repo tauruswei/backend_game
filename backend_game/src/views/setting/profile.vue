@@ -50,7 +50,7 @@
           <!--<div class="card card-profile for-channel-only">
             <div class="card-avatar">
               <a href="#pablo">
-                <img class="img" :src="require('@/assets/img/channel-providers.jpg')" />
+                <img class="img" :src="require('@/assets/img/channel-providers.webp')" />
               </a>
             </div>
             <div class="card-body">
@@ -66,7 +66,7 @@
           <div class="card card-profile for-clubadmin-only">
             <div class="card-avatar">
               <a href="#pablo">
-                <img class="img" :src="require('@/assets/img/club-admin.png')" />
+                <img class="img" :src="require('@/assets/img/club-admin.webp')" />
               </a>
             </div>
             <div class="card-body">
@@ -82,7 +82,7 @@
           <!--<div class="card card-profile for-clubmember-only">
             <div class="card-avatar">
               <a href="#pablo">
-                <img class="img" :src="require('@/assets/img/club-member.jpg')" />
+                <img class="img" :src="require('@/assets/img/club-member.webp')" />
               </a>
             </div>
             <div class="card-body">
@@ -163,7 +163,7 @@
           <div class="card card-profile for-admin-only">
             <div class="card-avatar">
               <a href="#pablo">
-                <img class="img" :src="require('@/assets/img/logo.png')" />
+                <img class="img" :src="require('@/assets/img/logo.webp')" />
               </a>
             </div>
             <div class="card-body">

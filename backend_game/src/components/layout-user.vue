@@ -3,7 +3,7 @@
     <el-container>
       <el-aside class="menu-container" :class="!isCollapse ? 'open' : 'close'" :width="width">
         <div class="logo" style="position: relative; z-index: 9; padding-left: 20px; text-align: left">
-          <img :src="require('../assets/img/logo.png')" />
+          <img :src="require('../assets/img/logo.webp')" />
           <span class="wtext-l">Chess Of Stars</span>
         </div>
         <el-menu class="menu" :default-active="$route.meta.route" :collapse="isCollapse" router>
@@ -110,7 +110,7 @@
               </div>
               <el-dropdown @command="handleCommand">
                 <span class="el-dropdown-link">
-                  <el-avatar :size="32" :src="require('@/assets/img/avatar.jpg')" />
+                  <el-avatar :size="32" :src="require('@/assets/img/avatar.webp')" />
                   <span class="text-container">
                     {{ "&nbsp;&nbsp;" + ($store.state.user?$store.state.user.name:'user') }}
                     <el-icon class="el-icon--right">

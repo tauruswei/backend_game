@@ -42,7 +42,7 @@
       <div class="card card-pricing card-raised">
         <div class="card-body" style="background-color: #fef5ff;">
           <div>
-            <el-image style="width:300px" :src="require('@/assets/img/blindbox.png')"></el-image>
+            <el-image style="width:300px" :src="require('@/assets/img/blindbox.webp')"></el-image>
           </div>
           <h6 class="card-category">Get a NFT in the blind box</h6>
           <h3 class="card-title">20 USDT</h3>
