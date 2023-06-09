@@ -130,7 +130,7 @@ export class MetaMask {
           if (res.code == 0) {
             store.commit("setMetaMask", { chainID: chainID, account: account, url: res.data });
             ElMessage.success('Connected!')
-            isAvailable()
+            this.isAvailable()
           }
         })
       }
