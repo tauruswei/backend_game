@@ -74,11 +74,11 @@ function handleClick(event, item) {
   emits('commands', { command: event, data: item })
 }
   </script>
-<style lang="scss" scoped>
-/deep/ .el-table {
+<style scoped>
+:deep(.el-table) {
   min-height: 400px;
 }
-/deep/ .el-table__header {
+:deep(.el-table__header) {
   text-transform: capitalize;
 }
 </style>
