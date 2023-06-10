@@ -21,7 +21,7 @@
   </el-dialog>
 </template> 
   <script setup>
-import { ref, defineProps, defineEmits,watch } from "vue"
+import { ref,watch } from "vue"
 import { blogApi } from "@/api/request";
 import Tinymce from "@/components/tinymce/tinymce.vue";
 import CropeImg from "@/components/crope-img.vue"

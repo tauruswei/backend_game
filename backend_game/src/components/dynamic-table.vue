@@ -23,7 +23,7 @@
 </template>
   
 <script setup>
-import { ref, defineProps, defineEmits, watch } from "vue";
+import { ref, watch } from "vue";
 let tableHeader = ref([]);
 let tableData = ref([]);
 let operationsData = ref(null);

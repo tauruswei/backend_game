@@ -16,7 +16,7 @@
 <script setup>
 import QrcodeVue from 'qrcode.vue'
 import { useStore } from "vuex"
-import { ref, defineProps, watch } from "vue"
+import { ref, watch } from "vue"
 const store = useStore();
 const props = defineProps({
   id: {

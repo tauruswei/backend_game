@@ -42,7 +42,7 @@ import 'tinymce/plugins/visualchars'
 import 'tinymce/plugins/wordcount'
 // import 'tinymce/plugins/table';
 
-import { computed, nextTick, ref, unref, watch, onDeactivated, onBeforeUnmount, defineProps, defineEmits, getCurrentInstance } from 'vue'
+import { computed, nextTick, ref, unref, watch, onDeactivated, onBeforeUnmount, getCurrentInstance } from 'vue'
 import { toolbar, plugins } from './tinymce'
 import { buildShortUUID } from '../../utils/uuid'
 import { bindHandlers } from './helper'

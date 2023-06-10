@@ -2,7 +2,7 @@
   <div>{{ time }}</div>
 </template>
 <script setup>
-import { ref, onBeforeUnmount, defineProps,defineEmits, watch } from 'vue';
+import { ref, onBeforeUnmount, watch } from 'vue';
 const props = defineProps({
   limit: {
     type: [Number, String],

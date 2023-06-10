@@ -34,7 +34,7 @@
   </div>
 </template>
 <script setup>
-import { ref,defineEmits } from "vue";
+import { ref } from "vue";
 import {useStore} from "vuex"
 import buyToken from "@/abi/buytoken.json";
 import cosdToken from "@/abi/cosdtoken.json";
