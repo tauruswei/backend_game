@@ -51,7 +51,7 @@ provider.on('accountsChanged', (accounts) => {
   else {
     if (store.state.metaMask) {
       store.commit("setMetaMask", { chainID: store.state.metaMask.chainID, url: store.state.metaMask.url, account: accounts[0] });
-      if(!isCurrentAccount()) currentAccountTips()
+      isCurrentAccount()
     }
   }
 })
@@ -64,14 +64,27 @@ provider.on('disconnect', () => {
   //window.location.reload()
 })
 function isCurrentAccount() {
-  if (!store.state.user.account) return false;
+  if (!store.state.user.account){ 
+    noBoundAddressTips();
+    return false;
+  }
+  if(store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()){
+    currentAccountTips()
+    return false;
+  }
   return store.state.user.account.toLowerCase() == store.state.metaMask.account.toLowerCase();
 }
 function currentAccountTips() {
   messageHelper.show('The wallet address you connected is inconsistent with the wallet address bounded to user,would you like to update the wallet address?',
     'Warning', () => {
       router.push("/setting/profile")
-    })
+  })
+}
+function noBoundAddressTips() {
+  messageHelper.show('Would you like to bind the current wallet address to your account?',
+    'Warning', () => {
+      router.push("/setting/profile")
+  })
 }
 export class MetaMask {
   constructor() {
@@ -97,7 +110,6 @@ export class MetaMask {
     if (isCurrentAccount()) ret = true;
     else {
       ret = false;
-      currentAccountTips()
     }
     return ret;
   }
@@ -278,7 +290,7 @@ export class MetaMask {
         console.log(res)
         resolve(res)
       }).catch(err => {
-        ElMessage.error(!err.status ? "stake failed" : err)
+        ElMessage.error(!err.status ? "Stake failed" : err)
         console.log(err)
         reject(err)
       })
@@ -291,7 +303,7 @@ export class MetaMask {
       myContract.methods.unStake(this.toHex(param.money)).send({
         from: param.from
       }).then(res => {
-        ElNotification({ type: "success", message: "unstake successfully\nIf the balance is not refreshed, manually refresh later" })
+        ElNotification({ type: "success", message: "Unstake successfully\nIf the balance is not refreshed, manually refresh later" })
         resolve(res)
       }).catch(err => {
         ElMessage.error(err)
@@ -305,7 +317,7 @@ export class MetaMask {
       myContract.methods.claimReward().send({
         from: param.from
       }).then(res => {
-        ElNotification({ type: "success", message: "claim rewards successfully" })
+        ElNotification({ type: "success", message: "Claim rewards successfully" })
         resolve(res)
       }).catch(err => {
         console.log(err)
@@ -321,7 +333,7 @@ export class MetaMask {
       myContract.methods.drawCard(this.toHex(param.money), param.club, param.channel).send({
         from: param.from
       }).then(res => {
-        ElNotification({ type: "success", message: "get blindbox successfully！It will take a few minutes,you can refresh later" })
+        ElNotification({ type: "success", message: "Get blindbox successfully！It will take a few minutes,you can refresh later" })
         resolve(res)
       }).catch(err => {
         console.log(err)
