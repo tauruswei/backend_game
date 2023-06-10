@@ -74,7 +74,7 @@ function handleClick(event, item) {
   emits('commands', { command: event, data: item })
 }
   </script>
-<style scoped>
+<style lang="scss" scoped>
 /deep/ .el-table {
   min-height: 400px;
 }

@@ -5,7 +5,8 @@ import Web3 from 'web3'
 import store from "@/store/index";
 import router from "@/router/index";
 import { messageHelper } from "@/utils/message-box";
-import { chainApi } from '@/api/request';
+import { chainApi,userApi } from '@/api/request';
+import { ElNotification } from 'element-plus';
 let option = {
   injectProvider: false,
   communicationLayerPreference: 'webrtc',
@@ -83,7 +84,19 @@ function currentAccountTips() {
 function noBoundAddressTips() {
   messageHelper.show('Would you like to bind the current wallet address to your account?',
     'Warning', () => {
-      router.push("/setting/profile")
+      let data = {
+        name: store.state.user.name,
+        userId: store.state.user.id,
+        walletAddress: store.state.metaMask.account
+      }
+      userApi.update(data).then(res=>{
+        if(res.code == 0) {
+          ElNotification({
+            type:'success',
+            message:"Bind successfully!"
+          })
+        }
+      })
   })
 }
 export class MetaMask {
