@@ -34,13 +34,13 @@
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref,getCurrentInstance } from "vue";
 import {useStore} from "vuex"
 import buyToken from "@/abi/buytoken.json";
 import cosdToken from "@/abi/cosdtoken.json";
 import busdApprove from "@/abi/busdtoken.json";
 import { loadingHelper } from "@/utils/loading";
-import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
+import { CONTRACTS,  ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 const store = useStore()
 const emit = defineEmits(['balance'])
 const action = ref({
@@ -49,7 +49,8 @@ const action = ref({
   title: '',
   command: ''
 });
-const metaMask = new MetaMask();
+const {proxy} = getCurrentInstance();
+const metaMask = proxy.metaMask;
 const min = ref(1)
 const allowPurchace = ref(2000000)
 const marketBalance = ref(10000000)

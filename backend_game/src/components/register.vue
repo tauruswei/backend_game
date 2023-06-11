@@ -59,6 +59,7 @@ const router = useRouter();
 const roleList = ref([{ id: 0, name: 'channel leader' }, { id: 1, name: 'club boss' }, { id: 2, name: 'user' }]);//0-渠道商 1-俱乐部老板 2 普通用户
 const formRef = ref(null);
 let id = AppHelper.getURLParam('id');
+console.log(id)
 const form = ref({
   email: "",
   name: "",

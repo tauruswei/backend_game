@@ -106,6 +106,17 @@
                         <p class="card-description">
                           You need to stake 4000 COSD (equivalent to 200 USDT) to get a qualification for a club ownership.
                         </p>
+                        <el-popover placement="top" :width="300" effect="dark" trigger="hover">
+                          <template #reference>
+                            <p>Activity Rules: <i class="fa fa-question-circle"></i></p>
+                          </template>
+                          <div style="letter-spacing: .01em;line-height: 1;">
+                            <h4 style="padding-bottom: 15px;">Activity Rules</h4>
+                            <p><span style="display:inline-block;width:140px">Activity Start Time: </span>{{ stakeStartTime.defi?.time }}</p>
+                            <p><span style="display:inline-block;width:140px">Lockup Period: </span>90 Days</p>
+                            <p><span style="display:inline-block;width:140px">Amount: </span>at latest 4000 cosd</p>
+                          </div>
+                        </el-popover>
                         <a href="javascript:void(0);" class="btn btn-rose btn-round" @click="open('clubstaking')">Stake</a>
                         <button class="btn btn-warning btn-round" v-if="balance.club" @click="open('clubunstaking')">Stop staking</button>
                       </div>
@@ -137,6 +148,17 @@
                         <p class="card-description">
                           You can only stake 2000 COSD (equivalent to 100 USDT).
                         </p>
+                        <el-popover placement="top" effect="dark" :width="300" trigger="hover">
+                          <template #reference>
+                            <p>Activity Rules: <i class="fa fa-question-circle"></i></p>
+                          </template>
+                          <div style="letter-spacing: .01em;line-height: 1;">
+                            <h4 style="padding-bottom: 15px;">Activity Rules</h4>
+                            <p><span style="display:inline-block;width:140px">Activity Start Time: </span>{{ stakeStartTime.defi?.time }}</p>
+                            <p><span style="display:inline-block;width:140px">Lockup Period: </span>90 Days</p>
+                            <p><span style="display:inline-block;width:140px">Annualized Return: </span>11%</p>
+                          </div>
+                        </el-popover>
                         <button class="btn btn-rose btn-round" @click="open('defistaking')">Stake</button>
                       </div>
                     </div>
@@ -185,7 +207,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref, onMounted, getCurrentInstance } from "vue"
 import { useStore } from "vuex"
 import buyToken from "@/abi/buytoken.json";
 import cosdToken from "@/abi/cosdtoken.json";
@@ -193,9 +215,9 @@ import busdApprove from "@/abi/busdtoken.json";
 import slStaking from "@/abi/slStaking.json";
 import clubStaking from "@/abi/clubStaking.json";
 import defiStaking from "@/abi/stakingPool.json";
-import { chainApi } from "@/api/request";
+import { DateHelper } from "@/utils/helper";
 import { loadingHelper } from "@/utils/loading";
-import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, POOL, savaAfterTranscation } from "@/utils/meta-mask";
+import { CONTRACTS, ASSETTYPE, TXTYPE, POOL, savaAfterTranscation } from "@/utils/meta-mask";
 import { cosdApi } from "@/api/request";
 import PurchaseCosd from "@/components/purchase-cosd.vue";
 const store = useStore();
@@ -216,11 +238,13 @@ const titles = ref({ buy: "Purchase COSD", "slstaking": "Staking for starlight l
 const visible = ref(false)
 const isClubBoss = ref(false)
 const needApprove = ref(true);
-const metaMask = new MetaMask();
+const { proxy } = getCurrentInstance();
+const metaMask = proxy.metaMask;
 const disabled = ref(false)
 const reward = ref(0)
-const buttonText = ref('Buy')
+const buttonText = ref('Stake')
 const min = ref(1)
+const stakeStartTime = ref({ club: {}, defi: {} })
 function handleClick(tab) {
   active.value = tab;
 }
@@ -259,6 +283,19 @@ function getClubStatus() {
     else store.commit("setRole", 2)
   });
 }
+function getStakeStartTime(key) {
+  if (!metaMask.isAvailable()) return;
+  let data = {
+    abi: abis.value[key],
+    address: CONTRACTS[key].address,
+    from: store.state.metaMask.account
+  }
+  metaMask.getStakeStartTimeByContract(data).then(res => {
+    console.log(res)
+
+    stakeStartTime.value[key] = { time: DateHelper.toString(res * 1000), origin: res * 1000 }
+  });
+}
 async function open(command) {
   if (!metaMask.isAvailable()) return;
   action.value = {
@@ -272,42 +309,42 @@ async function open(command) {
   openHandler[command]();
 }
 const openHandler = {
-  slstaking:()=>{
+  slstaking: () => {
     action.value.amount = 400;
     needApprove.value = true;
     buttonText.value = "Stake";
     min.value = 400;
     visible.value = true
   },
-  clubstaking:()=>{
+  clubstaking: () => {
     action.value.amount = 4000;
     needApprove.value = true;
     buttonText.value = "Stake";
     min.value = 4000;
     visible.value = true
   },
-  defistaking:()=>{
+  defistaking: () => {
     action.value.amount = 1;
     needApprove.value = true;
     buttonText.value = "Stake";
     min.value = 1;
     visible.value = true
   },
-  slunstaking:()=>{
+  slunstaking: () => {
     action.value.amount = balance.value['sl'];
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
     visible.value = true
   },
-  clubunstaking:()=>{
+  clubunstaking: () => {
     action.value.amount = balance.value['club'];
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
     visible.value = true
   },
-  defiunstaking:()=>{
+  defiunstaking: () => {
     action.value.amount = balance.value['defi'];
     needApprove.value = false
     buttonText.value = "Unstake"
@@ -316,17 +353,17 @@ const openHandler = {
   }
 }
 const approveHandler = {
-  slstaking: stakingApprove.bind(this,'sl'),
-  clubstaking: stakingApprove.bind(this,'club'),
-  defistaking: stakingApprove.bind(this,'defi')
+  slstaking: stakingApprove.bind(this, 'sl'),
+  clubstaking: stakingApprove.bind(this, 'club'),
+  defistaking: stakingApprove.bind(this, 'defi')
 }
 const transferHandler = {
-  slstaking: stakingTransfer.bind(this,'sl'),
-  clubstaking: stakingTransfer.bind(this,'club'),
-  defistaking: stakingTransfer.bind(this,'defi'),
-  slunstaking: unstakingTransfer.bind(this,'sl'),
-  clubunstaking: unstakingTransfer.bind(this,'club'),
-  defiunstaking: unstakingTransfer.bind(this,'defi')
+  slstaking: stakingTransfer.bind(this, 'sl'),
+  clubstaking: stakingTransfer.bind(this, 'club'),
+  defistaking: stakingTransfer.bind(this, 'defi'),
+  slunstaking: unstakingTransfer.bind(this, 'sl'),
+  clubunstaking: unstakingTransfer.bind(this, 'club'),
+  defiunstaking: unstakingTransfer.bind(this, 'defi')
 }
 function handleApproveOperate() {
   approveHandler[action.value.command]();
@@ -477,6 +514,8 @@ onMounted(() => {
     getBalance('sl')
     getBalance('club')
     getBalance('defi')
+    getStakeStartTime('club')
+    getStakeStartTime('defi')
     getClubStatus()
     getRewardBalance()
   }

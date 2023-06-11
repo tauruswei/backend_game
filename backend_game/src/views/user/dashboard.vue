@@ -144,18 +144,19 @@
 
 </template>
  <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted,getCurrentInstance } from 'vue'
 import { useStore } from "vuex";
 import cosdToken from "@/abi/cosdtoken.json";
 import nftToken from "@/abi/nft.json";
 import busdToken from "@/abi/busdtoken.json";
-import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
+import { CONTRACTS, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import { evicsApi } from '@/api/request';
 import { loadingHelper } from "@/utils/loading";
 import PurchaseCosd from "@/components/purchase-cosd.vue";
 const store = useStore();
 const dashboard = ref({ cosd: 0, nft: 0, games: 1, evics: 0 })
-const metaMask = new MetaMask();
+const {proxy} = getCurrentInstance();
+const metaMask = proxy.metaMask;
 const abis = ref({ cosd: cosdToken, nft: nftToken, busd: busdToken })
 const amount = ref(0)
 const amount1 = ref(0)
@@ -198,6 +199,9 @@ function getBalance(key) {
   });
 }
 function open(command) {
+  metaMask.isAvailable()
+  console.log(metaMask.isAvailable())
+  console.log(111111)
   if (!metaMask.isAvailable()) return;
   action.value = {
     btn: command == 'buy' ? 'Buy' : "Withdraw",

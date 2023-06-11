@@ -5,7 +5,7 @@ import Web3 from 'web3'
 import store from "@/store/index";
 import router from "@/router/index";
 import { messageHelper } from "@/utils/message-box";
-import { chainApi,userApi } from '@/api/request';
+import { chainApi, userApi } from '@/api/request';
 import { ElNotification } from 'element-plus';
 let option = {
   injectProvider: false,
@@ -30,78 +30,20 @@ const provider = await detectEthereumProvider();
 const MMSDK = new MetaMaskSDK(option);
 const ethereum = MMSDK.getProvider();
 const web3 = new Web3(provider)
-provider.on('chainChanged', (chainId) => {
-  if (!store.state.user) return;
-  console.log(chainId)
-  if (store.state.metaMask) {
-    chainApi.getWalletUrl(chainId).then(res => {
-      if (res.code == 0) {
-        store.commit("setMetaMask", { account: store.state.user.account, chainID: chainId, url: res.data });
-      }
-    })
-    ElMessage.success("You have changed the chain!")
-  }
-})
-provider.on('connect', (accounts) => {
-  console.log('connect', accounts)
-})
-provider.on('accountsChanged', (accounts) => {
-  console.log('accountsChanged', accounts);
-  if (!store.state.user) return;
-  if (!accounts.length) store.commit("setMetaMask", null);
-  else {
-    if (store.state.metaMask) {
-      store.commit("setMetaMask", { chainID: store.state.metaMask.chainID, url: store.state.metaMask.url, account: accounts[0] });
-      isCurrentAccount()
-    }
-  }
-})
-provider.on('message', message => {
-  console.log('message', message)
-})
-provider.on('disconnect', () => {
-  console.log('disconnect')
-  store.commit("setMetaMask", null)
-  //window.location.reload()
-})
-function isCurrentAccount() {
-  if (!store.state.user.account){ 
-    noBoundAddressTips();
-    return false;
-  }
-  if(store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()){
-    currentAccountTips()
-    return false;
-  }
-  return store.state.user.account.toLowerCase() == store.state.metaMask.account.toLowerCase();
-}
-function currentAccountTips() {
-  messageHelper.show('The wallet address you connected is inconsistent with the wallet address bounded to user,would you like to update the wallet address?',
-    'Warning', () => {
-      router.push("/setting/profile")
-  })
-}
-function noBoundAddressTips() {
-  messageHelper.show('Would you like to bind the current wallet address to your account?',
-    'Warning', () => {
-      let data = {
-        name: store.state.user.name,
-        userId: store.state.user.id,
-        walletAddress: store.state.metaMask.account
-      }
-      userApi.update(data).then(res=>{
-        if(res.code == 0) {
-          ElNotification({
-            type:'success',
-            message:"Bind successfully!"
-          })
-        }
-      })
-  })
-}
 export class MetaMask {
   constructor() {
     this.provider = provider;
+    this.enabled = false;
+    this.account = null;
+    this.chainId = null;
+    this.url = null;
+  }
+  disconnect() {
+    this.enabled = false;
+    this.account = null;
+    this.chainId = null;
+    this.url = null;
+    store.commit("setMetaMask", null)
   }
   isCurrentChain(id) {
     if (id != CHAINID) {
@@ -110,6 +52,41 @@ export class MetaMask {
     } else {
       return true
     }
+  }
+  isCurrentAccount() {
+    if (!store.state.user.account) {
+      this.noBoundAddressTips();
+      return false;
+    }
+    if (store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()) {
+      this.currentAccountTips()
+      return false;
+    }
+    return store.state.user.account.toLowerCase() == store.state.metaMask.account.toLowerCase();
+  }
+  currentAccountTips() {
+    messageHelper.show('The wallet address you connected is inconsistent with the wallet address bounded to user,would you like to update the wallet address?',
+      'Warning', () => {
+        router.push("/setting/profile")
+      })
+  }
+  noBoundAddressTips() {
+    messageHelper.show('Would you like to bind the current wallet address to your account?',
+      'Warning', () => {
+        let data = {
+          name: store.state.user.name,
+          userId: store.state.user.id,
+          walletAddress: store.state.metaMask.account
+        }
+        userApi.update(data).then(res => {
+          if (res.code == 0) {
+            ElNotification({
+              type: 'success',
+              message: "Bind successfully!"
+            })
+          }
+        })
+      })
   }
   isAvailable() {
     let ret = false;
@@ -120,7 +97,7 @@ export class MetaMask {
       ret = true;
     }
     if (!this.isCurrentChain(store.state.metaMask.chainID)) return false;
-    if (isCurrentAccount()) ret = true;
+    if (this.isCurrentAccount()) ret = true;
     else {
       ret = false;
     }
@@ -148,30 +125,37 @@ export class MetaMask {
       const accounts = await provider.request({
         method: 'eth_requestAccounts'
       });
-      const chainID = await provider.request({ method: 'eth_chainId' });
-      const account = accounts[0];
-      if (account) {
-        chainApi.getWalletUrl(chainID).then(res => {
+      this.chainId = await provider.request({ method: 'eth_chainId' });
+      this.account = accounts[0];
+      if (this.account) {
+        chainApi.getWalletUrl(this.chainId).then(res => {
           if (res.code == 0) {
-            store.commit("setMetaMask", { chainID: chainID, account: account, url: res.data });
-            ElMessage.success('Connected!')
+            this.url = res.data;
+            store.commit("setMetaMask", { chainID: this.chainId, account: this.account, url: res.data });
             this.isAvailable()
           }
         })
       }
       else {
-        store.commit("setMetaMask", null);
+        this.disconnect()
       }
       return true;
     } catch (error) {
       console.log(error)
-      store.commit("setMetaMask", null);
+      this.disconnect()
       return false
     }
   }
   isMetaMaskInstalled() {
     const { ethereum } = window;
     return Boolean(ethereum && ethereum.isMetaMask)
+  }
+  async isMetaMaskConnected() {
+    try {
+      this.enabled = await provider.enable()
+    } catch (error) {
+      console.log(error)
+    }
   }
   //ETH转账
   sendTransaction(param) {
@@ -265,6 +249,11 @@ export class MetaMask {
     const myContract = this.getContract(param.abi, param.address);
     let status = await myContract.methods.isClub(param.from).call()
     return status;
+  }
+  async getStakeStartTimeByContract(param) {
+    const myContract = this.getContract(param.abi, param.address);
+    let time = await myContract.methods.stakingStartTime().call()
+    return time;
   }
   //累计购买数量
   async getCOSDHasBuyByContract(param) {

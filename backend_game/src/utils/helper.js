@@ -4,7 +4,7 @@ export const AppHelper = {
 		let curUrlParams = curUrl.searchParams;
 		let value = curUrlParams.get(key);
         return value;
-    }
+    },
 }
 export const DateHelper = {
     toString: (date, fmt) => {

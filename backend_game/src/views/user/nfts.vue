@@ -122,7 +122,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted,getCurrentInstance } from "vue";
 import { useStore } from "vuex";
 import { nftApi, userApi } from "@/api/request";
 import blindBox from "@/abi/blindBox.json";
@@ -132,7 +132,7 @@ import PageTitle from "@/components/page-title.vue";
 import DynamicTable from "@/components/dynamic-table.vue";
 import { loadingHelper } from "@/utils/loading";
 import { DateHelper } from "@/utils/helper";
-import { CONTRACTS, MetaMask, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
+import { CONTRACTS, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import confetti from 'canvas-confetti';
 const store = useStore()
 const TYPES = ref({ buy: 3, used: 2, active: 0, using: 1 })
@@ -156,7 +156,8 @@ const address = ref({ channelAddress: "", clubAddress: "", userAddress: "" });
 const delay = ref(0);
 const amount = ref(20);
 const amount1 = ref(1);
-const metaMask = new MetaMask();
+const {proxy} = getCurrentInstance();
+const metaMask = proxy.metaMask;
 const disabled = ref(false)
 const nftParam = ref({})
 function handlerActions(data) {

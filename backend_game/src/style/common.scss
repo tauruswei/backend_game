@@ -234,6 +234,7 @@ $weight-xl: bold;
 .menu .el-menu-item.is-active,
 .menu .el-menu-item.is-active:hover {
   position: relative;
+  color: $color-primary;
   background-color: rgba($white, 0.06);
 }
 .menu .el-menu-item.is-active:before {

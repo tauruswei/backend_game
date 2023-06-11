@@ -24,15 +24,14 @@ const props = defineProps({
   }
 })
 const inviterId = ref(store.state.user ? store.state.user.id : '')
+const url = ref(null)
 watch(() => props.id, (val) => {
   if (val) {
     inviterId.value = val;
-    url.value = process.env.VUE_APP_MODE == "development" ? (window.location.protocol + window.location.host + '/register?id=' + inviterId.value) : (process.env.VUE_APP_LOCAL + '/register?id=' + inviterId.value)
+    url.value = process.env.VUE_APP_MODE == "development" ? (window.location.protocol + window.location.host + '/register?id=' + encodeURIComponent(inviterId.value)) : (process.env.VUE_APP_LOCAL + '/register?id=' + encodeURIComponent(inviterId.value))
   }
 }, { immediate: true })
-
-const url = ref(null)
-url.value = process.env.VUE_APP_MODE == "development" ? (window.location.protocol + window.location.host + '/register?id=' + inviterId.value) : (process.env.VUE_APP_LOCAL + '/register?id=' + inviterId.value)
+url.value = process.env.VUE_APP_MODE == "development" ? (window.location.protocol +"//"+ window.location.host + '/register?id=' + encodeURIComponent(inviterId.value)) : (process.env.VUE_APP_LOCAL + '/register?id=' + encodeURIComponent(inviterId.value))
 const size = ref(240)
 function download() {
   let canvas = document.getElementById('qcode').getElementsByTagName('canvas')

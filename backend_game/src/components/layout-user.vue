@@ -53,35 +53,10 @@
             </el-col>
             <el-col :span="20" style="text-align: right;">
               <div style="margin-top:5px;margin-right:10px;display:inline-block" v-if="$store.state.role !== 3">
-                <el-button :type="isConnected?'success':'primary'" @click="connectWallet" :disabled="isConnected?true:false" round>
-                  <span v-if="!isConnected"><i class="fa fa-btc"></i>&nbsp;&nbsp;Connect Wallet</span>
-                  <el-popover v-if="isConnected" placement="top" :width="300" trigger="hover">
-                    <template #reference>
-                      <span>
-                        <i class="fa fa-bullseye"></i>
-                        <b style="display:inline-block;vertical-align: top;font-weight:400">&nbsp;&nbsp;{{$store.state.metaMask.account.substring(0,12)+'...'}}</b>
-                      </span>
-                    </template>
-                    <template #default>
-                      <div style="text-align: center;">
-                        <el-image :src="require('@/assets/metamask-fox.svg')"></el-image>
-                        <p style="width:60%;margin:5px auto"><small>{{ $store.state.metaMask.account }}</small></p>
-                        <el-row :gutter="10" style="margin-top:10px">
-                          <el-col :span="12">
-                            <el-tag type="success" round><i class="fa fa-bullseye" style="font-size:12px;"></i> &nbsp;connected</el-tag>
-                          </el-col>
-                          <el-col :span="12" style="text-align: right;">
-                            bsc network
-                          </el-col>
-                        </el-row>
-                      </div>
-
-                    </template>
-                  </el-popover>
-                </el-button>
+                <metamask-connect></metamask-connect>
                 <!---->
                 <el-tooltip placement="bottom" content="Invite to be channel Leader" v-if="$store.state.role == 1">
-                  <el-button type="success" @click="inviteVisible = true" round>
+                  <el-button type="success" @click="inviteHandler()" round>
                     <i class="fa fa-link"></i>&nbsp;Invite
                   </el-button>
                 </el-tooltip>
@@ -121,27 +96,28 @@
       <email-cont @close="closeemail"></email-cont>
     </el-dialog>
     <el-dialog v-model="inviteVisible" title="Welcome to Chess of stars" width="440px">
-      <qcode-cont style="width:100%;text-align: center;"></qcode-cont>
+      <qcode-cont :id="inviterId" style="width:100%;text-align: center;"></qcode-cont>
     </el-dialog>
   </div>
 </template>
 <script setup>
-import { ref, computed } from "vue";
-import { useStore } from "vuex"
+import { ref, getCurrentInstance } from "vue";
 import { useRouter } from "vue-router"
-import { logout } from "@/utils/logout";
 import LayoutFooter from "@/components/footer.vue"
 import PasswordCont from "@/components/password.vue";
 import EmailCont from "@/components/reset-email.vue";
 import QcodeCont from "@/components/qcode.vue";
-import { MetaMask } from "@/utils/meta-mask";
-const store = useStore();
+import MetamaskConnect from "@/components/metamask.vue";
+import { userApi } from "@/api/request"
 const router = useRouter()
+const { proxy } = getCurrentInstance();
+const metaMask = proxy.metaMask;
 const isCollapse = ref(false);
 const width = ref("240px");
 const visible = ref(false);
 const visible1 = ref(false);
 const inviteVisible = ref(false)
+const inviterId = ref();
 function change() {
   isCollapse.value = !isCollapse.value;
   if (isCollapse.value) {
@@ -150,11 +126,9 @@ function change() {
     width.value = "240px";
   }
 }
-let isConnected = computed(() => {
-  return store.state.metaMask ? true : false
-})
 function handleCommand(command) {
   if (command == "logout") {
+    metaMask.disconnect();
     router.push("/login")
   }
   if (command == 'password') visible.value = true;
@@ -164,12 +138,23 @@ function handleCommand(command) {
 function closeemail() {
   visible1.value = false
 }
-function connectWallet() {
-  let metaMask = new MetaMask();
-  if (!isConnected.value) metaMask.connectMetaMask()
+function inviteHandler() {
+  if (!metaMask.account) {
+    ElMessage.error("You have not connected the wallet!")
+    return;
+  }
+  let data = {
+    walletAddress: metaMask.account
+  }
+  userApi.channelLeader(data).then(res => {
+    if (res.code == 0) {
+      inviterId.value = res.data;
+      inviteVisible.value = true;
+    }
+  })
 }
 </script>
-<style lang="scss" scoped>
+<style scoped>
 :deep(.el-avatar) {
   box-shadow: 0 2px 8px 0 rgba(83, 102, 203, 0.4);
 }
