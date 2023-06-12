@@ -32,7 +32,7 @@
                           <button class="btn btn-sm btn-warning btn-round btn-just-icon" @click="getAddress" title="get current wallet address">
                             <i class="fa fa-level-down"></i>
                           </button>
-                          <a class="btn btn-sm btn-info btn-round btn-just-icon" :href="`${url}address/${userData.wallet_address}`" target="_blank" title="View address on blockchain">
+                          <a class="btn btn-sm btn-info btn-round btn-just-icon" :href="url?`${url}address/${userData.wallet_address}`:'javascript:void(0);'" :target="url?'_blank':null" title="View address on blockchain">
                             <i class="fa fa-external-link"></i>
                           </a>
                         </div>

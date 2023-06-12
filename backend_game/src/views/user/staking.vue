@@ -55,7 +55,7 @@
                       <div class="card-footer">
                         <div class="stats">
                           <i class="fa fa-cubes"></i>&nbsp;Staking pool contract address:&nbsp;&nbsp;
-                          <a :href="`${$store.state.metaMask?.url}address/${contracts.sl.address}`" target="_blank">{{contracts.sl.address}}</a>
+                          <a :href="$store.state.metaMask?`${$store.state.metaMask?.url}address/${contracts.sl.address}`:'javascript:void(0);'" :target="$store.state.metaMask?'_blank':null">{{contracts.sl.address}}</a>
                         </div>
                       </div>
                     </div>
@@ -90,7 +90,7 @@
                       <div class="card-footer">
                         <div class="stats">
                           <i class="fa fa-cubes"></i>&nbsp;Staking pool contract address:&nbsp;&nbsp;
-                          <a :href="`${$store.state.metaMask?.url}address/${contracts.club.address}`" target="_blank">{{contracts.club.address}}</a>
+                          <a :href="$store.state.metaMask?`${$store.state.metaMask?.url}address/${contracts.club.address}`:'javascript:void(0);'" :target="$store.state.metaMask?'_blank':null">{{contracts.club.address}}</a>
                         </div>
                       </div>
                     </div>
@@ -135,7 +135,7 @@
                       <div class="card-footer">
                         <div class="stats">
                           <i class="fa fa-cubes"></i>&nbsp;Staking pool contract address:&nbsp;&nbsp;
-                          <a :href="`${$store.state.metaMask?.url}address/${contracts.defi.address}`" target="_blank">{{contracts.defi.address}}</a>
+                          <a :href="$store.state.metaMask?`${$store.state.metaMask?.url}address/${contracts.defi.address}`:'javascript:void(0);'" :target="$store.state.metaMask?'_blank':null">{{contracts.defi.address}}</a>
                         </div>
                       </div>
                     </div>
