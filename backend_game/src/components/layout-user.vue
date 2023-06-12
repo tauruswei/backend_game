@@ -109,6 +109,7 @@ import EmailCont from "@/components/reset-email.vue";
 import QcodeCont from "@/components/qcode.vue";
 import MetamaskConnect from "@/components/metamask.vue";
 import { userApi } from "@/api/request"
+import store from "@/store";
 const router = useRouter()
 const { proxy } = getCurrentInstance();
 const metaMask = proxy.metaMask;
@@ -139,7 +140,7 @@ function closeemail() {
   visible1.value = false
 }
 function inviteHandler() {
-  if (!metaMask.account) {
+  if (!store.state.metaMask.account) {
     ElMessage.error("You have not connected the wallet!")
     return;
   }

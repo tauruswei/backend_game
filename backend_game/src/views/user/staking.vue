@@ -291,8 +291,6 @@ function getStakeStartTime(key) {
     from: store.state.metaMask.account
   }
   metaMask.getStakeStartTimeByContract(data).then(res => {
-    console.log(res)
-
     stakeStartTime.value[key] = { time: DateHelper.toString(res * 1000), origin: res * 1000 }
   });
 }
