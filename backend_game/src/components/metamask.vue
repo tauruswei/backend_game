@@ -51,6 +51,7 @@ provider.on('chainChanged', (chainId) => {
 })
 provider.on('connect', (account) => {
   console.log('connect', account)
+  window.location.reload()
 })
 provider.on('accountsChanged', (accounts) => {
   console.log('accountsChanged', accounts);
@@ -62,6 +63,7 @@ provider.on('accountsChanged', (accounts) => {
       metaMask.account = accounts[0]
       store.commit("setMetaMask", { chainID: store.state.metaMask.chainID, url: store.state.metaMask.url, account: accounts[0] });
       metaMask.isCurrentAccount()
+      window.location.reload()
     }
   }
 })
@@ -71,7 +73,7 @@ provider.on('message', message => {
 provider.on('disconnect', () => {
   console.log('disconnect')
   metaMask.disconnect();
-  //window.location.reload()
+  window.location.reload()
 })
 function connectWallet() {
   metaMask.connectMetaMask()

@@ -133,6 +133,7 @@ export class MetaMask {
             this.url = res.data;
             store.commit("setMetaMask", { chainID: this.chainId, account: this.account, url: res.data });
             this.isAvailable()
+            window.location.reload()
           }
         })
       }
