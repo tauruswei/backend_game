@@ -337,7 +337,7 @@ export class MetaMask {
       myContract.methods.drawCard(this.toHex(param.money), param.club, param.channel).send({
         from: param.from
       }).then(res => {
-        ElNotification({ type: "success", message: "Get blindbox successfully！It will take a few minutes,you can refresh later" })
+        ElNotification({ type: "success", message: "You have successfully purchased the NFT blind box, It will take a few minutes,you can refresh later" })
         resolve(res)
       }).catch(err => {
         console.log(err)
