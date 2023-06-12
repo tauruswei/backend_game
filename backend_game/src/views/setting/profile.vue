@@ -32,7 +32,7 @@
                           <button class="btn btn-sm btn-warning btn-round btn-just-icon" @click="getAddress" title="get current wallet address">
                             <i class="fa fa-level-down"></i>
                           </button>
-                          <a class="btn btn-sm btn-info btn-round btn-just-icon" :href="`${url}${userData.wallet_address}`" target="_blank" title="View address on blockchain">
+                          <a class="btn btn-sm btn-info btn-round btn-just-icon" :href="`${url}address/${userData.wallet_address}`" target="_blank" title="View address on blockchain">
                             <i class="fa fa-external-link"></i>
                           </a>
                         </div>
@@ -188,19 +188,19 @@ import { useStore } from "vuex";
 import { userApi } from "@/api/request"
 import { loadingHelper } from "@/utils/loading";
 const store = useStore();
-const url = ref(store.state.metaMask.url);
+const url = ref(store.state.metaMask?.url);
 const userData = ref({
   wallet_address_nft: "gueryiy",
   wallet_address_sl: "gueryiy",
   name: store.state.user.name,
-  wallet_address: store.state.user.account
+  wallet_address: store.state.user?.account
 })
 function getAddress() {
   if (!store.state.metaMask) {
     ElMessage.error("please connect the wallet")
     return
   }
-  userData.value.wallet_address = store.state.metaMask.account
+  userData.value.wallet_address = store.state.metaMask?.account
 }
 function updateInfo() {
   if (!userData.value.name) {

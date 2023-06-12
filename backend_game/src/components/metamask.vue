@@ -32,6 +32,7 @@ import { useStore } from "vuex"
 import { chainApi } from "@/api/request";
 const { proxy } = getCurrentInstance()
 const store = useStore()
+const emit = defineEmits(['refresh'])
 const metaMask = proxy.metaMask;
 const provider = proxy.metaMask.provider;
 const chains = ref({'0x1':"ethereum",'0x61':'bsc'})
@@ -63,7 +64,6 @@ provider.on('accountsChanged', (accounts) => {
       metaMask.account = accounts[0]
       store.commit("setMetaMask", { chainID: store.state.metaMask.chainID, url: store.state.metaMask.url, account: accounts[0] });
       metaMask.isCurrentAccount()
-      window.location.reload()
     }
   }
 })
@@ -75,7 +75,8 @@ provider.on('disconnect', () => {
   metaMask.disconnect();
   window.location.reload()
 })
-function connectWallet() {
-  metaMask.connectMetaMask()
+async function connectWallet() {
+  await metaMask.connectMetaMask()
+  window.location.reload()
 }
 </script>

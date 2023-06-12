@@ -80,6 +80,8 @@ export class MetaMask {
         }
         userApi.update(data).then(res => {
           if (res.code == 0) {
+            let user = store.state.user;
+            store.commit("setUser",{...user, account:store.state.metaMask.account});
             ElNotification({
               type: 'success',
               message: "Bind successfully!"
@@ -128,12 +130,11 @@ export class MetaMask {
       this.chainId = await provider.request({ method: 'eth_chainId' });
       this.account = accounts[0];
       if (this.account) {
-        chainApi.getWalletUrl(this.chainId).then(res => {
+        await chainApi.getWalletUrl(this.chainId).then(res => {
           if (res.code == 0) {
             this.url = res.data;
             store.commit("setMetaMask", { chainID: this.chainId, account: this.account, url: res.data });
             this.isAvailable()
-            window.location.reload()
           }
         })
       }

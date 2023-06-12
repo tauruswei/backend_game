@@ -293,12 +293,14 @@ const evicHandler = {
     })
   }
 }
-
+function refresh(){
+  getBalance('cosd')
+  getBalance('nft')
+}
 onMounted(() => {
   evicBalance()
   if (metaMask.isAvailable()) {
-    getBalance('cosd')
-    getBalance('nft')
+    refresh();
   }
 })
  </script>

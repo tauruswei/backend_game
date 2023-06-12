@@ -207,7 +207,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, getCurrentInstance } from "vue"
+import { ref, onMounted, getCurrentInstance,computed } from "vue"
 import { useStore } from "vuex"
 import buyToken from "@/abi/buytoken.json";
 import cosdToken from "@/abi/cosdtoken.json";
@@ -506,16 +506,19 @@ async function claimReward() {
     loadingHelper.hide();
   })
 }
+function refresh() {
+  getBalance('cosd')
+  getBalance('sl')
+  getBalance('club')
+  getBalance('defi')
+  getStakeStartTime('club')
+  getStakeStartTime('defi')
+  getClubStatus()
+  getRewardBalance()
+}
 onMounted(() => {
   if (metaMask.isAvailable()) {
-    getBalance('cosd')
-    getBalance('sl')
-    getBalance('club')
-    getBalance('defi')
-    getStakeStartTime('club')
-    getStakeStartTime('defi')
-    getClubStatus()
-    getRewardBalance()
+    refresh()
   }
 })
 </script>
