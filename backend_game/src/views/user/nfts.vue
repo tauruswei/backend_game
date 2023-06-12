@@ -190,7 +190,7 @@ function query() {
           minted_at: DateHelper.toString(i.mintedAt * 1000),
           run_out_time: DateHelper.toString(i.runOutTime * 1000),
           game_chances: i.gameChances,
-          src: `https://cosd1.s3.amazonaws.com/${i.nftType}.png`
+          src: `https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/card/${i.nftType}.mp4-animation.gif`//N-001-BG.mp4-animation.gif
         }
         return item
       });
