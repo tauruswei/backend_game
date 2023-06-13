@@ -69,16 +69,9 @@ axios.interceptors.request.use(
   (err) => {
     loadingHelper.hide();
     ElNotification.error({
-      message: "请求超时",
+      message: "Sorry, the server failed to respond in time, please try again later",
       type: "error",
       position: "bottom-right",
-    });
-    router.replace({
-      //跳转到登录页面
-      path: "/login",
-      query: {
-        redirect: router.currentRoute.value.fullPath,
-      }, // 将跳转的路由path作为参数，登录成功后跳转到该路由
     });
     return Promise.resolve(err);
   }
@@ -107,14 +100,14 @@ axios.interceptors.response.use(
       let response = err.response;
       if (response.status == 504 || response.status == 404) {
         ElNotification.error({
-          message: "服务器被吃了",
+          message: "Service Unavailable",
           type: "error",
           position: "bottom-right",
         });
       } else if (response.status == 403) {
         //表示权限不足
         ElNotification.error({
-          message: "权限不足，请联系管理员",
+          message: "Insufficient Permissions",
           type: "error",
           position: "bottom-right",
         });
@@ -128,7 +121,7 @@ axios.interceptors.response.use(
       } else if (response.status == 401) {
         //表示未登录
         ElNotification.error({
-          message: "未经授权的访问！", //服务器返回来的信息
+          message: "Unauthorized access!", //服务器返回来的信息
           type: "error",
           position: "bottom-right",
         });

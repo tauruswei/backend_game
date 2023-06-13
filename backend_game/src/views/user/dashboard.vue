@@ -1,6 +1,5 @@
 <template>
   <div class="content">
-    <div class="container-fluid">
       <div class="row">
         <div class="col-lg-3 col-md-6 col-sm-6">
           <div class="card card-stats">
@@ -48,7 +47,7 @@
             <div class="card-footer">
               <div class="stats">
                 <i class="fa fa-ticket"></i>&nbsp;
-                <a href="#pablo">Get More NFTs</a>
+                <a href="/plat/nfts">Get More NFTs</a>
               </div>
             </div>
           </div>
@@ -71,40 +70,6 @@
           </div>
         </div>
       </div>
-      <!--<div class="row for-channel-or-club">
-        <div class="col-lg-3 col-md-6 col-sm-6">
-          <div class="card card-stats">
-            <div class="card-header card-header-success card-header-icon">
-              <div class="card-icon">
-                <i class="fa fa-sitemap"></i>
-              </div>
-              <p class="card-category">Clubs</p>
-              <h3 class="card-title">{{ dashboard.clubs }}</h3>
-            </div>
-            <div class="card-footer">
-              <div class="stats">
-                <i class="fa fa-sitemap"></i>&nbsp;All your clubs
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6">
-          <div class="card card-stats">
-            <div class="card-header card-header-success card-header-icon">
-              <div class="card-icon">
-                <i class="fa fa-group"></i>
-              </div>
-              <p class="card-category">All Members</p>
-              <h3 class="card-title">{{ dashboard.members }}</h3>
-            </div>
-            <div class="card-footer">
-              <div class="stats">
-                <i class="fa fa-group"></i>&nbsp;All members in your clubs
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>-->
       <div class="card">
         <div style="display:flex;align-items: center;justify-content: space-between;padding:10px;">
           <div>Current Evics: <b>{{ dashboard.evics }}</b></div>
@@ -122,7 +87,17 @@
           </div>
         </div>
       </div>
-
+    <div class="card">
+      <div class="card-header" style="padding-bottom: 0;">
+        <b style="font-size:18px">Purchase List</b>
+      </div>
+      <div class="card-body">
+        <el-tabs>
+          <el-tab-pane label="Evic"></el-tab-pane>
+          <el-tab-pane label="COSD"></el-tab-pane>
+          <el-tab-pane label="Blindbox"></el-tab-pane>
+        </el-tabs>
+      </div>
     </div>
     <el-dialog v-model="visible" :title="action.title" width="400px" destroy-on-close>
       <el-alert title="TIP: 1 USDT = 100 EVIC" type="info" style="margin-bottom:20px"></el-alert>
@@ -144,20 +119,19 @@
 
 </template>
  <script setup>
-import { ref, onMounted,getCurrentInstance } from 'vue'
+import { ref, onMounted, getCurrentInstance } from 'vue'
 import { useStore } from "vuex";
-import cosdToken from "@/abi/cosdtoken.json";
-import nftToken from "@/abi/nft.json";
-import busdToken from "@/abi/busdtoken.json";
-import { CONTRACTS, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
+import { ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import { evicsApi } from '@/api/request';
+import { base64 } from "@/utils/base64";
 import { loadingHelper } from "@/utils/loading";
 import PurchaseCosd from "@/components/purchase-cosd.vue";
 const store = useStore();
 const dashboard = ref({ cosd: 0, nft: 0, games: 1, evics: 0 })
-const {proxy} = getCurrentInstance();
+const { proxy } = getCurrentInstance();
+let CONTRACTS = store.state.abi;
 const metaMask = proxy.metaMask;
-const abis = ref({ cosd: cosdToken, nft: nftToken, busd: busdToken })
+const abis = ref({ cosd: JSON.parse(base64.decode(CONTRACTS.cosd.abi)), nft: JSON.parse(base64.decode(CONTRACTS.nft.abi)), busd: JSON.parse(base64.decode(CONTRACTS.busd.abi)) })
 const amount = ref(0)
 const amount1 = ref(0)
 const visible = ref(false)
@@ -200,8 +174,6 @@ function getBalance(key) {
 }
 function open(command) {
   metaMask.isAvailable()
-  console.log(metaMask.isAvailable())
-  console.log(111111)
   if (!metaMask.isAvailable()) return;
   action.value = {
     btn: command == 'buy' ? 'Buy' : "Withdraw",
@@ -238,7 +210,6 @@ const evicHandler = {
     if (isEmpty()) return;
     let data = {
       from: store.state.metaMask.account,
-      to: CONTRACTS['evic'].address,
       address: CONTRACTS["busd"].address,
       money: amount.value,
       abi: abis.value.busd
@@ -293,7 +264,7 @@ const evicHandler = {
     })
   }
 }
-function refresh(){
+function refresh() {
   getBalance('cosd')
   getBalance('nft')
 }

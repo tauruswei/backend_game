@@ -8,6 +8,7 @@ const store = createStore({
         roles:[{id:0,name:"admin"},{id:1,name:"user"}],
         metaMask:null,
         time:null,
+        abi: {},
         cancelTokenArr: []
     },
     mutations: {
@@ -36,6 +37,9 @@ const store = createStore({
         setMetaMask(state,metaMask){
             state.metaMask = metaMask;
         },
+        setABI(state,abi){
+            state.abi = abi;
+        },
         pushRequestToken(state, payload) {
             state.cancelTokenArr.push(payload.cancelToken)
         },
@@ -55,6 +59,7 @@ if (sessionStorage.getItem("store")) {
     store.state.token = JSON.parse(sessionStorage.getItem("store")).token;
     store.state.user = JSON.parse(sessionStorage.getItem("store")).user;
     store.state.metaMask = JSON.parse(sessionStorage.getItem("store")).metaMask;
+    store.state.abi = JSON.parse(sessionStorage.getItem("store")).abi;
     store.state.role = parseInt(JSON.parse(sessionStorage.getItem("store")).role);
     store.state.roles = JSON.parse(sessionStorage.getItem("store")).roles;
 }

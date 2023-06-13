@@ -125,14 +125,12 @@
 import { ref, onMounted,getCurrentInstance } from "vue";
 import { useStore } from "vuex";
 import { nftApi, userApi } from "@/api/request";
-import blindBox from "@/abi/blindBox.json";
-import busdToken from "@/abi/busdtoken.json";
-import nftToken from "@/abi/nft.json";
 import PageTitle from "@/components/page-title.vue";
 import DynamicTable from "@/components/dynamic-table.vue";
 import { loadingHelper } from "@/utils/loading";
 import { DateHelper } from "@/utils/helper";
-import { CONTRACTS, ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
+import { base64 } from "@/utils/base64";
+import { ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import confetti from 'canvas-confetti';
 const store = useStore()
 const TYPES = ref({ buy: 3, used: 2, active: 0, using: 1 })
@@ -150,6 +148,8 @@ let rowData = ref({});
 let pageNum = ref(1); let total = ref(1);
 let pageSize = ref(10);
 let blockChain = ref('Binance Smart Chain')
+let CONTRACTS = store.state.abi;
+let abis = ref({blindbox:JSON.parse(base64.decode(CONTRACTS.blindbox.abi)),busd:JSON.parse(base64.decode(CONTRACTS.busd.abi)),nft:JSON.parse(base64.decode(CONTRACTS.nft.abi))})
 const isOnlyUpdateStatus = ref(true);
 const hasUpdated = ref(true);
 const address = ref({ channelAddress: "", clubAddress: "", userAddress: "" });
@@ -251,9 +251,9 @@ function getCard() {
 function nftApprove() {
   if (!metaMask.isAvailable()) return;
   if (isEmpty()) return;
-  let data = { from: store.state.metaMask.account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: blindBox, club: address.value.clubAddress, channel: address.value.channelAddress }
+  let data = { from: store.state.metaMask.account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: abis.value.blindbox, club: address.value.clubAddress, channel: address.value.channelAddress }
   loadingHelper.show()
-  metaMask.approveByContract({ ...data, abiApprove: busdToken, approveAddress: CONTRACTS["busd"].address }).then(() => {
+  metaMask.approveByContract({ ...data, abiApprove: abis.value.busd, approveAddress: CONTRACTS["busd"].address }).then(() => {
     disabled.value = true;
     loadingHelper.hide();
   }).catch(err => {
@@ -263,7 +263,7 @@ function nftApprove() {
 function nftSwap(event) {
   if (!metaMask.isAvailable()) return;
   if (isEmpty()) return;
-  let data = { from: store.state.metaMask.account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: blindBox, club: address.value.clubAddress, channel: address.value.channelAddress }
+  let data = { from: store.state.metaMask.account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: abis.value.blindbox, club: address.value.clubAddress, channel: address.value.channelAddress }
   loadingHelper.show()
   metaMask.nftBlindBoxByContract(data).then((res) => {
     visible1.value = false;
@@ -297,7 +297,7 @@ function nftSwap(event) {
 function getNFTnfoFromChain(id) {
   if (!metaMask.isAvailable()) return;
   let param = {
-    abi: nftToken,
+    abi: abis.value.nft,
     from: store.state.metaMask.account,
     address: CONTRACTS['nft'].address,
     tokenId: id

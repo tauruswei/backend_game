@@ -77,8 +77,9 @@ rules.value.password = [
     trigger: "blur",
   }
 ];
-function doLogin() {
-  formRef.value.validate((valid) => {
+async function doLogin() {
+  await getABI()
+  await formRef.value.validate((valid) => {
     if (valid) {
       loadingHelper.show();
       let data = {
@@ -97,5 +98,16 @@ function doLogin() {
       });
     }
   });
+}
+function getABI(){
+  let data = {
+    network:"bsc"
+  }
+  userApi.abi(data).then(res=>{
+    if(res.code == 0){
+      store.commit("setABI",res.data);
+      console.log(res.data)
+    }
+  })
 }
 </script>

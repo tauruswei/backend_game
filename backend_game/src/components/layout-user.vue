@@ -145,7 +145,7 @@ function inviteHandler() {
     return;
   }
   let data = {
-    walletAddress: metaMask.account
+    walletAddress: store.state.metaMask.account
   }
   userApi.channelLeader(data).then(res => {
     if (res.code == 0) {

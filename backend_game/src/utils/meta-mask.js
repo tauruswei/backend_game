@@ -354,7 +354,7 @@ export class MetaMask {
   async transferEvicByContract(param) {
     const myContract = this.getContract(param.abi, param.address);
     return new Promise((resolve, reject) => {
-      myContract.methods.transfer(param.to, this.toHex(param.money)).send({
+      myContract.methods.transfer(param.from,this.toHex(param.money)).send({
         from: param.from
       }).then(res => {
         console.log(res)

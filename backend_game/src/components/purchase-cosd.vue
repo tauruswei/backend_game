@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-button type="primary" @click="open()" round>Purchase COSD</el-button>
+    <el-button type="primary" @click="open()" round>Purchase</el-button>
     <el-dialog v-model="visible" :title="action.title" width="400px" destroy-on-close append-to-body>
       <el-alert title="TIP: Accumulated expenses of usdt cannot exceed 100,000" type="info" style="margin-bottom:20px"></el-alert>
       <el-row :gutter="5" style="margin-bottom:20px">
@@ -36,12 +36,11 @@
 <script setup>
 import { ref,getCurrentInstance } from "vue";
 import {useStore} from "vuex"
-import buyToken from "@/abi/buytoken.json";
-import cosdToken from "@/abi/cosdtoken.json";
-import busdApprove from "@/abi/busdtoken.json";
 import { loadingHelper } from "@/utils/loading";
-import { CONTRACTS,  ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
+import { ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
+import {base64} from "@/utils/base64"
 const store = useStore()
+let CONTRACTS = store.state.abi;
 const emit = defineEmits(['balance'])
 const action = ref({
   amount1: 20,
@@ -57,7 +56,7 @@ const marketBalance = ref(10000000)
 const max = ref(2000000)
 const visible = ref(false)
 const disabled = ref(false)
-const abis = ref({ buy: buyToken, cosd: cosdToken, busd: busdApprove })
+const abis = ref({ buy: JSON.parse(base64.decode(CONTRACTS.buycosd.abi)), cosd: JSON.parse(base64.decode(CONTRACTS.cosd.abi)), busd: JSON.parse(base64.decode(CONTRACTS.busd.abi)) })
 function isEmpty() {
   if (!action.value.amount) {
     ElMessage.error("amount is required!")
@@ -127,7 +126,7 @@ function purchaseApprove() {
     money: action.value.amount,
     abi: abis.value.buy,
     approveAddress: CONTRACTS["busd"].address,
-    abiApprove: busdApprove
+    abiApprove: abis.value['busd']
   }
   if (isEmpty()) return;
   loadingHelper.show()
@@ -147,7 +146,7 @@ function purchase() {
     money: action.value.amount,
     abi: abis.value.buy,
     approveAddress: CONTRACTS["busd"].address,
-    abiApprove: busdApprove
+    abiApprove: abis.value['busd']
   }
   loadingHelper.show()
   metaMask.transferByContract(data).then((res) => {

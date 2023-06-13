@@ -20,12 +20,14 @@ export const userApi = {
   register: (data) => post("/user/createChannelLeader", data),
   wallet: (id) => post("/user/queryClubAndChannelAddress?userId=" + id),
   channel: (data) => post("/user/createChannelLeader",data),
-  channelLeader:(data)=> post("/user/queryChannelLeaderByWalletAddress",data)
+  channelLeader:(data)=> post("/user/queryChannelLeaderByWalletAddress",data),
+  abi:(data)=>uploadFile("/contract/getContractConfig",data),
 };
 export const chainApi = {
   transactions: (data) => post("/blockChain/call", data),
   save: (data) => post("/webTransaction/save", data),
-  getWalletUrl:(data)=> post("/user/queryBlockChainExplorer?blockChainType="+parseInt(data).toString(10))
+  getWalletUrl:(data)=> post("/user/queryBlockChainExplorer?blockChainType="+parseInt(data).toString(10)),
+  list: (data) => post("/webTransaction/queryTransactionList", data),
 }
 export const evicsApi = {
   assets: (data) => post("/asset/queryUserAssets", data),
