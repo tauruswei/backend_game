@@ -40,7 +40,7 @@ import { loadingHelper } from "@/utils/loading";
 import { ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import {base64} from "@/utils/base64"
 const store = useStore()
-let CONTRACTS = store.state.abi;
+let CONTRACTS = store.state.abi.contract;
 const emit = defineEmits(['balance'])
 const action = ref({
   amount1: 20,

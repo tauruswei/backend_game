@@ -129,7 +129,7 @@ import PurchaseCosd from "@/components/purchase-cosd.vue";
 const store = useStore();
 const dashboard = ref({ cosd: 0, nft: 0, games: 1, evics: 0 })
 const { proxy } = getCurrentInstance();
-let CONTRACTS = store.state.abi;
+let CONTRACTS = store.state.abi.contract;
 const metaMask = proxy.metaMask;
 const abis = ref({ cosd: JSON.parse(base64.decode(CONTRACTS.cosd.abi)), nft: JSON.parse(base64.decode(CONTRACTS.nft.abi)), busd: JSON.parse(base64.decode(CONTRACTS.busd.abi)) })
 const amount = ref(0)

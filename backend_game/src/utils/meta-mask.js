@@ -11,7 +11,7 @@ let option = {
   injectProvider: false,
   communicationLayerPreference: 'webrtc',
 }
-const CHAINID = "0x61";
+const CHAINID = '0x' + store.state.abi.chainId.toString(16);
 export const CONTRACTS = {
   sl: { address: "0x2795bA76b7f6665669FcBE3dA0B5e4e5FBdA634c", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
   club: { address: "0x285B0B99C8182F344d57A4FbDa665BDe4Ff32fd3", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
@@ -44,6 +44,99 @@ export class MetaMask {
     this.chainId = null;
     this.url = null;
     store.commit("setMetaMask", null)
+  }
+  async connectMetaMask() {
+    if (!this.isMetaMaskInstalled()) {
+      // 判断是否安装MetaMask扩展工具
+      const forwarderOrigin = window.location.origin
+      const onboarding = new MetaMaskOnboarding({
+        forwarderOrigin
+      })
+      onboarding.startOnboarding()
+      return
+    }
+    if (!provider) {
+      messageHelper.error('Please install MetaMask!');
+      return
+    }
+    if (provider !== window.ethereum) {
+      console.error('Do you have multiple wallets installed?');
+    }
+
+    try {
+      this.chainId = await provider.request({ method: 'eth_chainId' });
+      if (this.chainId == CHAINID) {
+        const accounts = await provider.request({
+          method: 'eth_requestAccounts'
+        });
+        this.account = accounts[0];
+      } else {
+        this.checkNetwork()
+        this.chainId = this.toHex(store.state.abi.chainId)
+      }
+
+      if (this.account) {
+        await chainApi.getWalletUrl(this.chainId).then(res => {
+          if (res.code == 0) {
+            this.url = res.data;
+            store.commit("setMetaMask", { chainID: this.chainId, account: this.account, url: res.data });
+            this.isAvailable()
+          }
+        })
+      }
+      else {
+        this.disconnect()
+      }
+      return true;
+    } catch (error) {
+      console.log(error)
+      this.disconnect()
+      return false
+    }
+  }
+  isMetaMaskInstalled() {
+    const { ethereum } = window;
+    return Boolean(ethereum && ethereum.isMetaMask)
+  }
+  async isMetaMaskConnected() {
+    try {
+      this.enabled = await provider.enable()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  //检测网络并添加
+  checkNetwork = async () => {
+    try {
+        await provider.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: CHAINID }], // chainId must be in hexadecimal numbers
+        });
+    } catch (error) {
+      // This error code indicates that
+      /// the chain has not been added to MetaMask
+      // if it is not, then install it into the user MetaMask
+      // @ts-ignore
+      if (error.code === 4902) {
+        try {
+          await provider.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: this.chainId,
+                rpcUrl: store.state.abi.rpcUrl,
+              },
+            ],
+          });
+          await provider.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: this.toHex(store.state.abi.chainId) }], // chainId must be in hexadecimal numbers
+          });
+        } catch (addError) {
+          console.log(addError);
+        }
+      }
+    }
   }
   isCurrentChain(id) {
     if (id != CHAINID) {
@@ -81,7 +174,7 @@ export class MetaMask {
         userApi.update(data).then(res => {
           if (res.code == 0) {
             let user = store.state.user;
-            store.commit("setUser",{...user, account:store.state.metaMask.account});
+            store.commit("setUser", { ...user, account: store.state.metaMask.account });
             ElNotification({
               type: 'success',
               message: "Bind successfully!"
@@ -92,7 +185,7 @@ export class MetaMask {
   }
   isAvailable() {
     let ret = false;
-    if (!store.state.metaMask) {
+    if (!provider.selectedAddress) {
       messageHelper.error("please connect wallet")
       return false;
     } else {
@@ -104,60 +197,6 @@ export class MetaMask {
       ret = false;
     }
     return ret;
-  }
-  async connectMetaMask() {
-    if (!this.isMetaMaskInstalled()) {
-      // 判断是否安装MetaMask扩展工具
-      const forwarderOrigin = window.location.origin
-      const onboarding = new MetaMaskOnboarding({
-        forwarderOrigin
-      })
-      onboarding.startOnboarding()
-      return
-    }
-    if (!provider) {
-      messageHelper.error('Please install MetaMask!');
-      return
-    }
-    if (provider !== window.ethereum) {
-      console.error('Do you have multiple wallets installed?');
-    }
-
-    try {
-      const accounts = await provider.request({
-        method: 'eth_requestAccounts'
-      });
-      this.chainId = await provider.request({ method: 'eth_chainId' });
-      this.account = accounts[0];
-      if (this.account) {
-        await chainApi.getWalletUrl(this.chainId).then(res => {
-          if (res.code == 0) {
-            this.url = res.data;
-            store.commit("setMetaMask", { chainID: this.chainId, account: this.account, url: res.data });
-            this.isAvailable()
-          }
-        })
-      }
-      else {
-        this.disconnect()
-      }
-      return true;
-    } catch (error) {
-      console.log(error)
-      this.disconnect()
-      return false
-    }
-  }
-  isMetaMaskInstalled() {
-    const { ethereum } = window;
-    return Boolean(ethereum && ethereum.isMetaMask)
-  }
-  async isMetaMaskConnected() {
-    try {
-      this.enabled = await provider.enable()
-    } catch (error) {
-      console.log(error)
-    }
   }
   //ETH转账
   sendTransaction(param) {
@@ -196,7 +235,8 @@ export class MetaMask {
       })
       .then((success) => {
         if (success) {
-          console.log('COSD1 successfully added to wallet!');
+          console.log(success)
+          console.log(param.symbol+' successfully added to wallet!');
         } else {
           throw new Error('Something went wrong.');
         }
@@ -354,7 +394,7 @@ export class MetaMask {
   async transferEvicByContract(param) {
     const myContract = this.getContract(param.abi, param.address);
     return new Promise((resolve, reject) => {
-      myContract.methods.transfer(param.from,this.toHex(param.money)).send({
+      myContract.methods.transfer(param.from, this.toHex(param.money)).send({
         from: param.from
       }).then(res => {
         console.log(res)

@@ -27,32 +27,24 @@
   </el-button>
 </template>
 <script setup>
-import { ref,getCurrentInstance, computed } from "vue";
+import { ref, getCurrentInstance, computed } from "vue";
 import { useStore } from "vuex"
 import { chainApi } from "@/api/request";
+import { base64 } from "@/utils/base64";
 const { proxy } = getCurrentInstance()
 const store = useStore()
+let CONTRACTS = store.state.abi.contract;
 const emit = defineEmits(['refresh'])
 const metaMask = proxy.metaMask;
 const provider = proxy.metaMask.provider;
+const abis = ref({ cosd: JSON.parse(base64.decode(CONTRACTS.cosd.abi)), busd: JSON.parse(base64.decode(CONTRACTS.busd.abi)) })
 const chains = ref({'0x1':"ethereum",'0x61':'bsc'})
 let isConnected = computed(() => {
   return store.state.metaMask ? true : false
 })
-provider.on('chainChanged', (chainId) => {
-  if (!store.state.user) return;
-  if (store.state.metaMask) {
-    chainApi.getWalletUrl(chainId).then(res => {
-      if (res.code == 0) {
-        store.commit("setMetaMask", { account: store.state.user.account, chainID: chainId, url: res.data });
-      }
-    })
-    ElMessage.success("You have changed the chain!")
-  }
-})
 provider.on('connect', (account) => {
   console.log('connect', account)
-  window.location.reload()
+  if(!store.state.metaMask) metaMask.connectMetaMask()
 })
 provider.on('accountsChanged', (accounts) => {
   console.log('accountsChanged', accounts);
@@ -73,10 +65,49 @@ provider.on('message', message => {
 provider.on('disconnect', () => {
   console.log('disconnect')
   metaMask.disconnect();
-  window.location.reload()
 })
+provider.on('chainChanged', (chainId) => {
+  if (!store.state.user) return;
+  if (store.state.metaMask) {
+    chainApi.getWalletUrl(chainId).then(res => {
+      if (res.code == 0) {
+        store.commit("setMetaMask", { account: store.state.user.account, chainID: chainId, url: res.data });
+      }
+    })
+    ElMessage.success("You have changed the chain!")
+  }
+})
+function getBalance(key) {
+  let data = {
+    abi: abis.value[key],
+    address: CONTRACTS[key].address,
+    from: store.state.metaMask.account,
+    key: key
+  }
+  metaMask.getBalanceByContract(data).then(res => {
+    let balance = store.state.balance
+    balance[key] = Math.round((res) * 1000) / 1000;
+    store.commit("setBalance",{...balance})
+  });
+}
 async function connectWallet() {
   await metaMask.connectMetaMask()
-  window.location.reload()
+  await getBalance('busd')
+  await getBalance('cosd')
+  if(!store.state.balance?.usdt) {
+    let param ={
+        address: CONTRACTS['busd'].address,
+        symbol: 'BUSD'
+    }
+    metaMask.watchAsset(param)
+  }
+  if(!store.state.balance?.cosd) {
+    let param ={
+        address: CONTRACTS['cosd'].address,
+        symbol: 'COSD1'
+    }
+    metaMask.watchAsset(param)
+  }
+  //window.location.reload()
 }
 </script>

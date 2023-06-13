@@ -125,11 +125,12 @@
                             <template #reference>
                               <p>Activity Rules: <i class="fa fa-question-circle"></i></p>
                             </template>
-                            <div style="letter-spacing: .01em;line-height: 1;">
+                            <div style="letter-spacing: .01em;line-height: 1.2;">
                               <h4 style="padding-bottom: 15px;">Activity Rules</h4>
-                              <p><span style="display:inline-block;width:140px">Activity Start Time: </span>{{ stakeStartTime.defi?.time }}</p>
+                              <p><span style="display:inline-block;width:140px">Activity Start Time: </span>{{ stakeStartTime.club?.time }}</p>
                               <p><span style="display:inline-block;width:140px">Lockup Period: </span>90 Days</p>
                               <p><span style="display:inline-block;width:140px">Amount: </span>&gt;= 4000 cosd</p>
+                              <p> Users can only stake after the event starts. The staking period of each user is 90 days, and the user can only unstake after the staking reaches 90 days. The staking period starts once the staking operation is completed.</p>
                             </div>
                           </el-popover>
                           <a href="javascript:void(0);" class="btn btn-rose btn-round" @click="open('clubstaking')">Stake</a>
@@ -193,11 +194,12 @@
                             <template #reference>
                               <p>Activity Rules: <i class="fa fa-question-circle"></i></p>
                             </template>
-                            <div style="letter-spacing: .01em;line-height: 1;">
+                            <div style="letter-spacing: .01em;line-height: 1.2;">
                               <h4 style="padding-bottom: 15px;">Activity Rules</h4>
                               <p><span style="display:inline-block;width:140px">Activity Start Time: </span>{{ stakeStartTime.defi?.time }}</p>
                               <p><span style="display:inline-block;width:140px">Lockup Period: </span>90 Days</p>
                               <p><span style="display:inline-block;width:140px">Annualized Return: </span>11%</p>
+                              <p> Users can only stake after the event starts. The duration of the defi event is 90 days. The staking income is calculated on a daily basis, and the annual return rate is 11%, so the earlier you operate, the higher the income you will get.</p>
                             </div>
                           </el-popover>
                           <button class="btn btn-rose btn-round" @click="open('defistaking')">Stake</button>
@@ -261,7 +263,7 @@ const action = ref({
   title: '',
   command: ''
 });
-let CONTRACTS = store.state.abi;
+let CONTRACTS = store.state.abi.contract;
 const contracts = ref(CONTRACTS);
 const abis = ref({ sl: JSON.parse(base64.decode(CONTRACTS.sl.abi)), club: JSON.parse(base64.decode(CONTRACTS.club.abi)), defi: JSON.parse(base64.decode(CONTRACTS.defi.abi)), buy: JSON.parse(base64.decode(CONTRACTS.buycosd.abi)), cosd: JSON.parse(base64.decode(CONTRACTS.cosd.abi)), busd: JSON.parse(base64.decode(CONTRACTS.busd.abi)) })
 const titles = ref({ buy: "Purchase COSD", "slstaking": "Staking for starlight league", "clubstaking": "Staking for club ownership", "defistaking": "Staking for earning COSD" })

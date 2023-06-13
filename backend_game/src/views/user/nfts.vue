@@ -132,6 +132,7 @@ import { DateHelper } from "@/utils/helper";
 import { base64 } from "@/utils/base64";
 import { ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import confetti from 'canvas-confetti';
+import NFTTYPES from "@/data/nft-img-name.json";
 const store = useStore()
 const TYPES = ref({ buy: 3, used: 2, active: 0, using: 1 })
 let activeName = ref(TYPES.value.active);
@@ -148,7 +149,7 @@ let rowData = ref({});
 let pageNum = ref(1); let total = ref(1);
 let pageSize = ref(10);
 let blockChain = ref('Binance Smart Chain')
-let CONTRACTS = store.state.abi;
+let CONTRACTS = store.state.abi.contract;
 let abis = ref({blindbox:JSON.parse(base64.decode(CONTRACTS.blindbox.abi)),busd:JSON.parse(base64.decode(CONTRACTS.busd.abi)),nft:JSON.parse(base64.decode(CONTRACTS.nft.abi))})
 const isOnlyUpdateStatus = ref(true);
 const hasUpdated = ref(true);
@@ -190,7 +191,7 @@ function query() {
           minted_at: DateHelper.toString(i.mintedAt * 1000),
           run_out_time: DateHelper.toString(i.runOutTime * 1000),
           game_chances: i.gameChances,
-          src: `https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/card/${i.nftType}.mp4-animation.gif`//N-001-BG.mp4-animation.gif
+          src: `https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/card/${NFTTYPES[i.nftType].card_name}`
         }
         return item
       });
