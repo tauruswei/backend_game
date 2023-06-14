@@ -17,7 +17,7 @@
               <el-tag type="success" round><i class="fa fa-bullseye" style="font-size:12px;"></i> &nbsp;connected</el-tag>
             </el-col>
             <el-col :span="12" style="text-align: right;">
-              <span>{{chains[$store.state.metaMask.chainID]}}</span> network
+              <span>{{chains[$store.state.metaMask?.chainID]}}</span> network
             </el-col>
           </el-row>
         </div>
@@ -36,7 +36,7 @@ const store = useStore()
 let CONTRACTS = store.state.abi.contract;
 const emit = defineEmits(['refresh'])
 const metaMask = proxy.metaMask;
-const provider = proxy.metaMask.provider;
+const provider = window.ethereum;
 const abis = ref({ cosd: JSON.parse(base64.decode(CONTRACTS.cosd.abi)), busd: JSON.parse(base64.decode(CONTRACTS.busd.abi)) })
 const chains = ref({'0x1':"ethereum",'0x61':'bsc'})
 let isConnected = computed(() => {
@@ -54,7 +54,7 @@ provider.on('accountsChanged', (accounts) => {
   } else {
     if (store.state.metaMask) {
       metaMask.account = accounts[0]
-      store.commit("setMetaMask", { chainID: store.state.metaMask.chainID, url: store.state.metaMask.url, account: accounts[0] });
+      store.commit("setMetaMask", { chainID: store.state.metaMask?.chainID, url: store.state.metaMask.url, account: accounts[0] });
       metaMask.isCurrentAccount()
     }
   }
@@ -71,7 +71,7 @@ provider.on('chainChanged', (chainId) => {
   if (store.state.metaMask) {
     chainApi.getWalletUrl(chainId).then(res => {
       if (res.code == 0) {
-        store.commit("setMetaMask", { account: store.state.user.account, chainID: chainId, url: res.data });
+        store.commit("setMetaMask", { account: store.state.user?.account, chainID: chainId, url: res.data });
       }
     })
     ElMessage.success("You have changed the chain!")
@@ -81,7 +81,7 @@ function getBalance(key) {
   let data = {
     abi: abis.value[key],
     address: CONTRACTS[key].address,
-    from: store.state.metaMask.account,
+    from: store.state.metaMask?.account,
     key: key
   }
   metaMask.getBalanceByContract(data).then(res => {

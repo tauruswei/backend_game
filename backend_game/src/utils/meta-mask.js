@@ -11,7 +11,6 @@ let option = {
   injectProvider: false,
   communicationLayerPreference: 'webrtc',
 }
-console.log(store.state.abi)
 export const CONTRACTS = {
   sl: { address: "0x2795bA76b7f6665669FcBE3dA0B5e4e5FBdA634c", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
   club: { address: "0x285B0B99C8182F344d57A4FbDa665BDe4Ff32fd3", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
@@ -26,25 +25,23 @@ export const CONTRACTS = {
 export const TXTYPE = { buy: 0, stake: { defi: 1, sl: 2, club: 3 }, evic: 7, evic1: 8, unstake: { defi: 4, sl: 5, club: 6 }, blindbox: 9, nft: 10 }
 export const ASSETTYPE = { usdt: 0, cosd: 1, nft: 2, evic: 3, sl: 4 }
 export const POOL = { defi: 1, sl: 2, club: 3 }
-let provider = getProvider();
 const MMSDK = new MetaMaskSDK(option);
 const ethereum = MMSDK.getProvider();
-const web3 = new Web3(provider)
+const web3 = new Web3(ethereum)
 function toHex(num){
   let hex = '0x' + num.toString(16);
   return hex
 }
-async function getProvider(){
-  let provider = await detectEthereumProvider();
-  return provider
-}
 export class MetaMask {
   constructor() {
-    this.provider = provider;
+    this.provider = null;
     this.enabled = false;
     this.account = null;
     this.chainId = null;
     this.url = null;
+  }
+  async getProvider(){
+    this.provider = await detectEthereumProvider();
   }
   disconnect() {
     this.enabled = false;
@@ -63,19 +60,20 @@ export class MetaMask {
       onboarding.startOnboarding()
       return
     }
-    if (!provider) {
+    await this.getProvider()
+    if (!this.provider) {
       messageHelper.error('Please install MetaMask!');
       return
     }
-    if (provider !== window.ethereum) {
+    if (this.provider !== window.ethereum) {
       console.error('Do you have multiple wallets installed?');
     }
 
     try {
       const CHAINID = toHex(store.state.abi.chainId)
-      this.chainId = await provider.request({ method: 'eth_chainId' });
+      this.chainId = await ethereum.request({ method: 'eth_chainId' });
       if (this.chainId == CHAINID) {
-        const accounts = await provider.request({
+        const accounts = await ethereum.request({
           method: 'eth_requestAccounts'
         });
         this.account = accounts[0];
@@ -109,7 +107,7 @@ export class MetaMask {
   }
   async isMetaMaskConnected() {
     try {
-      this.enabled = await provider.enable()
+      this.enabled = await ethereum.enable()
     } catch (error) {
       console.log(error)
     }
@@ -118,7 +116,7 @@ export class MetaMask {
   async checkNetwork() {
     try {
       const CHAINID = toHex(store.state.abi.chainId)
-      await provider.request({
+      await ethereum.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: CHAINID }], // chainId must be in hexadecimal numbers
       });
@@ -129,7 +127,7 @@ export class MetaMask {
       // @ts-ignore
       if (error.code === 4902) {
         try {
-          await provider.request({
+          await ethereum.request({
             method: "wallet_addEthereumChain",
             params: [
               {
@@ -156,7 +154,7 @@ export class MetaMask {
     }
   }
   isCurrentAccount() {
-    if (!store.state.user.account) {
+    if (!store.state.user?.account) {
       this.noBoundAddressTips();
       return false;
     }
@@ -178,12 +176,12 @@ export class MetaMask {
         let data = {
           name: store.state.user.name,
           userId: store.state.user.id,
-          walletAddress: store.state.metaMask.account
+          walletAddress: store.state.metaMask?.account
         }
         userApi.update(data).then(res => {
           if (res.code == 0) {
             let user = store.state.user;
-            store.commit("setUser", { ...user, account: store.state.metaMask.account });
+            store.commit("setUser", { ...user, account: store.state.metaMask?.account });
             ElNotification({
               type: 'success',
               message: "Bind successfully!"
@@ -194,13 +192,13 @@ export class MetaMask {
   }
   isAvailable() {
     let ret = false;
-    if (!provider.selectedAddress) {
+    if (!store.state.metaMask) {
       messageHelper.error("please connect wallet")
       return false;
     } else {
       ret = true;
     }
-    if (!this.isCurrentChain(store.state.metaMask.chainID)) return false;
+    if (!this.isCurrentChain(store.state.metaMask?.chainID)) return false;
     if (this.isCurrentAccount()) ret = true;
     else {
       ret = false;

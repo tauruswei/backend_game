@@ -1,9 +1,9 @@
 const { defineConfig } = require("@vue/cli-service");
 const CompressionPlugin = require("compression-webpack-plugin");
 const Timestamp = new Date().getTime();
-//const AutoImport = require('unplugin-auto-import/webpack')
-//const Components = require('unplugin-vue-components/webpack')
-//const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
+const AutoImport = require('unplugin-auto-import/webpack')
+const Components = require('unplugin-vue-components/webpack')
+const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
 //const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = defineConfig({
@@ -58,12 +58,12 @@ module.exports = defineConfig({
       }
     },
     plugins: [
-      /*AutoImport({
+      AutoImport({
         resolvers: [ElementPlusResolver()],
       }),
       Components({
         resolvers: [ElementPlusResolver()],
-      }),*/
+      }),
       new CompressionPlugin({
         algorithm: 'gzip', // 使用gzip压缩
         test: /\.js$|\.html$|\.css$/, // 匹配文件名
