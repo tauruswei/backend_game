@@ -3,7 +3,7 @@
     <el-container>
       <el-aside class="menu-container" :class="!isCollapse ? 'open' : 'close'" :width="width">
         <div class="logo" style="position: relative; z-index: 9; padding-left: 20px; text-align: left">
-          <img :src="require('../assets/img/logo.webp')" />
+          <img :src="require('@/assets/img/logo.webp')" />
           <span class="wtext-l">Chess Of Stars</span>
         </div>
         <el-menu class="menu" :default-active="$route.meta.route" :collapse="isCollapse" router>
@@ -104,8 +104,8 @@
 import { ref, getCurrentInstance } from "vue";
 import { useRouter } from "vue-router"
 import LayoutFooter from "@/components/footer.vue"
-import PasswordCont from "@/components/password.vue";
-import EmailCont from "@/components/reset-email.vue";
+import PasswordCont from "@/components/userAdmin/password.vue";
+import EmailCont from "@/components/userAdmin/reset-email.vue";
 import QcodeCont from "@/components/qcode.vue";
 import MetamaskConnect from "@/components/metamask.vue";
 import { userApi } from "@/api/request"

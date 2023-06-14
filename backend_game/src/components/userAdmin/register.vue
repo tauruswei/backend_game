@@ -1,7 +1,7 @@
 <template>
   <div class="login-bg">
     <div class="logo" style="position: relative; z-index: 9; padding-left: 20px; text-align: left">
-      <img :src="require('../assets/img/logo.webp')" />
+      <img :src="require('@/assets/img/logo.webp')" />
       <span class="wtext-l">Chess Of Stars</span>
     </div>
     <div class="login-box" style="margin-top:10px">

@@ -43,11 +43,11 @@ import 'tinymce/plugins/wordcount'
 // import 'tinymce/plugins/table';
 
 import { computed, nextTick, ref, unref, watch, onDeactivated, onBeforeUnmount, getCurrentInstance } from 'vue'
-import { toolbar, plugins } from './tinymce'
-import { buildShortUUID } from '../../utils/uuid'
-import { bindHandlers } from './helper'
-import { onMountedOrActivated } from '../../hooks/core'
-import { isNumber } from '../../utils/is'
+import { toolbar, plugins } from '@/components/tinymce/tinymce'
+import { buildShortUUID } from '@/utils/uuid'
+import { bindHandlers } from '@/components/tinymce/helper'
+import { onMountedOrActivated } from '@/hooks/core'
+import { isNumber } from '@/utils/is'
 
 const props = defineProps({
     options: {

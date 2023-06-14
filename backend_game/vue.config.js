@@ -51,7 +51,7 @@ module.exports = defineConfig({
       web3: "Web3"
     },
     optimization: {
-      minimize:true,
+      minimize: true,
       splitChunks: {
         chunks: 'all'
       }
@@ -74,7 +74,10 @@ module.exports = defineConfig({
       new BundleAnalyzerPlugin()
     ],
   },
-  devServer:{
-    port:1521
+  devServer: {
+    port: 1433,
+    proxy: {
+      ws: false
+    }
   }
 });

@@ -20,7 +20,7 @@
 import { ref } from "vue";
 import { useStore } from "vuex"
 import { useRouter } from "vue-router";
-import { userApi } from "../api/request";
+import { userApi } from "@/api/request";
 import { loadingHelper } from "@/utils/loading";
 import { encryptAES } from "@/utils/crypto";
 const emit = defineEmits(['close'])

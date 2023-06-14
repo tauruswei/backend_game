@@ -1,6 +1,6 @@
-import router from "../router/index";
-import store from "../store/index";
-import { userApi } from "../api/request";
+import router from "@/router/index";
+import store from "@/store/index";
+import { userApi } from "@/api/request";
 
 export const logout = function () {
     (async () => {

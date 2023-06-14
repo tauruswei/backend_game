@@ -26,7 +26,7 @@
 import { ref } from "vue";
 import { useStore } from "vuex"
 import { useRouter } from "vue-router";
-import { userApi } from "../api/request";
+import { userApi } from "@/api/request";
 import { loadingHelper } from "@/utils/loading";
 import CountDownTime from "@/components/count-down-time.vue"
 const emit = defineEmits(['close'])

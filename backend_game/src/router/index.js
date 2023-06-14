@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from "@/store/index";
 import LayoutUser from "@/components/layout-user.vue";
-import Login from "@/components/login.vue";
+import Login from "@/components/userAdmin/login.vue";
+import LoginAdmin from "@/components/admin/login.vue";
 import Notfound from "@/components/404.vue";
 import adminDash from "@/views/admin/dashboard.vue";
 const routes = [
@@ -19,18 +20,28 @@ const routes = [
     }
   },
   {
+    path: "/admin/login",
+    name: "loginadmin",
+    component: LoginAdmin,
+    meta: {
+      title: "管理员登录",
+      route: "/admin/login",
+    }
+  },
+  {
     path: "/register",
     name: "register",
-    component: () => import("@/components/register.vue"),
+    component: () => import("@/components/userAdmin/register.vue"),
     meta: {
       title: "注册",
       route: "/register",
     }
   },
+  
   {
     path: "/password",
     name: "password",
-    component: () => import("@/components/password.vue"),
+    component: () => import("@/components/userAdmin/password.vue"),
     meta: {
       title: "修改密码",
       route: "/password",

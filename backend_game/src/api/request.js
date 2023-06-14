@@ -23,6 +23,10 @@ export const userApi = {
   channelLeader:(data)=> post("/user/queryChannelLeaderByWalletAddress",data),
   abi:(data)=>uploadFile("/contract/getContractConfig",data),
 };
+export const adminApi = {
+  login: (data) => post("/user/login", data),
+  checkUser:(data)=>post("/user/queryUserByName?name="+data),
+}
 export const chainApi = {
   transactions: (data) => post("/blockChain/call", data),
   save: (data) => post("/webTransaction/save", data),

@@ -1,8 +1,8 @@
 import axios from "axios";
-import router from "../router/index";
-import store from "../store/index";
+import router from "@/router/index";
+import store from "@/store/index";
 import Qs from "qs";
-import { loadingHelper } from "./loading";
+import { loadingHelper } from "@/utils/loading";
 
 //配置了两个拦截器
 axios.defaults.withCredentials = true;
@@ -69,7 +69,7 @@ axios.interceptors.request.use(
   (err) => {
     loadingHelper.hide();
     ElNotification.error({
-      message: "Sorry, the server failed to respond in time, please try again later",
+      message: "Sorry, the server failed to respond",
       type: "error",
       position: "bottom-right",
     });
@@ -95,6 +95,15 @@ axios.interceptors.response.use(
     return res.data;
   },
   (err) => {
+    if(err.code == "ECONNABORTED"){
+      console.log(err)
+      ElNotification.error({
+        message: "Sorry, the server failed to respond in time, please try again later",
+        type: "error",
+        position: "bottom-right",
+      });
+      return Promise.reject(err);
+    }
     if (err && err.response) {
       loadingHelper.hide();
       let response = err.response;
