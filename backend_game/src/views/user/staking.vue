@@ -27,6 +27,12 @@
                       <div class="ripple-container"></div>
                     </a>
                   </li>
+                  <li class="nav-item" @click="handleClickb('unstakelist')">
+                    <a class="nav-link" :class="activeNameb =='unstakelist'?' active show':''" href="javascript:void(0);" data-toggle="tab">
+                      UnStaking List
+                      <div class="ripple-container"></div>
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -212,8 +218,28 @@
               </div>
             </div>
             <div v-if="activeNameb =='list'">
-              <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations" @commands="view"></dynamic-table>
-              <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
+              <el-row :gutter="10">
+                <el-col :span="6">
+                  <el-select v-model="stakeListType">
+                    <el-option label="starlight" :value="2"></el-option>
+                    <el-option label="club" :value="3"></el-option>
+                    <el-option label="defi" :value="1"></el-option>
+                  </el-select>
+                </el-col>
+              </el-row>
+              <buy-list v-if="activeNameb =='list'" :txtype="stakeListType"></buy-list>
+            </div>
+            <div v-if="activeNameb =='unstakelist'">
+              <el-row :gutter="10">
+                <el-col :span="6">
+                  <el-select v-model="unstakeListType">
+                    <el-option label="starlight" :value="5"></el-option>
+                    <el-option label="club" :value="6"></el-option>
+                    <el-option label="defi" :value="4"></el-option>
+                  </el-select>
+                </el-col>
+              </el-row>
+              <buy-list v-if="activeNameb =='unstakelist'" :txtype="unstakeListType"></buy-list>
             </div>
           </div>
         </div>
@@ -251,6 +277,7 @@ import { ASSETTYPE, TXTYPE, POOL, savaAfterTranscation } from "@/utils/meta-mask
 import { base64 } from "@/utils/base64";
 import { cosdApi } from "@/api/request";
 import PurchaseCosd from "@/components/purchase-cosd.vue";
+import BuyList from "@/components/user/trans-table.vue";
 const store = useStore();
 const active = ref("sl");
 const balance = ref({
@@ -278,6 +305,9 @@ const buttonText = ref('Stake')
 const min = ref(1)
 const stakeStartTime = ref({ club: {}, defi: {} })
 const activeNameb = ref("trans")
+const transTypes = ref(TXTYPE)
+const stakeListType = ref(2)
+const unstakeListType = ref(5)
 function handleClick(tab) {
   active.value = tab;
 }

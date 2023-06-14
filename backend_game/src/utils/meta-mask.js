@@ -128,13 +128,11 @@ export class MetaMask {
               },
             ],
           });
-          await provider.request({
-            method: "wallet_switchEthereumChain",
-            params: [{ chainId: this.toHex(store.state.abi.chainId) }], // chainId must be in hexadecimal numbers
-          });
         } catch (addError) {
           console.log(addError);
         }
+      } else if (error.code === 4001) {
+        alert('Sorry you need to switch to the right network, please try again!');
       }
     }
   }

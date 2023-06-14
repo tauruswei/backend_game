@@ -1,4 +1,11 @@
 {
+    "1": {
+        "id":1,
+        "zh_name":"阿斯特里德",
+        "en_name":"Astrid",
+        "card_name":"1.png",
+        "type":"n_001"
+    },
    "10001": {
         "id":1,
         "zh_name":"阿斯特里德",
@@ -62,42 +69,42 @@
         "card_name":"N_009-BG.mp4-animation.gif",
         "type":"n_009"
     },
-    "10010": {
+    "20001": {
         "id":10,
         "zh_name":"赛里莎",
         "en_name":"Zyrisa",
         "card_name":"N_010-BG.mp4-animation.gif",
         "type":"n_010"
     },
-    "20001": {
+    "20002": {
         "id":11,
         "zh_name":"塞菲娅",
         "en_name":"Sephia",
         "card_name":"R_001-BG.mp4-animation.gif",
         "type":"r_001"
     },
-    "20002": {
+    "20003": {
         "id":12,
         "zh_name":"灰烬",
         "en_name":"Ember",
         "card_name":"R_002-BG.mp4-animation.gif",
         "type":"r_002"
     },
-    "20003": {
+    "20004": {
         "id":13,
         "zh_name":"马拉基",
         "en_name":"Malachi",
         "card_name":"R_003-BG.mp4-animation.gif",
         "type":"r_003"
     },
-    "20004": {
+    "20005": {
         "id":14,
         "zh_name":"莱拉",
         "en_name":"Leila",
         "card_name":"R_004-BG.mp4-animation.gif",
         "type":"r_004"
     },
-    "20005": {
+    "20006": {
         "id":15,
         "zh_name":"戈里姆",
         "en_name":"Gorim",

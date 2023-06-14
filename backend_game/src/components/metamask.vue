@@ -94,20 +94,6 @@ async function connectWallet() {
   await metaMask.connectMetaMask()
   await getBalance('busd')
   await getBalance('cosd')
-  if(!store.state.balance?.usdt) {
-    let param ={
-        address: CONTRACTS['busd'].address,
-        symbol: 'BUSD'
-    }
-    metaMask.watchAsset(param)
-  }
-  if(!store.state.balance?.cosd) {
-    let param ={
-        address: CONTRACTS['cosd'].address,
-        symbol: 'COSD1'
-    }
-    metaMask.watchAsset(param)
-  }
   //window.location.reload()
 }
 </script>

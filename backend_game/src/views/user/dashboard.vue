@@ -83,19 +83,27 @@
         <div style="display:flex;align-items: center;justify-content: space-between;padding:10px;">
           <div>Current COSD: <b>{{ dashboard.cosd }}</b></div>
           <div>
-            <purchase-cosd @balance="getBalance('cosd')"></purchase-cosd>
+            <add-token style="display:inline-block;" @balance="getBalance('cosd')"></add-token>
+            &nbsp;
+            <purchase-cosd style="display:inline-block" @balance="getBalance('cosd')"></purchase-cosd>
           </div>
         </div>
       </div>
     <div class="card">
       <div class="card-header" style="padding-bottom: 0;">
-        <b style="font-size:18px">Purchase List</b>
+        <b class="card-title">Purchase List</b>
       </div>
       <div class="card-body">
-        <el-tabs>
-          <el-tab-pane label="Evic"></el-tab-pane>
-          <el-tab-pane label="COSD"></el-tab-pane>
-          <el-tab-pane label="Blindbox"></el-tab-pane>
+        <el-tabs v-model="activeName">
+          <el-tab-pane label="Evic" name="evic">
+            <buy-list v-if="activeName =='evic'" :txtype="transTypes.evic"></buy-list>
+          </el-tab-pane>
+          <el-tab-pane label="COSD" name="cosd">
+            <buy-list v-if="activeName =='cosd'" :txtype="transTypes.buy"></buy-list>
+          </el-tab-pane>
+          <el-tab-pane label="Blindbox" name="blindbox">
+            <buy-list v-if="activeName =='blindbox'" :txtype="transTypes.blindbox"></buy-list>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </div>
@@ -122,15 +130,18 @@
 import { ref, onMounted, getCurrentInstance } from 'vue'
 import { useStore } from "vuex";
 import { ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
-import { evicsApi } from '@/api/request';
+import { evicsApi,} from '@/api/request';
 import { base64 } from "@/utils/base64";
 import { loadingHelper } from "@/utils/loading";
 import PurchaseCosd from "@/components/purchase-cosd.vue";
+import AddToken from "@/components/user/add-token.vue";
+import BuyList from "@/components/user/trans-table.vue";
 const store = useStore();
 const dashboard = ref({ cosd: 0, nft: 0, games: 1, evics: 0 })
 const { proxy } = getCurrentInstance();
 let CONTRACTS = store.state.abi.contract;
 const metaMask = proxy.metaMask;
+const transTypes = ref(TXTYPE)
 const abis = ref({ cosd: JSON.parse(base64.decode(CONTRACTS.cosd.abi)), nft: JSON.parse(base64.decode(CONTRACTS.nft.abi)), busd: JSON.parse(base64.decode(CONTRACTS.busd.abi)) })
 const amount = ref(0)
 const amount1 = ref(0)
@@ -138,6 +149,7 @@ const visible = ref(false)
 const action = ref({ title: "", btn: "" })
 const max = ref(Infinity)
 const min = ref(100)
+const activeName = ref("evic")
 function isEmpty() {
   if (!amount.value) {
     ElMessage.error("amount is required!")

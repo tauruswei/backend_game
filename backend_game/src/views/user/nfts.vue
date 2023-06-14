@@ -40,9 +40,9 @@
     </div>
     <template v-if="activeName ==TYPES.buy">
       <div class="card card-pricing card-raised">
-        <div class="card-body" style="background-color: #fef5ff;">
+        <div class="card-body" style="background-color: #fcfcff;">
           <div>
-            <el-image style="width:300px" :src="require('@/assets/img/blindbox.webp')"></el-image>
+            <el-image style="width:300px" :src="require('@/assets/img/blindbox.gif')"></el-image>
           </div>
           <h6 class="card-category">Get a NFT in the blind box</h6>
           <h3 class="card-title">20 USDT</h3>
@@ -182,6 +182,7 @@ function query() {
   nftApi.list(data).then((res) => {
     if (res.data.list) {
       tableData.value = res.data.list.map(i => {
+        let imgInfo = NFTTYPES[i.nftType+''];
         let item = {
           id: i.id,
           Token_ID: i.tokenId,
@@ -191,7 +192,7 @@ function query() {
           minted_at: DateHelper.toString(i.mintedAt * 1000),
           run_out_time: DateHelper.toString(i.runOutTime * 1000),
           game_chances: i.gameChances,
-          src: `https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/card/${NFTTYPES[i.nftType].card_name}`
+          src: `https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/card/`+imgInfo?.card_name
         }
         return item
       });
