@@ -1,10 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
-import store from "@/store/index";
+import store from "../store/index";
 import LayoutUser from "@/components/layout-user.vue";
 import Login from "@/components/userAdmin/login.vue";
-import LoginAdmin from "@/components/admin/login.vue";
+import LoginAdmin from "@/components/admin/login-admin.vue";
 import Notfound from "@/components/404.vue";
-import adminDash from "@/views/admin/dashboard.vue";
 const routes = [
   {
     path: "/",
@@ -20,12 +19,12 @@ const routes = [
     }
   },
   {
-    path: "/admin/login",
+    path: "/adminlogin",
     name: "loginadmin",
     component: LoginAdmin,
     meta: {
       title: "管理员登录",
-      route: "/admin/login",
+      route: "/adminlogin",
     }
   },
   {
@@ -37,18 +36,8 @@ const routes = [
       route: "/register",
     }
   },
-  
   {
-    path: "/password",
-    name: "password",
-    component: () => import("@/components/userAdmin/password.vue"),
-    meta: {
-      title: "修改密码",
-      route: "/password",
-    }
-  },
-  {
-    path: "/:catchAll(.*)",
+    path: "/404",
     name: "404",
     component: Notfound,
     meta: {
@@ -121,7 +110,7 @@ const routes = [
       {
         path: "home",
         name: "home",
-        component: adminDash,
+        component: ()=>import("@/views/admin/dashboard.vue"),
         meta: {
           route: "/admin/home",
           permission: "admin",
@@ -221,7 +210,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    document.title = to.meta.title;
+    document.title = to.meta?.title;
     //进入登录页面的时候清除 token
     if (to.path == "/login" || to.path == "/register") {
       store.commit("setUser", null);

@@ -34,9 +34,8 @@ import { ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { userApi } from "@/api/request";
-import PasswordCont from "@/components/admin/reset-password.vue";
+import PasswordCont from "@/components/admin/reset-password-admin.vue";
 import { loadingHelper } from "@/utils/loading";
-import { encryptAES } from "@/utils/crypto";
 const visible = ref(false);
 const store = useStore();
 const router = useRouter();
@@ -59,7 +58,7 @@ async function doLogin() {
       loadingHelper.show();
       let data = {
         username: form.value.username,
-        passwd: encryptAES(form.value.password),
+        passwd: form.value.password,
       };
       userApi.login(data).then((res) => {
         if (res.code == 0 && res.msg == "success") {
@@ -73,15 +72,5 @@ async function doLogin() {
       });
     }
   });
-}
-function getABI(){
-  let data = {
-    network:"bsc"
-  }
-  userApi.abi(data).then(res=>{
-    if(res.code == 0){
-      store.commit("setABI",res.data);
-    }
-  })
 }
 </script>

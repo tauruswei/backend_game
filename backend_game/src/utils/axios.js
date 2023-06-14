@@ -1,6 +1,6 @@
 import axios from "axios";
-import router from "@/router/index";
-import store from "@/store/index";
+import router from "../router/index";
+import store from "../store/index";
 import Qs from "qs";
 import { loadingHelper } from "@/utils/loading";
 

@@ -24,15 +24,15 @@
         </div>
       </div>
       <dynamic-table :data="tableData" :header="tableHeader" :operations="operations" :preNum="pageNum * pageSize - pageSize" @commands="view"></dynamic-table>
-      <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
+      <el-pagination background layout="prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
     </div>
     <!--View NFT on Blockchain-->
     <el-dialog v-model="visible" title="View" width="80%" destroy-on-close>
       <iframe :src="rowData.link" width="100%" height="400" style="border:none"></iframe>
     </el-dialog>
     <!--View NFT on Blockchain-->
-    <blog-h5 v-model:visible="dialogShow" :title="dialogTitle" :data="editData"></blog-h5>
-    <blog-vlog v-model:visible="dialogShow1" :title="dialogTitle" :data="editData"></blog-vlog>
+    <blog-h5 v-model="dialogShow" :title="dialogTitle" :data="editData"></blog-h5>
+    <blog-vlog v-model="dialogShow1" :title="dialogTitle" :data="editData"></blog-vlog>
   </div>
 </template>
   <script setup>

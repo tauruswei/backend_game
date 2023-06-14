@@ -47,7 +47,7 @@
         </div>
       </div>
       <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations" @commands="view"></dynamic-table>
-      <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
+      <el-pagination background layout="prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
     </div>
     <!--View NFT on Blockchain-->
     <el-dialog v-model="visible" title="View NFT on Blockchain" destroy-on-close>

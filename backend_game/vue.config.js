@@ -1,10 +1,10 @@
 const { defineConfig } = require("@vue/cli-service");
 const CompressionPlugin = require("compression-webpack-plugin");
 const Timestamp = new Date().getTime();
-const AutoImport = require('unplugin-auto-import/webpack')
-const Components = require('unplugin-vue-components/webpack')
-const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+//const AutoImport = require('unplugin-auto-import/webpack')
+//const Components = require('unplugin-vue-components/webpack')
+//const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
+//const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = defineConfig({
   transpileDependencies: true,
@@ -48,7 +48,8 @@ module.exports = defineConfig({
       fs: "var fs",
       echarts: "echarts",
       "tinymce/tinymce": "tinymce",
-      web3: "Web3"
+      web3: "Web3",
+      //"@metamask/sdk":"MetaMaskSDK"
     },
     optimization: {
       minimize: true,
@@ -57,12 +58,12 @@ module.exports = defineConfig({
       }
     },
     plugins: [
-      AutoImport({
+      /*AutoImport({
         resolvers: [ElementPlusResolver()],
       }),
       Components({
         resolvers: [ElementPlusResolver()],
-      }),
+      }),*/
       new CompressionPlugin({
         algorithm: 'gzip', // 使用gzip压缩
         test: /\.js$|\.html$|\.css$/, // 匹配文件名
@@ -71,13 +72,12 @@ module.exports = defineConfig({
         threshold: 10240, // 对超过10k的数据压缩
         deleteOriginalAssets: false, // 是否删除未压缩的源文件，谨慎设置，如果希望提供非gzip的资源，可不设置或者设置为false（比如删除打包后的gz后还可以加载到原始资源文件）
       }),
-      new BundleAnalyzerPlugin()
+      //new BundleAnalyzerPlugin()
     ],
   },
   devServer: {
-    port: 1433,
-    proxy: {
-      ws: false
-    }
-  }
+    port: 1521,
+    historyApiFallback: true
+  },
+    
 });

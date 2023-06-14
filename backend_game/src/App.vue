@@ -1,9 +1,8 @@
 <template>
-  <el-config-provider>
     <div id="app">
-      <router-view></router-view>
+      <router-view />
     </div>
-  </el-config-provider>
+  
 </template>
 
 <style lang="scss">

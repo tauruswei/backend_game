@@ -82,7 +82,7 @@
           </el-row>
         </el-header>
         <el-main style="height:calc(100vh - 120px)">
-          <router-view></router-view>
+          <router-view />
         </el-main>
         <el-footer style="overflow: hidden;border-top: 1px solid #e6e8eb;">
           <layout-footer></layout-footer>
@@ -102,6 +102,7 @@
 </template>
 <script setup>
 import { ref, getCurrentInstance } from "vue";
+import {useStore} from "vuex";
 import { useRouter } from "vue-router"
 import LayoutFooter from "@/components/footer.vue"
 import PasswordCont from "@/components/userAdmin/password.vue";
@@ -109,8 +110,8 @@ import EmailCont from "@/components/userAdmin/reset-email.vue";
 import QcodeCont from "@/components/qcode.vue";
 import MetamaskConnect from "@/components/metamask.vue";
 import { userApi } from "@/api/request"
-import store from "@/store";
 const router = useRouter()
+const store = useStore()
 const { proxy } = getCurrentInstance();
 const metaMask = proxy.metaMask;
 const isCollapse = ref(false);

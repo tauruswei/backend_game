@@ -1,5 +1,3 @@
-import { ElMessageBox, ElMessage } from 'element-plus';
-//全局只有一次的message
 let count = 0, countMessage = 0;
 let messagebox;
 let message;

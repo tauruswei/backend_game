@@ -9,7 +9,7 @@ const store = createStore({
         metaMask:null,
         balance:{busd:0,cosd:0},
         time:null,
-        abi: {},
+        abi: null,
         cancelTokenArr: []
     },
     mutations: {

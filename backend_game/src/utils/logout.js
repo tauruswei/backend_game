@@ -1,5 +1,5 @@
-import router from "@/router/index";
-import store from "@/store/index";
+import router from "../router/index";
+import store from "../store/index";
 import { userApi } from "@/api/request";
 
 export const logout = function () {

@@ -3,7 +3,7 @@
     <page-title :option="title"></page-title>
     <div class="card-body">
     <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize"></dynamic-table>
-    <el-pagination background layout="prev, pager, next" :total="total" v-model:current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
+    <el-pagination background layout="prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
   </div>
   </div>
 </template>

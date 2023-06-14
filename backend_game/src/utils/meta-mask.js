@@ -2,8 +2,8 @@ import MetaMaskSDK from '@metamask/sdk';
 import MetaMaskOnboarding from '@metamask/onboarding'
 import detectEthereumProvider from '@metamask/detect-provider';
 import Web3 from 'web3'
-import store from "@/store/index";
-import router from "@/router/index";
+import store from "../store/index";
+import router from "../router/index";
 import { messageHelper } from "@/utils/message-box";
 import { chainApi, userApi } from '@/api/request';
 import { ElNotification } from 'element-plus';
@@ -11,7 +11,7 @@ let option = {
   injectProvider: false,
   communicationLayerPreference: 'webrtc',
 }
-const CHAINID = '0x' + store.state.abi.chainId.toString(16);
+console.log(store.state.abi)
 export const CONTRACTS = {
   sl: { address: "0x2795bA76b7f6665669FcBE3dA0B5e4e5FBdA634c", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
   club: { address: "0x285B0B99C8182F344d57A4FbDa665BDe4Ff32fd3", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
@@ -26,10 +26,18 @@ export const CONTRACTS = {
 export const TXTYPE = { buy: 0, stake: { defi: 1, sl: 2, club: 3 }, evic: 7, evic1: 8, unstake: { defi: 4, sl: 5, club: 6 }, blindbox: 9, nft: 10 }
 export const ASSETTYPE = { usdt: 0, cosd: 1, nft: 2, evic: 3, sl: 4 }
 export const POOL = { defi: 1, sl: 2, club: 3 }
-const provider = await detectEthereumProvider();
+let provider = getProvider();
 const MMSDK = new MetaMaskSDK(option);
 const ethereum = MMSDK.getProvider();
 const web3 = new Web3(provider)
+function toHex(num){
+  let hex = '0x' + num.toString(16);
+  return hex
+}
+async function getProvider(){
+  let provider = await detectEthereumProvider();
+  return provider
+}
 export class MetaMask {
   constructor() {
     this.provider = provider;
@@ -64,6 +72,7 @@ export class MetaMask {
     }
 
     try {
+      const CHAINID = toHex(store.state.abi.chainId)
       this.chainId = await provider.request({ method: 'eth_chainId' });
       if (this.chainId == CHAINID) {
         const accounts = await provider.request({
@@ -106,12 +115,13 @@ export class MetaMask {
     }
   }
   //检测网络并添加
-  checkNetwork = async () => {
+  async checkNetwork() {
     try {
-        await provider.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: CHAINID }], // chainId must be in hexadecimal numbers
-        });
+      const CHAINID = toHex(store.state.abi.chainId)
+      await provider.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: CHAINID }], // chainId must be in hexadecimal numbers
+      });
     } catch (error) {
       // This error code indicates that
       /// the chain has not been added to MetaMask
@@ -137,6 +147,7 @@ export class MetaMask {
     }
   }
   isCurrentChain(id) {
+    const CHAINID = toHex(store.state.abi.chainId)
     if (id != CHAINID) {
       messageHelper.error("Currently, Binance Smart Chain is only supported. Please switch to the Binance Smart Chain Mainnet network!")
       return false;
@@ -234,7 +245,7 @@ export class MetaMask {
       .then((success) => {
         if (success) {
           console.log(success)
-          console.log(param.symbol+' successfully added to wallet!');
+          console.log(param.symbol + ' successfully added to wallet!');
         } else {
           throw new Error('Something went wrong.');
         }
