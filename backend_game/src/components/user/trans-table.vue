@@ -6,9 +6,13 @@
             {{ (scope.$index + 1) * pageNum }}
         </template>
       </el-table-column>
-      <el-table-column label="From" prop="fromAmount" min-width="10%"></el-table-column>
-      <el-table-column label="To" prop="toAmount" min-width="10%"></el-table-column>
-      <el-table-column label="txID" prop="txId" min-width="30%"></el-table-column>
+      <el-table-column label="Cost Amount" prop="fromAmount" min-width="10%"></el-table-column>
+      <el-table-column label="Buy Amount" prop="toAmount" min-width="10%"></el-table-column>
+      <el-table-column label="txID" min-width="30%">
+        <template #default="scope">
+            <a :href="$store.state.metaMask?($store.state.metaMask?.url+'tx/'+scope.row.txId):'javascript:void(0);'" :target="$store.state.metaMask?'_blank':null">{{ scope.row.txId }}</a>
+        </template>
+      </el-table-column>
       <el-table-column label="Create time" min-width="25%" prop="createTime"></el-table-column>
       <el-table-column label="Update time" min-width="20%" prop="updateTime"></el-table-column>
       <template #empty>

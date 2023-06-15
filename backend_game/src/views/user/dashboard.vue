@@ -89,9 +89,12 @@
           </div>
         </div>
       </div>
-    <div class="card">
-      <div class="card-header" style="padding-bottom: 0;">
-        <b class="card-title">Purchase List</b>
+    <div class="card" style="margin-top:50px;">
+      <div class="card-header card-header-text card-header-warning">
+        <div class="card-text" style="display:block">
+          <h4 class="card-title">Transcations</h4>
+          <p class="card-category"></p>
+        </div>
       </div>
       <div class="card-body">
         <el-tabs v-model="activeName">
