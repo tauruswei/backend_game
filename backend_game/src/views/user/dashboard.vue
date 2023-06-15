@@ -75,8 +75,10 @@
           <div>Current Evics: <b>{{ dashboard.evics }}</b></div>
           <div>
             <el-button type="primary" @click="open('buy')" round>Purchase</el-button>
+            <el-tooltip placement="top" content="At least 1000 evic" effect="customized">
             <el-button type='success' style="margin-left:10px;" :disabled="!dashboard.evics" @click="open('withdraw')" round>Withdraw</el-button>
-          </div>
+          </el-tooltip>
+        </div>
         </div>
       </div>
       <div class="card">
@@ -305,3 +307,16 @@ onUnmounted(()=>{
   Bus.$off('refresh')
 })
  </script>
+ <style>
+ .el-popper.is-customized {
+   /* Set padding to ensure the height is 32px */
+   padding: 6px 12px;
+   color:rgba(255,152,0);
+   background: #fff9f1;
+ }
+ 
+ .el-popper.is-customized .el-popper__arrow::before {
+    background: #fff9f1;
+   right: 0;
+ }
+ </style>
