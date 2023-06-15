@@ -269,7 +269,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, getCurrentInstance } from "vue"
+import { ref, onMounted, getCurrentInstance, onUnmounted } from "vue"
 import { useStore } from "vuex"
 import { DateHelper } from "@/utils/helper";
 import { loadingHelper } from "@/utils/loading";
@@ -278,6 +278,7 @@ import { base64 } from "@/utils/base64";
 import { cosdApi } from "@/api/request";
 import PurchaseCosd from "@/components/purchase-cosd.vue";
 import BuyList from "@/components/user/trans-table.vue";
+import Bus from "@/utils/event-bus";
 const store = useStore();
 const active = ref("sl");
 const balance = ref({
@@ -579,6 +580,9 @@ function refresh() {
   getClubStatus()
   getRewardBalance()
 }
+Bus.$on('refresh',(isRefresh)=>{
+  if(isRefresh) refresh();
+})
 function handleClickb(tab) {
   activeNameb.value = tab;
 }
@@ -586,5 +590,8 @@ onMounted(() => {
   if (metaMask.isAvailable()) {
     refresh()
   }
+})
+onUnmounted(()=>{
+  Bus.$off('refresh')
 })
 </script>

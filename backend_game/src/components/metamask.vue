@@ -31,6 +31,7 @@ import { ref, getCurrentInstance, computed } from "vue";
 import { useStore } from "vuex"
 import { chainApi } from "@/api/request";
 import { base64 } from "@/utils/base64";
+import Bus from "@/utils/event-bus";
 const { proxy } = getCurrentInstance()
 const store = useStore()
 let CONTRACTS = store.state.abi.contract;
@@ -94,6 +95,6 @@ async function connectWallet() {
   await metaMask.connectMetaMask()
   await getBalance('busd')
   await getBalance('cosd')
-  //window.location.reload()
+  Bus.$emit('refresh',true);
 }
 </script>

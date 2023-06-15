@@ -127,7 +127,7 @@
 
 </template>
  <script setup>
-import { ref, onMounted, getCurrentInstance } from 'vue'
+import { ref, onMounted, getCurrentInstance,onUnmounted } from 'vue'
 import { useStore } from "vuex";
 import { ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import { evicsApi,} from '@/api/request';
@@ -136,6 +136,7 @@ import { loadingHelper } from "@/utils/loading";
 import PurchaseCosd from "@/components/purchase-cosd.vue";
 import AddToken from "@/components/user/add-token.vue";
 import BuyList from "@/components/user/trans-table.vue";
+import Bus from "@/utils/event-bus";
 const store = useStore();
 const dashboard = ref({ cosd: 0, nft: 0, games: 1, evics: 0 })
 const { proxy } = getCurrentInstance();
@@ -280,10 +281,16 @@ function refresh() {
   getBalance('cosd')
   getBalance('nft')
 }
+Bus.$on('refresh',(isRefresh)=>{
+  if(isRefresh) refresh();
+})
 onMounted(() => {
   evicBalance()
   if (metaMask.isAvailable()) {
     refresh();
   }
+})
+onUnmounted(()=>{
+  Bus.$off('refresh')
 })
  </script>
