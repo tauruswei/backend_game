@@ -294,6 +294,11 @@ export class MetaMask {
     let reward = await myContract.methods.stakingReward(param.from).call()
     return reward / Math.pow(10, 18);
   }
+  async getRewardRateByContract(param) {
+    const myContract = this.getContract(param.abi, param.address);
+    let rewardRate = await myContract.methods.rewardRateInit().call()
+    return rewardRate + "%";
+  }
   async getClubStatusByContract(param) {
     const myContract = this.getContract(param.abi, param.address);
     let status = await myContract.methods.isClub(param.from).call()

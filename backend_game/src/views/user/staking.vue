@@ -204,8 +204,8 @@
                               <h4 style="padding-bottom: 15px;">Activity Rules</h4>
                               <p><span style="display:inline-block;width:140px">Activity Start Time: </span>{{ stakeStartTime.defi?.time }}</p>
                               <p><span style="display:inline-block;width:140px">Lockup Period: </span>90 Days</p>
-                              <p><span style="display:inline-block;width:140px">Annualized Return: </span>11%</p>
-                              <p> Users can only stake after the event starts. The duration of the defi event is 90 days. The staking income is calculated on a daily basis, and the annual return rate is 11%, so the earlier you operate, the higher the income you will get.</p>
+                              <p><span style="display:inline-block;width:140px">Annualized Return: </span>{{ rewardRate }}</p>
+                              <p> Users can only stake after the event starts. The duration of the defi event is 90 days. The staking income is calculated on a daily basis, and the annual return rate is {{ rewardRate }}, so the earlier you operate, the higher the income you will get.</p>
                             </div>
                           </el-popover>
                           <button class="btn btn-rose btn-round" @click="open('defistaking')">Stake</button>
@@ -302,6 +302,7 @@ const { proxy } = getCurrentInstance();
 const metaMask = proxy.metaMask;
 const disabled = ref(false)
 const reward = ref(0)
+const rewardRate = ref('11%')
 const buttonText = ref('Stake')
 const min = ref(1)
 const stakeStartTime = ref({ club: {}, defi: {} })
@@ -332,6 +333,17 @@ function getRewardBalance() {
   }
   metaMask.getRewardByContract(data).then(res => {
     reward.value = res
+  });
+}
+function getRewardRate() {
+  if (!metaMask.isAvailable()) return;
+  let data = {
+    abi: abis.value['defi'],
+    address: CONTRACTS['defi'].address,
+    from: store.state.metaMask.account
+  }
+  metaMask.getRewardRateByContract(data).then(res => {
+    rewardRate.value = res
   });
 }
 function getClubStatus() {
@@ -579,6 +591,7 @@ function refresh() {
   getStakeStartTime('defi')
   getClubStatus()
   getRewardBalance()
+  getRewardRate()
 }
 Bus.$on('refresh',(isRefresh)=>{
   if(isRefresh) refresh();

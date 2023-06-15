@@ -99,7 +99,12 @@
       <div class="card-body">
         <el-tabs v-model="activeName">
           <el-tab-pane label="Evic" name="evic">
-            <buy-list v-if="activeName =='evic'" :txtype="transTypes.evic"></buy-list>
+            <el-select v-model="evicType">
+              <el-option label="all" value="[7,8]"></el-option>
+              <el-option label="purchase" :value="7"></el-option>
+              <el-option label="withdraw" :value="8"></el-option>
+            </el-select>
+            <buy-list v-if="activeName =='evic'" :txtype="evicType"></buy-list>
           </el-tab-pane>
           <el-tab-pane label="COSD" name="cosd">
             <buy-list v-if="activeName =='cosd'" :txtype="transTypes.buy"></buy-list>
@@ -154,6 +159,7 @@ const action = ref({ title: "", btn: "" })
 const max = ref(Infinity)
 const min = ref(100)
 const activeName = ref("evic")
+const evicType = ref("[7,8]")
 function isEmpty() {
   if (!amount.value) {
     ElMessage.error("amount is required!")
@@ -196,8 +202,8 @@ function open(command) {
     title: "Evics Transcation",
     command: command
   }
-  openHandler[command]();
-  visible.value = true;
+  let res = openHandler[command]();
+  if(res) visible.value = true;
 }
 function handleOperate() {
   evicHandler[action.value.command]()
@@ -207,17 +213,19 @@ const openHandler = {
     max.value = dashboard.value.evics;
     min.value = 1000;
     if (dashboard.value.evics < 1000) {
-      ElMessage.warning("Lower limit of withdrawal 1000 evic!");
-      return;
+      ElMessage.warning("Withdraw must be at least 1000 EVIC!");
+      return false;
     }
     amount.value = 10;
     amount1.value = 1000;
+    return true;
   },
   buy: () => {
     max.value = Infinity
     min.value = 100
     amount.value = 1;
     amount1.value = 100;
+    return true;
   }
 }
 const evicHandler = {
@@ -254,7 +262,7 @@ const evicHandler = {
   withdraw: () => {
     if (!amount1.value) return;
     if (amount1.value > dashboard.value.evics) {
-      ElMessage.error("cannot exceed the balance!")
+      ElMessage.warning("cannot exceed the balance!")
       return
     }
     let param = {
