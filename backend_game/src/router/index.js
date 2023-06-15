@@ -19,12 +19,12 @@ const routes = [
     }
   },
   {
-    path: "/adminlogin",
+    path: "/admin/login",
     name: "loginadmin",
     component: LoginAdmin,
     meta: {
       title: "管理员登录",
-      route: "/adminlogin",
+      route: "/admin/login",
     }
   },
   {
