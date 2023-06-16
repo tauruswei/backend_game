@@ -28,10 +28,10 @@ const url = ref(null)
 watch(() => props.id, (val) => {
   if (val) {
     inviterId.value = val;
-    url.value = process.env.VUE_APP_MODE == "development" ? (window.location.protocol + window.location.host + '/register?id=' + encodeURIComponent(inviterId.value)) : (process.env.VUE_APP_LOCAL + '/register?id=' + encodeURIComponent(inviterId.value))
+    url.value = window.location.protocol + window.location.host + '/register?id=' + encodeURIComponent(inviterId.value)
   }
 }, { immediate: true })
-url.value = process.env.VUE_APP_MODE == "development" ? (window.location.protocol +"//"+ window.location.host + '/register?id=' + encodeURIComponent(inviterId.value)) : (process.env.VUE_APP_LOCAL + '/register?id=' + encodeURIComponent(inviterId.value))
+url.value = window.location.protocol +"//"+ window.location.host + '/register?id=' + encodeURIComponent(inviterId.value)
 const size = ref(240)
 function download() {
   let canvas = document.getElementById('qcode').getElementsByTagName('canvas')
