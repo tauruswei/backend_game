@@ -26,16 +26,16 @@
       <page-title :option="title" v-if="activeName !==TYPES.buy"></page-title>
       <div class="card-body" v-if="activeName == TYPES.active">
         <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations" @commands="handlerActions"></dynamic-table>
-        <el-pagination background layout="prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
+        <el-pagination background layout="total, sizes, prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" @size-change="handleSizeChange" :page-size="pageSize" />
 
       </div>
       <div class="card-body" v-if="activeName == TYPES.using">
         <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="handlerActions"></dynamic-table>
-        <el-pagination background layout="prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
+        <el-pagination background layout="total, sizes, prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" @size-change="handleSizeChange" :page-size="pageSize" />
       </div>
       <div class="card-body" v-if="activeName == TYPES.used">
         <dynamic-table :data="tableData" :header="tableHeader1" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="handlerActions"></dynamic-table>
-        <el-pagination background layout="prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
+        <el-pagination background layout="total, sizes, prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" @size-change="handleSizeChange" :page-size="pageSize" />
       </div>
     </div>
     <template v-if="activeName ==TYPES.buy">
@@ -224,6 +224,10 @@ function handleTabClick(tab) {
 function handlePageChange(val) {
   pageNum.value = val;
   query();
+}
+function handleSizeChange(val) {
+  pageSize.value = val;
+  query()
 }
 function translate(type) {
   let rate = 20;

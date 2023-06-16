@@ -3,7 +3,7 @@
     <el-table :data="listData" style="width:100%;min-height:360px">
       <el-table-column label="No." min-width="5%">
         <template #default="scope">
-            {{ (scope.$index + 1) * pageNum }}
+            {{ scope.$index + 1 + (pageNum - 1) * pageSize }}
         </template>
       </el-table-column>
       <el-table-column label="Amount" min-width="20%">
@@ -25,7 +25,7 @@
         <el-empty style="margin:0 auto"></el-empty>
       </template>
     </el-table>
-    <el-pagination background layout="prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
+    <el-pagination background layout="total, sizes, prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" @size-change="handleSizeChange" :page-size="pageSize" />
   </div>
 </template>
 <script setup>
@@ -40,6 +40,7 @@ const total = ref(1)
 const listData = ref([]);
 const txtype = ref({0:{from:"USDT",to:"COSD"},1:{to:"COSD"},2:{to:"COSD"},3:{to:"COSD"},4:{to:"COSD"},
 5:{to:"COSD"},6:{to:"COSD"},7:{from:"USDT",to:"Evic"},8:{from:"Evic",to:"USDT"},9:{from:"USDT",to:"NFT"},10:{from:"NFT",to:""}})
+const currentType = ref()
 const props = defineProps({
   txtype: { type: [ Number,String ] },
 })
@@ -48,9 +49,11 @@ watch(() => props.txtype, (val) => {
     pageNum.value = 1;
     if(typeof val == 'string') {
         val = JSON.parse(val)
-        queryEvic(val) 
+        currentType.value = val
+        queryEvic() 
     }else{
-      query(val)  
+      currentType.value = val  
+      query()  
     }    
   }  
 }, { immediate: true })
@@ -58,12 +61,16 @@ function handlePageChange(val) {
   pageNum.value = val;
   query()
 }
-function query(txtype) {
+function handleSizeChange(val) {
+  pageSize.value = val;
+  query()
+}
+function query() {
   let data = {
     pageSize: pageSize.value,
     pageNo: pageNum.value,
     userId: store.state.user.id,
-    transType: txtype,
+    transType: currentType.value,
     status: 1
   }
   chainApi.list(data).then((res) => {
@@ -77,12 +84,12 @@ function query(txtype) {
     }
   })
 }
-function queryEvic(txtype) {
+function queryEvic() {
   let data = {
     pageSize: pageSize.value,
     pageNo: pageNum.value,
     userId: store.state.user.id,
-    transType: txtype,
+    transType: currentType.value,
     status: 1
   }
   chainApi.eviclist(data).then((res) => {

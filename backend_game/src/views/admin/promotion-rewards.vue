@@ -47,7 +47,7 @@
         </div>
       </div>
       <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations" @commands="view"></dynamic-table>
-      <el-pagination background layout="prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" :page-size="pageSize" />
+      <el-pagination background layout="total, sizes, prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" @size-change="handleSizeChange" :page-size="pageSize" />
     </div>
     <!--View NFT on Blockchain-->
     <el-dialog v-model="visible" title="View NFT on Blockchain" destroy-on-close>
@@ -129,6 +129,10 @@ function handleClick(tab) {
 function handlePageChange(val) {
   pageNum.value = val;
   query();
+}
+function handleSizeChange(val) {
+  pageSize.value = val;
+  query()
 }
 onMounted(() => {
   query();
