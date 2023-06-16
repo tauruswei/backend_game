@@ -105,7 +105,7 @@ function getABI(){
   }
   userApi.abi(data).then(res=>{
     if(res.code == 0){
-      store.commit("setABI",res.data);
+      store.commit("setABI",{...res.data});
     }
   })
 }

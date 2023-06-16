@@ -10,6 +10,7 @@ import { ElNotification } from 'element-plus';
 let option = {
   injectProvider: false,
   communicationLayerPreference: 'webrtc',
+  preferDesktop:true
 }
 export const CONTRACTS = {
   sl: { address: "0x2795bA76b7f6665669FcBE3dA0B5e4e5FBdA634c", owner: "0xccb233A8269726c51265cff07fDC84110F5F3F4c" },
@@ -51,7 +52,14 @@ export class MetaMask {
     store.commit("setMetaMask", null)
   }
   async connectMetaMask() {
+    if(!window.ethereum) {
+      messageHelper.error('Please install MetaMask!');
+      return
+    }
     if (!this.isMetaMaskInstalled()) {
+      const accounts = await ethereum.request({
+        method: 'eth_requestAccounts'
+      });
       // 判断是否安装MetaMask扩展工具
       const forwarderOrigin = window.location.origin
       const onboarding = new MetaMaskOnboarding({
@@ -115,7 +123,7 @@ export class MetaMask {
   //检测网络并添加
   async checkNetwork() {
     try {
-      const CHAINID = toHex(store.state.abi.chainId)
+      const CHAINID = toHex(store.state.abi.chainId)//
       await ethereum.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: CHAINID }], // chainId must be in hexadecimal numbers
@@ -131,18 +139,26 @@ export class MetaMask {
             method: "wallet_addEthereumChain",
             params: [
               {
-                chainId: this.chainId,
-                rpcUrl: store.state.abi.rpcUrl,
+                chainName: store.state.abi.networkName,
+                chainId: toHex(store.state.abi.chainId), 
+                rpcUrls: [...store.state.abi.rpcUrls],
+                blockExplorerUrls:[store.state.abi.explorer],
+                nativeCurrency: {
+                  name: store.state.abi?.nativeCurrency,
+                  symbol: store.state.abi?.nativeCurrency,
+                  decimals: 18
+                },
               },
             ],
-          });
+          })
         } catch (addError) {
-          console.log(addError);
+          console.log("add",addError);
         }
       } else if (error.code === 4001) {
         alert('Sorry you need to switch to the right network, please try again!');
       }
     }
+    
   }
   isCurrentChain(id) {
     const CHAINID = toHex(store.state.abi.chainId)
@@ -158,11 +174,11 @@ export class MetaMask {
       this.noBoundAddressTips();
       return false;
     }
-    if (store.state.user.account.toLowerCase() != store.state.metaMask.account.toLowerCase()) {
+    if (store.state.user.account.toLowerCase() != store.state.metaMask?.account.toLowerCase()) {
       this.currentAccountTips()
       return false;
     }
-    return store.state.user.account.toLowerCase() == store.state.metaMask.account.toLowerCase();
+    return store.state.user.account.toLowerCase() == store.state.metaMask?.account.toLowerCase();
   }
   currentAccountTips() {
     messageHelper.show('The wallet address you connected is inconsistent with the wallet address bounded to user,would you like to update the wallet address?',
@@ -192,6 +208,10 @@ export class MetaMask {
   }
   isAvailable() {
     let ret = false;
+    if(!this.isMetaMaskInstalled()){
+      messageHelper.error("please install metamask")
+      return false;
+    }
     if (!store.state.metaMask) {
       messageHelper.error("please connect wallet")
       return false;

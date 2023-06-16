@@ -318,7 +318,7 @@ function getBalance(key) {
   let data = {
     abi: abis.value[key],
     address: CONTRACTS[key].address,
-    from: store.state.metaMask.account
+    from: store.state.metaMask?.account
   }
   metaMask.getBalanceByContract(data).then(res => {
     balance.value[key] = Math.round((res) * 1000) / 1000;
@@ -329,7 +329,7 @@ function getRewardBalance() {
   let data = {
     abi: abis.value['defi'],
     address: CONTRACTS['defi'].address,
-    from: store.state.metaMask.account
+    from: store.state.metaMask?.account
   }
   metaMask.getRewardByContract(data).then(res => {
     reward.value = res
@@ -340,7 +340,7 @@ function getRewardRate() {
   let data = {
     abi: abis.value['defi'],
     address: CONTRACTS['defi'].address,
-    from: store.state.metaMask.account
+    from: store.state.metaMask?.account
   }
   metaMask.getRewardRateByContract(data).then(res => {
     rewardRate.value = res
@@ -351,7 +351,7 @@ function getClubStatus() {
   let data = {
     abi: abis.value['club'],
     address: CONTRACTS['club'].address,
-    from: store.state.metaMask.account
+    from: store.state.metaMask?.account
   }
   metaMask.getClubStatusByContract(data).then(res => {
     isClubBoss.value = res;
@@ -364,7 +364,7 @@ function getStakeStartTime(key) {
   let data = {
     abi: abis.value[key],
     address: CONTRACTS[key].address,
-    from: store.state.metaMask.account
+    from: store.state.metaMask?.account
   }
   metaMask.getStakeStartTimeByContract(data).then(res => {
     stakeStartTime.value[key] = { time: DateHelper.toString(res * 1000), origin: res * 1000 }
@@ -497,7 +497,7 @@ async function stakingApprove(key) {
   let isTimeAvailable = await isStakeTimeAvailable(key)
   if (key != 'sl' && !isTimeAvailable) return;
   if (!metaMask.isAvailable()) return;
-  let data = { from: store.state.metaMask.account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key], abiApprove: abis.value["cosd"], approveAddress: CONTRACTS["cosd"].address }
+  let data = { from: store.state.metaMask?.account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key], abiApprove: abis.value["cosd"], approveAddress: CONTRACTS["cosd"].address }
   if (!validatorAmount('cosd')) return;
   loadingHelper.show()
   metaMask.approveByContract(data).then(() => {
@@ -509,7 +509,7 @@ async function stakingApprove(key) {
 }
 function stakingTransfer(key) {
   if (!metaMask.isAvailable()) return;
-  let data = { from: store.state.metaMask.account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key], abiApprove: abis.value["cosd"], approveAddress: CONTRACTS["cosd"].address }
+  let data = { from: store.state.metaMask?.account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key], abiApprove: abis.value["cosd"], approveAddress: CONTRACTS["cosd"].address }
   loadingHelper.show()
   metaMask.stakingByContract(data).then((res) => {
     visible.value = false;
@@ -541,7 +541,7 @@ async function unstakingTransfer(key) {
   if (key !== 'sl' && !isTimeAvailable) return;
   if (!metaMask.isAvailable()) return;
   if (!validatorAmount(key)) return;
-  let account = store.state.metaMask.account;
+  let account = store.state.metaMask?.account;
   let data = { from: account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key] }
   loadingHelper.show()
   metaMask.unStakingByContract(data).then((res) => {
@@ -574,7 +574,7 @@ async function claimReward() {
   let isTimeAvailable = await isUnStakeTimeAvailable('defi');
   if (!isTimeAvailable) return;
   if (!metaMask.isAvailable()) return;
-  let data = { from: store.state.metaMask.account, address: CONTRACTS['defi'].address, abi: abis.value['defi'] };
+  let data = { from: store.state.metaMask?.account, address: CONTRACTS['defi'].address, abi: abis.value['defi'] };
   loadingHelper.show();
   metaMask.claimRewardByContract(data).then(() => {
     loadingHelper.hide();

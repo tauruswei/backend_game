@@ -253,7 +253,7 @@ function getCard() {
 function nftApprove() {
   if (!metaMask.isAvailable()) return;
   if (isEmpty()) return;
-  let data = { from: store.state.metaMask.account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: abis.value.blindbox, club: address.value.clubAddress, channel: address.value.channelAddress }
+  let data = { from: store.state.metaMask?.account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: abis.value.blindbox, club: address.value.clubAddress, channel: address.value.channelAddress }
   loadingHelper.show()
   metaMask.approveByContract({ ...data, abiApprove: abis.value.busd, approveAddress: CONTRACTS["busd"].address }).then(() => {
     disabled.value = true;
@@ -265,7 +265,7 @@ function nftApprove() {
 function nftSwap(event) {
   if (!metaMask.isAvailable()) return;
   if (isEmpty()) return;
-  let data = { from: store.state.metaMask.account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: abis.value.blindbox, club: address.value.clubAddress, channel: address.value.channelAddress }
+  let data = { from: store.state.metaMask?.account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: abis.value.blindbox, club: address.value.clubAddress, channel: address.value.channelAddress }
   loadingHelper.show()
   metaMask.nftBlindBoxByContract(data).then((res) => {
     visible1.value = false;
@@ -300,7 +300,7 @@ function getNFTnfoFromChain(id) {
   if (!metaMask.isAvailable()) return;
   let param = {
     abi: abis.value.nft,
-    from: store.state.metaMask.account,
+    from: store.state.metaMask?.account,
     address: CONTRACTS['nft'].address,
     tokenId: id
   }

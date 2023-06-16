@@ -189,7 +189,7 @@ function getBalance(key) {
   let data = {
     abi: abis.value[key],
     address: CONTRACTS[key].address,
-    from: store.state.metaMask.account,
+    from: store.state.metaMask?.account,
     key: key
   }
   metaMask.getBalanceByContract(data).then(res => {
@@ -235,7 +235,7 @@ const evicHandler = {
     if (!metaMask.isAvailable()) return;
     if (isEmpty()) return;
     let data = {
-      from: store.state.metaMask.account,
+      from: store.state.metaMask?.account,
       address: CONTRACTS["busd"].address,
       money: amount.value,
       abi: abis.value.busd

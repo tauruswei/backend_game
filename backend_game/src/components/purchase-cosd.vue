@@ -101,7 +101,7 @@ async function getMarketBalance() {
     abi: abis.value['cosd'],
     address: CONTRACTS['cosd'].address,
     baddress: CONTRACTS['buycosd'].address,
-    from: store.state.metaMask.account
+    from: store.state.metaMask?.account
   }
   await metaMask.getMarketBalanceByContract(data).then(res => {
     marketBalance.value = Math.round((res) * 1000) / 1000;
@@ -112,7 +112,7 @@ async function getAmountOfCOSDHasBuy() {
   let data = {
     abi: abis.value['buy'],
     address: CONTRACTS['buycosd'].address,
-    from: store.state.metaMask.account
+    from: store.state.metaMask?.account
   }
   await metaMask.getCOSDHasBuyByContract(data).then(res => {
     allowPurchace.value = 2000000 - Math.round((res) * 1000) / 1000;
@@ -121,7 +121,7 @@ async function getAmountOfCOSDHasBuy() {
 function purchaseApprove() {
   if (!metaMask.isAvailable()) return;
   let data = {
-    from: store.state.metaMask.account,
+    from: store.state.metaMask?.account,
     address: CONTRACTS["buycosd"].address,
     money: action.value.amount,
     abi: abis.value.buy,
@@ -141,7 +141,7 @@ function purchase() {
   if (!metaMask.isAvailable()) return;
   if (isEmpty()) return;
   let data = {
-    from: store.state.metaMask.account,
+    from: store.state.metaMask?.account,
     address: CONTRACTS["buycosd"].address,
     money: action.value.amount,
     abi: abis.value.buy,

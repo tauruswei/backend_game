@@ -141,12 +141,12 @@ function closeemail() {
   visible1.value = false
 }
 function inviteHandler() {
-  if (!store.state.metaMask.account) {
+  if (!store.state.metaMask?.account) {
     ElMessage.error("You have not connected the wallet!")
     return;
   }
   let data = {
-    walletAddress: store.state.metaMask.account
+    walletAddress: store.state.metaMask?.account
   }
   userApi.channelLeader(data).then(res => {
     if (res.code == 0) {

@@ -39,7 +39,7 @@ const {proxy} = getCurrentInstance();
 const metaMask = proxy.metaMask;
 const address = ref("")
 const symbol = ref("")
-const image = ref("")
+const image = ref('https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/favicon.ico')
 const visible = ref(false)
 
 async function open() {
