@@ -8,10 +8,10 @@
       </el-table-column>
       <el-table-column label="Amount" min-width="20%">
         <template #default="scope">
-            <span>
-                <h3 style="margin-bottom:0"><b>{{ scope.row.toAmount }}</b>&nbsp;<small style="font-size:14px;color:#999">{{ txtype[scope.row.transType].to }}</small></h3>
-                <span>({{ scope.row.fromAmount }} <small>{{ txtype[scope.row.transType].from }}</small>)</span>               
-            </span>
+            <div>
+                <h3 style="margin:0"><b>{{ scope.row.toAmount }}</b>&nbsp;<small style="font-size:14px;color:#999">{{ txtype[scope.row.transType].to }}</small></h3>
+                <span v-if="[0,7,8,9].indexOf(scope.row.transType) > -1">({{ scope.row.fromAmount }} <small>{{ txtype[scope.row.transType].from }}</small>)</span>               
+            </div>
         </template>
       </el-table-column>
       <el-table-column label="txID" min-width="30%">
@@ -38,8 +38,8 @@ const pageSize = ref(10);
 const pageNum = ref(1)
 const total = ref(1)
 const listData = ref([]);
-const txtype = ref({0:{from:"USDT",to:"COSD"},1:{from:"COSD",to:"defi"},2:{from:"COSD",to:"starlight"},3:{from:"COSD",to:"club"},4:{from:"COSD",to:"defi"},
-5:{from:"COSD",to:"starlight"},6:{from:"COSD",to:"club"},7:{from:"USDT",to:"Evic"},8:{from:"Evic",to:"USDT"},9:{from:"USDT",to:"NFT"},10:{from:"NFT",to:""}})
+const txtype = ref({0:{from:"USDT",to:"COSD"},1:{to:"COSD"},2:{to:"COSD"},3:{to:"COSD"},4:{to:"COSD"},
+5:{to:"COSD"},6:{to:"COSD"},7:{from:"USDT",to:"Evic"},8:{from:"Evic",to:"USDT"},9:{from:"USDT",to:"NFT"},10:{from:"NFT",to:""}})
 const props = defineProps({
   txtype: { type: [ Number,String ] },
 })
