@@ -68,7 +68,7 @@ const infos = ref({
   cosd:{
     symbol:"COSD",
     address:CONTRACTS.cosd.address,
-    image:"https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/favicon.ico"
+    image:CONTRACTS.cosd.image||"https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/favicon.ico"
   },
   bnb:{
     symbol:"BNB",
@@ -78,7 +78,7 @@ const infos = ref({
   busd:{
     symbol:"BUSD",
     address:CONTRACTS.busd.address,
-    image:"https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/favicon.ico"
+    image:CONTRACTS.busd.image||"https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/favicon.ico"
   }
 })
 const visible = ref(false)
