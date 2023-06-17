@@ -85,7 +85,7 @@
         <div style="display:flex;align-items: center;justify-content: space-between;padding:10px;">
           <div>Current COSD: <b>{{ dashboard.cosd }}</b></div>
           <div>
-            <add-token style="display:inline-block;" @balance="getBalance('cosd')"></add-token>
+            <add-token style="display:inline-block;" @balance="getBalances()"></add-token>
             &nbsp;
             <purchase-cosd style="display:inline-block" @balance="getBalance('cosd')"></purchase-cosd>
           </div>
@@ -293,6 +293,10 @@ const evicHandler = {
 function refresh() {
   getBalance('cosd')
   getBalance('nft')
+}
+function getBalances(){
+  getBalance('cosd')
+  getBalance('busd')
 }
 Bus.$on('refresh',(isRefresh)=>{
   if(isRefresh) refresh();

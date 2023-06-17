@@ -86,7 +86,7 @@ export class MetaMask {
         });
         this.account = accounts[0];
       } else {
-        this.checkNetwork()
+        if(!this.checkNetwork()) return;
         this.chainId = this.toHex(store.state.abi.chainId)
       }
 
@@ -128,6 +128,7 @@ export class MetaMask {
         method: "wallet_switchEthereumChain",
         params: [{ chainId: CHAINID }], // chainId must be in hexadecimal numbers
       });
+      return true
     } catch (error) {
       // This error code indicates that
       /// the chain has not been added to MetaMask
@@ -154,17 +155,20 @@ export class MetaMask {
         } catch (addError) {
           console.log("add",addError);
         }
+        return false
       } else if (error.code === 4001) {
         alert('Sorry you need to switch to the right network, please try again!');
+        return false
       }
     }
     
   }
-  isCurrentChain(id) {
+  async isCurrentChain(id) {
     const CHAINID = toHex(store.state.abi.chainId)
     if (id != CHAINID) {
-      messageHelper.error("Currently, Binance Smart Chain is only supported. Please switch to the Binance Smart Chain Mainnet network!")
-      return false;
+      let res = await this.checkNetwork();
+      console.log("isbsc",res)
+      return res;
     } else {
       return true
     }

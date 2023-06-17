@@ -390,14 +390,18 @@ const openHandler = {
     min.value = 400;
     visible.value = true
   },
-  clubstaking: () => {
+  clubstaking: async () => {
+    let isTimeAvailable = await isStakeTimeAvailable('club');
+    if (!isTimeAvailable) return;
     action.value.amount = 4000;
     needApprove.value = true;
     buttonText.value = "Stake";
     min.value = 4000;
     visible.value = true
   },
-  defistaking: () => {
+  defistaking: async () => {
+    let isTimeAvailable = await isStakeTimeAvailable('defi');
+    if (!isTimeAvailable) return;
     action.value.amount = 1;
     needApprove.value = true;
     buttonText.value = "Stake";
@@ -411,14 +415,18 @@ const openHandler = {
     disabled.value = true;
     visible.value = true
   },
-  clubunstaking: () => {
+  clubunstaking: async () => {
+    let isTimeAvailable = await isUnStakeTimeAvailable('club');
+    if (!isTimeAvailable) return;
     action.value.amount = balance.value['club'];
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
     visible.value = true
   },
-  defiunstaking: () => {
+  defiunstaking: async () => {
+    let isTimeAvailable = await isUnStakeTimeAvailable('defi');
+    if (!isTimeAvailable) return;
     action.value.amount = balance.value['defi'];
     needApprove.value = false
     buttonText.value = "Unstake"
@@ -494,8 +502,6 @@ async function isUnStakeTimeAvailable(key) {
   return ret
 }
 async function stakingApprove(key) {
-  let isTimeAvailable = await isStakeTimeAvailable(key)
-  if (key != 'sl' && !isTimeAvailable) return;
   if (!metaMask.isAvailable()) return;
   let data = { from: store.state.metaMask?.account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key], abiApprove: abis.value["cosd"], approveAddress: CONTRACTS["cosd"].address }
   if (!validatorAmount('cosd')) return;
@@ -537,8 +543,6 @@ function stakingTransfer(key) {
   })
 }
 async function unstakingTransfer(key) {
-  let isTimeAvailable = await isUnStakeTimeAvailable(key);
-  if (key !== 'sl' && !isTimeAvailable) return;
   if (!metaMask.isAvailable()) return;
   if (!validatorAmount(key)) return;
   let account = store.state.metaMask?.account;

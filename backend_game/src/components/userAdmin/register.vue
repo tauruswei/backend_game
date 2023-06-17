@@ -190,13 +190,12 @@ async function doLogin() {
     email: form.value.email,
     passwd: encryptAES(form.value.passwd),
   };
-  await getABI();
   await userApi.login(data).then((res) => {
     if (res.code == 0 && res.msg == "success") {
       store.commit("setUser", { name: res.data.userName, account: res.data.walletAddress, id: res.data.userId });
       store.commit("setRole", res.data.userType);
       store.commit("setToken", res.data.token);
-      router.push("/plat")
+      getABI();
     }
     loadingHelper.hide();
   });
@@ -208,6 +207,7 @@ function getABI(){
   userApi.abi(data).then(res=>{
     if(res == 0){
       store.commit("setABI",res.data);
+      router.push("/plat")
     }
   })
 }

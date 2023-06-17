@@ -78,7 +78,6 @@ rules.value.password = [
   }
 ];
 async function doLogin() {
-  await getABI()
   await formRef.value.validate((valid) => {
     if (valid) {
       loadingHelper.show();
@@ -91,8 +90,7 @@ async function doLogin() {
           store.commit("setUser", { name: res.data.userName, account: res.data.walletAddress, id: res.data.userId });
           store.commit("setRole", res.data.userType);
           store.commit("setToken", res.data.token);
-          router.push("/plat");
-
+          getABI()
         }
         loadingHelper.hide();
       });
@@ -106,6 +104,7 @@ function getABI(){
   userApi.abi(data).then(res=>{
     if(res.code == 0){
       store.commit("setABI",{...res.data});
+      router.push("/plat");
     }
   })
 }
