@@ -13,7 +13,9 @@
         </div>
         <div class="card" style="margin-top:45px">
           <div class="card-header card-header-tabs card-header-warning">
-            <div class="nav-tabs-navigation">
+            <el-row>
+              <el-col :span="22">
+                <div class="nav-tabs-navigation">
               <div class="nav-tabs-wrapper">
                 <ul class="nav nav-tabs" data-tabs="tabs">
                   <li class="nav-item" @click="handleClickb('trans')">
@@ -36,6 +38,12 @@
                 </ul>
               </div>
             </div>
+              </el-col>
+              <el-col :span="2" style="text-align:right">
+              <i class="fa fa-refresh page-refresh" @click="listRefresh"></i>
+            </el-col>
+            </el-row>
+            
           </div>
           <div class="card-body">
             <div v-if="activeNameb =='trans'">
@@ -71,7 +79,8 @@
                           </div>
                           <p class="card-category">Current staking COSD</p>
                           <h3 class="card-title">{{ balance.sl }}</h3>
-                          <span class="badge badge-pill" :class="balance.sl<400?' badge-default':' badge-success'">Starlight League Unqualified</span>
+                          <span class="badge badge-pill badge-success" v-if="balance.sl>=400">Starlight League Unqualified</span>
+                          <span class="badge badge-pill badge-default" v-if="balance.sl<400">Starlight League Qualified</span>
                         </div>
                         <div class="card-footer">
                           <div class="stats">
@@ -106,7 +115,8 @@
                           </div>
                           <p class="card-category">Current staking COSD</p>
                           <h3 class="card-title">{{ balance.club }}</h3>
-                          <span class="badge badge-pill" :class="isClubBoss?' badge-success':' badge-default'">Club ownership Unqualified</span>
+                          <span class="badge badge-pill badge-success" v-if="isClubBoss">Club ownership Qqualified</span>
+                          <span class="badge badge-pill badge-default" v-if="!isClubBoss">Club ownership Unqualified</span>
                         </div>
                         <div class="card-footer">
                           <div class="stats">
@@ -227,7 +237,7 @@
                   </el-select>
                 </el-col>
               </el-row>
-              <buy-list v-if="activeNameb =='list'" :txtype="stakeListType"></buy-list>
+              <buy-list v-model:refresh="isrefresh" v-if="activeNameb =='list'" :txtype="stakeListType"></buy-list>
             </div>
             <div v-if="activeNameb =='unstakelist'">
               <el-row :gutter="10">
@@ -239,7 +249,7 @@
                   </el-select>
                 </el-col>
               </el-row>
-              <buy-list v-if="activeNameb =='unstakelist'" :txtype="unstakeListType"></buy-list>
+              <buy-list v-model:refresh="isrefresh" v-if="activeNameb =='unstakelist'" :txtype="unstakeListType"></buy-list>
             </div>
           </div>
         </div>
@@ -249,18 +259,21 @@
     <el-dialog v-model="visible" :title="action.title" width="400px" destroy-on-close>
       <el-row :gutter="5">
         <el-col :span="4">
-          AMOUNT
+          COSD
         </el-col>
         <el-col :span="20">
           <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min.value" :max="100000" placeholder="`set amount" style="width:100%" clearable></el-input-number>
         </el-col>
         <el-col :span="24" style="margin-top:15px" v-if="needApprove">
+          <div style="text-align: right;">
+            <b style="display:inline-block;padding:0 10px;background: #fef1db;color:#ff9800;">allowance: {{ allowance[action.key] }}</b>
+          </div>
           <el-button type="primary" @click="handleApproveOperate()" style="width:100%" :disabled="disabled">
             <el-tag size="small">1</el-tag>&nbsp;Approve Spending
           </el-button>
         </el-col>
         <el-col :span="24" style="margin-top:15px">
-          <el-button type="success" @click="handleTransferOperate()" style="width:100%" :disabled="!disabled">
+          <el-button type="success" @click="handleTransferOperate()" style="width:100%" :disabled="allowance[action.key] >= action.amount?false:true">
             <el-tag size="small" v-if="needApprove">2</el-tag>&nbsp;{{buttonText}}
           </el-button>
         </el-col>
@@ -310,6 +323,8 @@ const activeNameb = ref("trans")
 const transTypes = ref(TXTYPE)
 const stakeListType = ref(2)
 const unstakeListType = ref(5)
+const isrefresh =ref(false)
+const allowance = ref({sl:0,club:0,defi:0,blindbox:0,buycosd:0})
 function handleClick(tab) {
   active.value = tab;
 }
@@ -323,6 +338,17 @@ function getBalance(key) {
   metaMask.getBalanceByContract(data).then(res => {
     balance.value[key] = Math.round((res) * 1000) / 1000;
   });
+}
+function getAllowance(key){
+  let data = {
+    abi: abis.value['cosd'],
+    address: CONTRACTS['cosd'].address,
+    from: store.state.metaMask?.account,
+    to: CONTRACTS[key].address
+  }
+  metaMask.getAllowanceByContract(data).then(res=>{
+    allowance.value[key] = res
+  })
 }
 function getRewardBalance() {
   if (!metaMask.isAvailable()) return;
@@ -376,7 +402,8 @@ async function open(command) {
     amount1: 20,
     amount: 1,
     title: titles.value[command],
-    command: command
+    command: command,
+    key:''
   }
   disabled.value = false;
   min.value = 1;
@@ -388,6 +415,7 @@ const openHandler = {
     needApprove.value = true;
     buttonText.value = "Stake";
     min.value = 400;
+    action.value.key = 'sl'
     visible.value = true
   },
   clubstaking: async () => {
@@ -397,6 +425,7 @@ const openHandler = {
     needApprove.value = true;
     buttonText.value = "Stake";
     min.value = 4000;
+    action.value.key = 'club'
     visible.value = true
   },
   defistaking: async () => {
@@ -406,6 +435,7 @@ const openHandler = {
     needApprove.value = true;
     buttonText.value = "Stake";
     min.value = 1;
+    action.value.key = 'defi'
     visible.value = true
   },
   slunstaking: () => {
@@ -413,6 +443,7 @@ const openHandler = {
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
+    action.value.key = 'club'
     visible.value = true
   },
   clubunstaking: async () => {
@@ -422,6 +453,7 @@ const openHandler = {
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
+    action.value.key = 'club'
     visible.value = true
   },
   defiunstaking: async () => {
@@ -431,13 +463,9 @@ const openHandler = {
     needApprove.value = false
     buttonText.value = "Unstake"
     disabled.value = true;
+    action.value.key = 'defi'
     visible.value = true
   }
-}
-const approveHandler = {
-  slstaking: stakingApprove.bind(this, 'sl'),
-  clubstaking: stakingApprove.bind(this, 'club'),
-  defistaking: stakingApprove.bind(this, 'defi')
 }
 const transferHandler = {
   slstaking: stakingTransfer.bind(this, 'sl'),
@@ -448,7 +476,7 @@ const transferHandler = {
   defiunstaking: unstakingTransfer.bind(this, 'defi')
 }
 function handleApproveOperate() {
-  approveHandler[action.value.command]();
+  stakingApprove(action.value.key);
 }
 function handleTransferOperate() {
   transferHandler[action.value.command]();
@@ -473,8 +501,10 @@ async function getStakeTime(key) {
     poolId: POOL[key]
   };
   let ret;
+  loadingHelper.show("Checking for stake time ...")
   await cosdApi.checkTime(data).then((res => {
     if (res.code == 0) ret = res.data
+    loadingHelper.hide()
   }))
   return ret
 }
@@ -484,8 +514,10 @@ async function getUnstakeTime(key) {
     poolId: POOL[key]
   }
   let ret;
+  loadingHelper.show("Checking for unstake time ...")
   await cosdApi.checkTimeun(data).then((res => {
     if (res.code == 0) ret = res.data.flag
+    loadingHelper.hide()
   }))
   return ret
 }
@@ -503,19 +535,20 @@ async function isUnStakeTimeAvailable(key) {
 }
 async function stakingApprove(key) {
   if (!metaMask.isAvailable()) return;
-  let data = { from: store.state.metaMask?.account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key], abiApprove: abis.value["cosd"], approveAddress: CONTRACTS["cosd"].address }
+  let data = { from: store.state.metaMask?.account, address: CONTRACTS[key].address, amount: action.value.amount, abi: abis.value[key], abiApprove: abis.value["cosd"], approveAddress: CONTRACTS["cosd"].address }
   if (!validatorAmount('cosd')) return;
   loadingHelper.show()
   metaMask.approveByContract(data).then(() => {
     loadingHelper.hide();
     disabled.value = true;
+    getAllowance(key)
   }).catch(err => {
     loadingHelper.hide();
   })
 }
 function stakingTransfer(key) {
   if (!metaMask.isAvailable()) return;
-  let data = { from: store.state.metaMask?.account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key], abiApprove: abis.value["cosd"], approveAddress: CONTRACTS["cosd"].address }
+  let data = { from: store.state.metaMask?.account, address: CONTRACTS[key].address, amount: action.value.amount, abi: abis.value[key], abiApprove: abis.value["cosd"], approveAddress: CONTRACTS["cosd"].address }
   loadingHelper.show()
   metaMask.stakingByContract(data).then((res) => {
     visible.value = false;
@@ -536,6 +569,7 @@ function stakingTransfer(key) {
     savaAfterTranscation(param)
     getBalance(key);
     getBalance('cosd');
+    getAllowance(key)
     if (key == 'club') getClubStatus()
     if (key == 'defi') { getRewardBalance() }
   }).catch(err => {
@@ -546,7 +580,7 @@ async function unstakingTransfer(key) {
   if (!metaMask.isAvailable()) return;
   if (!validatorAmount(key)) return;
   let account = store.state.metaMask?.account;
-  let data = { from: account, address: CONTRACTS[key].address, money: action.value.amount, abi: abis.value[key] }
+  let data = { from: account, address: CONTRACTS[key].address, amount: action.value.amount, abi: abis.value[key] }
   loadingHelper.show()
   metaMask.unStakingByContract(data).then((res) => {
     visible.value = false;
@@ -587,6 +621,9 @@ async function claimReward() {
   })
 }
 function refresh() {
+  getAllowance('sl')
+  getAllowance('club')
+  getAllowance('defi')
   getBalance('cosd')
   getBalance('sl')
   getBalance('club')
@@ -602,6 +639,9 @@ Bus.$on('refresh',(isRefresh)=>{
 })
 function handleClickb(tab) {
   activeNameb.value = tab;
+}
+function listRefresh(){
+  isrefresh.value =true;
 }
 onMounted(() => {
   if (metaMask.isAvailable()) {

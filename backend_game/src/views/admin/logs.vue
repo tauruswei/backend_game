@@ -18,16 +18,20 @@ let tableHeader = ref(["id", "user", "time", "type", "operation"])
 let pageNum = ref(1); 
 let total = ref(1);
 let pageSize = ref(10);
+const loading = ref(false)
 function query() {
   let data = {
     pageSize: pageSize.value,
     pageNum: pageNum.value
   }
+  loading.value = true
   userApi.logs(data).then((res) => {
     if (res.data.data) {
       tableData.value = res.data.data; 
       total.value = res.data.total;
+      
     }
+    loading.value = false
   })
 }
 function handlePageChange(val) {

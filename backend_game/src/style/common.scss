@@ -30,7 +30,7 @@ $weight-xl: bold;
 
 .title-des {
   padding-bottom: 4px;
-  color:$white;
+  color: $white;
 }
 .text-muted {
   color: var(--el-color-info);
@@ -79,7 +79,7 @@ $weight-xl: bold;
   display: inline-block;
   padding-left: 10px;
   line-height: 40px;
-  color:$white;
+  color: $white;
 }
 .header.el-header,
 .header-h.el-header {
@@ -211,8 +211,8 @@ $weight-xl: bold;
   background-size: cover;
   background-repeat: no-repeat;
 }
-.menu-container.close{
-  opacity:1
+.menu-container.close {
+  opacity: 1;
 }
 .menu-container .el-menu.menu {
   margin-top: 20px;
@@ -221,10 +221,10 @@ $weight-xl: bold;
   background-color: transparent;
   font-weight: 500;
 }
-.el-menu-item .fa{
-  padding-right:10px;
+.el-menu-item .fa {
+  padding-right: 10px;
 }
-.menu .el-menu{
+.menu .el-menu {
   background-color: transparent;
 }
 .menu .el-menu-item,
@@ -262,22 +262,40 @@ $weight-xl: bold;
 .el-autocomplete .el-input__wrapper {
   padding-right: 1px;
 }
-.el-pagination{
-  margin-top:20px;
+.el-pagination {
+  margin-top: 20px;
 }
 
-#selectpicker .el-input__wrapper{
+#selectpicker .el-input__wrapper {
   background-color: transparent;
   border: none;
   box-shadow: none !important;
 }
-#selectpicker .el-input__inner{
+#selectpicker .el-input__inner {
   color: $white !important;
 }
-#selectpicker .el-input__inner::placeholder{
-  color:#f0f0f0 !important;
+#selectpicker .el-input__inner::placeholder {
+  color: #f0f0f0 !important;
 }
-#selectpicker .selectpicker.btn{
-  padding:5px 0;
-  display:inline-block;
+#selectpicker .selectpicker.btn {
+  padding: 5px 0;
+  display: inline-block;
+}
+.page-refresh {
+  cursor: pointer;
+  width: 33px;
+  height: 33px;
+  text-align: center;
+  line-height: 33px !important;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+  transition: all 0.5s;
+}
+.page-refresh:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: all 0.5s;
+}
+.page-refresh:active {
+  transform: rotate(180deg);
+  transition: all 0.5s;
 }

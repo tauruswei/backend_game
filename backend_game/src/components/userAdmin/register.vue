@@ -13,13 +13,11 @@
         </el-form-item>
         <el-form-item label="Verify code" prop="code">
           <el-row :gutter="10" style="width:100%">
-            <el-col :span="18">
+            <el-col :span="16">
               <el-input v-model="form.code" type="text" placeholder="enter your verify code" clearable />
             </el-col>
-            <el-col :span="6">
-              <el-button @click="getVerifyCode" type="primary" :disabled="btndisabled" plain>{{!btndisabled?'send': ''}}
-                <count-down-time v-if="btndisabled" :limit="time" @change="()=>{btndisabled = false}"></count-down-time>
-              </el-button>
+            <el-col :span="8">
+              <count-down-time :email="form.email" @send="setDisabled"></count-down-time>
             </el-col>
           </el-row>
         </el-form-item>
@@ -144,24 +142,6 @@ rules.value.rpassword = [
     trigger: "blur",
   },
 ];
-function getVerifyCode() {
-  formRef.value.validateField(['email'], (valid) => {
-    if (valid) {
-      loadingHelper.show()
-      userApi.code({ email: form.value.email }).then(res => {
-        if (res.code == 0) {
-          ElNotification({
-            type: "success",
-            message: "send successfully!",
-          });
-          btndisabled.value = true;
-          time.value = res.data;
-          loadingHelper.hide()
-        }
-      })
-    }
-  })
-}
 function doRegister() {
   formRef.value.validate((valid) => {
     if (valid) {
@@ -176,39 +156,15 @@ function doRegister() {
       }
       userApi.signup(data).then((res) => {
         if (res.code == 0 && res.msg == "success") {
-          doLogin();
+          formRef.value.resetFields()
+          router.push('/login')
         }
         loadingHelper.hide();
       });
     }
   });
 }
-async function doLogin() {
-  loadingHelper.show();
-  
-  let data = {
-    email: form.value.email,
-    passwd: encryptAES(form.value.passwd),
-  };
-  await userApi.login(data).then((res) => {
-    if (res.code == 0 && res.msg == "success") {
-      store.commit("setUser", { name: res.data.userName, account: res.data.walletAddress, id: res.data.userId });
-      store.commit("setRole", res.data.userType);
-      store.commit("setToken", res.data.token);
-      getABI();
-    }
-    loadingHelper.hide();
-  });
-}
-function getABI(){
-  let data = {
-    network:"bsc"
-  }
-  userApi.abi(data).then(res=>{
-    if(res == 0){
-      store.commit("setABI",res.data);
-      router.push("/plat")
-    }
-  })
+function setDisabled(disabled){
+  btndisabled.value = disabled
 }
 </script>

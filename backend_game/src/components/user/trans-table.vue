@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data="listData" style="width:100%;min-height:360px">
+    <el-table :data="listData" style="width:100%;min-height:360px" v-loading="loading">
       <el-table-column label="No." min-width="5%">
         <template #default="scope">
             {{ scope.$index + 1 + (pageNum - 1) * pageSize }}
@@ -41,9 +41,12 @@ const listData = ref([]);
 const txtype = ref({0:{from:"USDT",to:"COSD"},1:{to:"COSD"},2:{to:"COSD"},3:{to:"COSD"},4:{to:"COSD"},
 5:{to:"COSD"},6:{to:"COSD"},7:{from:"USDT",to:"Evic"},8:{from:"Evic",to:"USDT"},9:{from:"USDT",to:"NFT"},10:{from:"NFT",to:""}})
 const currentType = ref()
+const emit = defineEmits(['update:refresh'])
 const props = defineProps({
   txtype: { type: [ Number,String ] },
+  refresh: {type: Boolean, default:false}
 })
+const loading = ref(false)
 watch(() => props.txtype, (val) => {
   if (val != undefined) {
     pageNum.value = 1;
@@ -57,6 +60,15 @@ watch(() => props.txtype, (val) => {
     }    
   }  
 }, { immediate: true })
+watch(()=>props.refresh,(val)=>{
+    if(val) {
+        if(typeof currentType.value == "number"){
+            query()
+        }else{
+            queryEvic() 
+        }
+    }
+},{immediate:true})
 function handlePageChange(val) {
   pageNum.value = val;
   query()
@@ -73,6 +85,7 @@ function query() {
     transType: currentType.value,
     status: 1
   }
+  loading.value = true;
   chainApi.list(data).then((res) => {
     if (res.code == 0) {
       listData.value = res.data.list;
@@ -81,6 +94,8 @@ function query() {
         if(item.updateTime) item.updateTime = DateHelper.toString(item.updateTime)
       }) 
       total.value = res.data.total;
+      loading.value = false;
+      emit("update:refresh", false)
     }
   })
 }
@@ -92,6 +107,7 @@ function queryEvic() {
     transType: currentType.value,
     status: 1
   }
+  loading.value = true;
   chainApi.eviclist(data).then((res) => {
     if (res.code == 0) {
       listData.value = res.data.list;
@@ -100,6 +116,8 @@ function queryEvic() {
         if(item.updateTime) item.updateTime = DateHelper.toString(item.updateTime)
       }) 
       total.value = res.data.total;
+      loading.value = false;
+      emit("update:refresh", false)
     }
   })
 }

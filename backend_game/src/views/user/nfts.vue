@@ -23,38 +23,36 @@
       </li>
     </ul>
     <div class="card">
-      <page-title :option="title" v-if="activeName !==TYPES.buy"></page-title>
-      <div class="card-body" v-if="activeName == TYPES.active">
-        <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations" @commands="handlerActions"></dynamic-table>
+      <page-title :option="title" v-if="activeName !==TYPES.buy" @refresh="query()"></page-title>
+      <div class="card-body" v-show="activeName == TYPES.active">
+        <dynamic-table v-loading="loading" :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations" @commands="handlerActions"></dynamic-table>
         <el-pagination background layout="total, sizes, prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" @size-change="handleSizeChange" :page-size="pageSize" />
 
       </div>
-      <div class="card-body" v-if="activeName == TYPES.using">
-        <dynamic-table :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="handlerActions"></dynamic-table>
+      <div class="card-body" v-show="activeName == TYPES.using">
+        <dynamic-table v-loading="loading" :data="tableData" :header="tableHeader" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="handlerActions"></dynamic-table>
         <el-pagination background layout="total, sizes, prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" @size-change="handleSizeChange" :page-size="pageSize" />
       </div>
-      <div class="card-body" v-if="activeName == TYPES.used">
-        <dynamic-table :data="tableData" :header="tableHeader1" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="handlerActions"></dynamic-table>
+      <div class="card-body" v-show="activeName == TYPES.used">
+        <dynamic-table v-loading="loading" :data="tableData" :header="tableHeader1" :preNum="pageNum * pageSize - pageSize" :operations="operations1" @commands="handlerActions"></dynamic-table>
         <el-pagination background layout="total, sizes, prev, pager, next" :total="total" :current-page="pageNum" @current-change="handlePageChange" @size-change="handleSizeChange" :page-size="pageSize" />
       </div>
     </div>
-    <template v-if="activeName ==TYPES.buy">
-      <div class="card card-pricing card-raised">
-        <div class="card-body" style="background-color: #fcfcff;">
-          <div>
-            <el-image style="width:300px" :src="require('@/assets/img/blindbox.gif')"></el-image>
-          </div>
-          <h6 class="card-category">Get a NFT in the blind box</h6>
-          <h3 class="card-title">20 USDT</h3>
-          <span style="text-decoration:line-through!important;">99 USDT</span>
-          <p class="card-description">
-            Each blind box contains a NFT, which may be one of the
-            <a target="_blank" href="https://chessofstars.io/nftlist">NFTs here</a>.
-          </p>
-          <button class="btn btn-primary btn-round" @click="getCard()">Try your luck</button>
+    <div class="card card-pricing card-raised" v-show="activeName == TYPES.buy">
+      <div class="card-body" style="background-color: #fcfcff;">
+        <div>
+          <el-image style="width:300px" :src="require('@/assets/img/blindbox.gif')"></el-image>
         </div>
+        <h6 class="card-category">Get a NFT in the blind box</h6>
+        <h3 class="card-title">20 USDT</h3>
+        <span style="text-decoration:line-through!important;">99 USDT</span>
+        <p class="card-description">
+          Each blind box contains a NFT, which may be one of the
+          <a target="_blank" href="https://chessofstars.io/nftlist">NFTs here</a>.
+        </p>
+        <button class="btn btn-primary btn-round" @click="getCard()">Try your luck</button>
       </div>
-    </template>
+    </div>
     <!--View NFT on Blockchain-->
     <el-dialog v-model="visible" title="View NFT on Blockchain" width="800px" @close="handleSaveParamAfterTransfer()" :open-delay="delay" destroy-on-close>
       <div class="card ">
@@ -108,12 +106,15 @@
           <el-input-number v-model.number="amount1" controls-position="right" :step="1" :min="1" :max="100000" placeholder="`set amount" disabled @change="translate('nft')" style="width:100%" clearable></el-input-number>
         </el-col>
         <el-col :span="24" style="margin-top:15px">
+          <div style="text-align: right;">
+            <b style="display:inline-block;padding:0 10px;background: #fef1db;color:#ff9800;">allowance: {{ allowance['blindbox'] }}</b>
+          </div>
           <el-button type="primary" @click="nftApprove()" style="width:100%" :disabled="disabled">
             <el-tag size="small">1</el-tag>&nbsp;Approve Spending
           </el-button>
         </el-col>
         <el-col :span="24" style="margin-top:15px;">
-          <el-button type="success" @click="nftSwap($event)" style="width:100%" :disabled="!disabled">
+          <el-button type="success" @click="nftSwap($event)" style="width:100%" :disabled="allowance['blindbox'] >= amount?false:true">
             <el-tag size="small">2</el-tag>&nbsp;Buy
           </el-button>
         </el-col>
@@ -122,7 +123,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted,getCurrentInstance } from "vue";
+import { ref, onMounted, getCurrentInstance } from "vue";
 import { useStore } from "vuex";
 import { nftApi, userApi } from "@/api/request";
 import PageTitle from "@/components/page-title.vue";
@@ -150,17 +151,19 @@ let pageNum = ref(1); let total = ref(1);
 let pageSize = ref(10);
 let blockChain = ref('Binance Smart Chain')
 let CONTRACTS = store.state.abi.contract;
-let abis = ref({blindbox:JSON.parse(base64.decode(CONTRACTS.blindbox.abi)),busd:JSON.parse(base64.decode(CONTRACTS.busd.abi)),nft:JSON.parse(base64.decode(CONTRACTS.nft.abi))})
+let abis = ref({ blindbox: JSON.parse(base64.decode(CONTRACTS.blindbox.abi)), busd: JSON.parse(base64.decode(CONTRACTS.busd.abi)), nft: JSON.parse(base64.decode(CONTRACTS.nft.abi)) })
+const allowance = ref({sl:0,club:0,defi:0,blindbox:0,buycosd:0})
 const isOnlyUpdateStatus = ref(true);
 const hasUpdated = ref(true);
 const address = ref({ channelAddress: "", clubAddress: "", userAddress: "" });
 const delay = ref(0);
 const amount = ref(20);
 const amount1 = ref(1);
-const {proxy} = getCurrentInstance();
+const { proxy } = getCurrentInstance();
 const metaMask = proxy.metaMask;
 const disabled = ref(false)
 const nftParam = ref({})
+const loading = ref(false)
 function handlerActions(data) {
   if (data.command == "view") {
     delay.value = 0
@@ -169,9 +172,10 @@ function handlerActions(data) {
     setRowdata(data.data);
   }
   if (data.command == "updateStatus") {
-    updateNFTStatus(data.data)
+    useNFTForGame(data.data)
   }
 }
+
 function query() {
   let data = {
     pageSize: pageSize.value,
@@ -179,10 +183,11 @@ function query() {
     status: activeName.value,
     userId: store.state.user.id
   }
+  loading.value = true
   nftApi.list(data).then((res) => {
     if (res.data.list) {
       tableData.value = res.data.list.map(i => {
-        let imgInfo = NFTTYPES[i.nftType+''];
+        let imgInfo = NFTTYPES[i.nftType + ''];
         let item = {
           id: i.id,
           Token_ID: i.tokenId,
@@ -192,12 +197,13 @@ function query() {
           minted_at: DateHelper.toString(i.mintedAt * 1000),
           run_out_time: DateHelper.toString(i.runOutTime * 1000),
           game_chances: i.gameChances,
-          src: `https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/card/`+imgInfo?.card_name
+          src: `https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/card/` + imgInfo?.card_name
         }
         return item
       });
       total.value = res.data.total;
     }
+    loading.value = false
   })
 }
 function setRowdata(data) {
@@ -243,24 +249,38 @@ function isEmpty() {
   }
   return amount.value ? false : true;
 }
+function getAllowance(key){
+  let data = {
+    abi: abis.value['busd'],
+    address: CONTRACTS['busd'].address,
+    from: store.state.metaMask?.account,
+    to: CONTRACTS[key].address
+  }
+  metaMask.getAllowanceByContract(data).then(res=>{
+    allowance.value[key] = res
+  })
+}
 //随机获取
 function getCard() {
   if (!metaMask.isAvailable()) return;
+  visible1.value = true;
   userApi.wallet(store.state.user.id).then(res => {
     if (res.code == 0) {
       address.value = res.data;
       disabled.value = false;
-      visible1.value = true;
+      
     }
   });
 }
 function nftApprove() {
   if (!metaMask.isAvailable()) return;
   if (isEmpty()) return;
-  let data = { from: store.state.metaMask?.account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: abis.value.blindbox, club: address.value.clubAddress, channel: address.value.channelAddress }
+  let data = { from: store.state.metaMask?.account, address: CONTRACTS['blindbox'].address, amount: amount.value, abi: abis.value.blindbox, club: address.value.clubAddress, channel: address.value.channelAddress }
+  if(!address.value.clubAddress) return;
   loadingHelper.show()
   metaMask.approveByContract({ ...data, abiApprove: abis.value.busd, approveAddress: CONTRACTS["busd"].address }).then(() => {
     disabled.value = true;
+    getAllowance('blindbox')
     loadingHelper.hide();
   }).catch(err => {
     loadingHelper.hide();
@@ -269,10 +289,11 @@ function nftApprove() {
 function nftSwap(event) {
   if (!metaMask.isAvailable()) return;
   if (isEmpty()) return;
-  let data = { from: store.state.metaMask?.account, address: CONTRACTS['blindbox'].address, money: amount.value, abi: abis.value.blindbox, club: address.value.clubAddress, channel: address.value.channelAddress }
+  let data = { from: store.state.metaMask?.account, address: CONTRACTS['blindbox'].address, amount: amount.value, abi: abis.value.blindbox, club: address.value.clubAddress, channel: address.value.channelAddress }
   loadingHelper.show()
   metaMask.nftBlindBoxByContract(data).then((res) => {
     visible1.value = false;
+    getAllowance('blindbox')
     delay.value = 1000
     animation(event, true)
     nftParam.value = {
@@ -292,12 +313,25 @@ function nftSwap(event) {
       "blockNumber": res.blockNumber
     }
     let tokenid = res.events.DrawCardEvent.returnValues.cardId;
+    let nftparam = {
+      from: store.state.metaMask?.account, 
+      address: CONTRACTS['nft'].address,
+      abi: abis.value.nft,
+      tokenId: tokenid
+    }
     getNFTnfoFromChain(tokenid)
-
+    //addNFTToWallet(nftparam);
     loadingHelper.hide()
   }).catch(err => {
     console.log(err)
     loadingHelper.hide();
+  })
+}
+function addNFTToWallet(param){
+  metaMask.addNFTToWalletByContract(param).then(res=>{
+    console.log("add to wallet")
+  }).catch((err)=>{
+    console.log(err)
   })
 }
 function getNFTnfoFromChain(id) {
@@ -310,7 +344,8 @@ function getNFTnfoFromChain(id) {
   }
   metaMask.getNFTInfoByContract(param).then(res => {
     visible.value = true;
-    rowData.value.src = res.uri;
+    let imgInfo = NFTTYPES[res.number + ''];
+    rowData.value.src = `https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/card/` + imgInfo?.card_name;
     rowData.value.NFT_type = res.number;
     rowData.value.game_chances = res.chances;
     rowData.value.status = 0;
@@ -324,14 +359,51 @@ function getNFTnfoFromChain(id) {
 
   })
 }
-function handleSaveParamAfterTransfer(value) {
+async function handleSaveParamAfterTransfer(value) {
   if (!hasUpdated.value && !isOnlyUpdateStatus.value) {
-    if (value) nftParam.value.nftVo.status = value;
-    savaAfterTranscation(nftParam.value)
+    if (value) {
+      nftParam.value.nftVo.status = value;
+      ElMessageBox.confirm(
+        'Do you want to use this nft for game?',
+        'Info',
+        {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Cancel',
+          type: 'warning',
+        }
+      )
+        .then(() => {
+          nftParam.value.nftVo.status = 1;
+          rowData.value.status = 1;
+        })
+        .catch(() => {
+          console.log('cancel')
+          nftParam.value.nftVo.status = 0;
+          rowData.value.status = 0;
+        })
+    }
+    await savaAfterTranscation(nftParam.value)
+    await query();
     hasUpdated.value = true;
     isOnlyUpdateStatus.value = true;
-    if (value) rowData.value.status = value;
   }
+}
+function useNFTForGame(row) {
+  ElMessageBox.confirm(
+    'Do you want to use this nft for game?',
+    'Info',
+    {
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'Cancel',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+      updateNFTStatus(row)
+    })
+    .catch(() => {
+      console.log('cancel')
+    })
 }
 function updateNFTStatus(row) {
   let data = {
@@ -372,5 +444,8 @@ function r(mi, ma) {
 }
 onMounted(() => {
   query();
+  if (metaMask.isAvailable()) {
+  getAllowance('blindbox')
+  }
 })
 </script>

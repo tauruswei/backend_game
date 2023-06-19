@@ -20,12 +20,15 @@
           <el-input-number v-model.number="action.amount" controls-position="right" :step="1" :min="min" :max="max/20" placeholder="`set amount" style="width:100%" @change="translate('cosd')" clearable></el-input-number>
         </el-col>
         <el-col :span="24" style="margin-top:15px">
+          <div style="text-align: right;">
+            <b style="display:inline-block;padding:0 10px;background: #fef1db;color:#ff9800;">allowance: {{ allowance['buycosd'] }}</b>
+          </div>
           <el-button type="primary" @click="purchaseApprove()" style="width:100%" :disabled="disabled">
             <el-tag size="small">1</el-tag>&nbsp;Approve Spending
           </el-button>
         </el-col>
         <el-col :span="24" style="margin-top:15px">
-          <el-button type="success" @click="purchase()" style="width:100%" :disabled="!disabled">
+          <el-button type="success" @click="purchase()" style="width:100%" :disabled="allowance['buycosd'] >= action.amount?false:true">
             <el-tag size="small">2</el-tag>&nbsp;Buy
           </el-button>
         </el-col>
@@ -34,7 +37,7 @@
   </div>
 </template>
 <script setup>
-import { ref,getCurrentInstance } from "vue";
+import { ref,getCurrentInstance, onMounted } from "vue";
 import {useStore} from "vuex"
 import { loadingHelper } from "@/utils/loading";
 import { ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
@@ -48,6 +51,7 @@ const action = ref({
   title: '',
   command: ''
 });
+const allowance = ref({sl:0,club:0,defi:0,blindbox:0,buycosd:0})
 const {proxy} = getCurrentInstance();
 const metaMask = proxy.metaMask;
 const min = ref(1)
@@ -73,14 +77,14 @@ async function open() {
   }
   disabled.value = false;
   min.value = 1;
-  await getMarketBalance()
+  /*await getMarketBalance()
   await getAmountOfCOSDHasBuy()
   max.value = Math.min(marketBalance.value, allowPurchace.value, 2000000)
   if (max.value <= 0) {
     if (!allowPurchace.value) ElMessage.error("The COSD limit is 2,000,000,there is no available quota!")
     if (!marketBalance.value) ElMessage.error("No COSD available for purchase in the market !")
     return;
-  }
+  }*/
   visible.value = true
 }
 function translate(type) {
@@ -94,6 +98,17 @@ function translate(type) {
 function toMax() {
   action.value.amount1 = Math.min(marketBalance.value, allowPurchace.value, 2000000)
   translate('usdt')
+}
+function getAllowance(key){
+  let data = {
+    abi: abis.value['busd'],
+    address: CONTRACTS['busd'].address,
+    from: store.state.metaMask?.account,
+    to: CONTRACTS[key].address
+  }
+  metaMask.getAllowanceByContract(data).then(res=>{
+    allowance.value[key] = res
+  })
 }
 async function getMarketBalance() {
   if (!metaMask.isAvailable()) return;
@@ -123,15 +138,20 @@ function purchaseApprove() {
   let data = {
     from: store.state.metaMask?.account,
     address: CONTRACTS["buycosd"].address,
-    money: action.value.amount,
+    amount: action.value.amount,
     abi: abis.value.buy,
     approveAddress: CONTRACTS["busd"].address,
     abiApprove: abis.value['busd']
+  }
+  if(allowance.buycosd > 100000){
+    ElMessage.error("Accumulated expenses of usdt cannot exceed 100,000")
+    return;
   }
   if (isEmpty()) return;
   loadingHelper.show()
   metaMask.approveByContract(data).then(() => {
     loadingHelper.hide();
+    getAllowance('buycosd')
     disabled.value = true;
   }).catch(err => {
     loadingHelper.hide();
@@ -143,7 +163,7 @@ function purchase() {
   let data = {
     from: store.state.metaMask?.account,
     address: CONTRACTS["buycosd"].address,
-    money: action.value.amount,
+    amount: action.value.amount,
     abi: abis.value.buy,
     approveAddress: CONTRACTS["busd"].address,
     abiApprove: abis.value['busd']
@@ -166,8 +186,14 @@ function purchase() {
     }
     savaAfterTranscation(param)
     emit("balance");
+    getAllowance('buycosd')
   }).catch(err => {
     loadingHelper.hide();
   })
 }
+onMounted(()=>{
+  if (metaMask.isAvailable()) {
+  getAllowance('buycosd')
+  }
+})
 </script>

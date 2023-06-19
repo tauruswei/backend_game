@@ -77,7 +77,13 @@ module.exports = defineConfig({
   },
   devServer: {
     port: 1521,
-    historyApiFallback: true
+    historyApiFallback: true,
+    client:{
+      overlay:{
+      runtimeErrors:false
+    }
+    }
+    
   },
     
 });

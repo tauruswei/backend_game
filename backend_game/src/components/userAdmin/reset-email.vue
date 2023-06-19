@@ -6,13 +6,11 @@
       </el-form-item>
       <el-form-item label="Verify code" prop="code">
         <el-row :gutter="10" style="width:100%">
-          <el-col :span="20">
+          <el-col :span="18">
             <el-input v-model="form.code" placeholder="enter your verify code" clearable />
           </el-col>
-          <el-col :span="4">
-            <el-button @click="getVerifyCode" type="primary" :disabled="btndisabled" plain>{{!btndisabled?'send': ''}}
-                <count-down-time v-if="btndisabled" :limit="time" @change="()=>{btndisabled = false}"></count-down-time>
-              </el-button>
+          <el-col :span="6">
+            <count-down-time :email="form.email" @send="setDisabled"></count-down-time>
           </el-col>
         </el-row>
       </el-form-item>
@@ -58,24 +56,6 @@ rules.value.email = [{ required: true, message: "email is required", trigger: "b
   trigger: "blur",
 }];
 rules.value.code = [{ required: true, message: "Verify code is required", trigger: "blur" }];
-function getVerifyCode() {
-  formRef.value.validateField(['email'], (valid) => {
-    if (valid) {
-      loadingHelper.show()
-      userApi.code({ email: form.value.email }).then(res => {
-        if (res.code == 0) {
-          ElNotification({
-            type: "success",
-            message: "send successfully!",
-          });
-          btndisabled.value = true;
-          time.value = res.data;
-          loadingHelper.hide()
-        }
-      })
-    }
-  })
-}
 function submit() {
   formRef.value.validate((valid) => {
     if (valid) {
@@ -102,5 +82,7 @@ function submit() {
     }
   });
 }
-
+function setDisabled(disabled){
+  btndisabled.value = disabled
+}
 </script>

@@ -84,6 +84,7 @@ let pageNum = ref(1); let total = ref(1);
 let pageSize = ref(10);
 let epoch = ref("")
 let search = ref("")
+const loading = ref(false)
 function view(data) {
   if (data.command == "view") {
     visible.value = true;
@@ -98,11 +99,14 @@ function query() {
     epoch: epoch.value ? epoch.value : null,
     search: search.value ? search.value : null
   }
+  loading.value = true
   gameApi.rewards(data).then((res) => {
     if (res.data.data) {
       tableData.value = res.data.data;
       total.value = res.data.total;
+      
     }
+    loading.value = false
   })
 }
 function queryRow(data) {

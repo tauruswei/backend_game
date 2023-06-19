@@ -31,8 +31,8 @@
       <iframe :src="rowData.link" width="100%" height="400" style="border:none"></iframe>
     </el-dialog>
     <!--View NFT on Blockchain-->
-    <blog-h5 v-model="dialogShow" :title="dialogTitle" :data="editData"></blog-h5>
-    <blog-vlog v-model="dialogShow1" :title="dialogTitle" :data="editData"></blog-vlog>
+    <blog-h5 v-model:visible="dialogShow" :title="dialogTitle" :data="editData"></blog-h5>
+    <blog-vlog v-model:visible="dialogShow1" :title="dialogTitle" :data="editData"></blog-vlog>
   </div>
 </template>
   <script setup>
@@ -57,6 +57,7 @@ let dialogShow = ref(false);
 let dialogShow1 = ref(false);
 let editData = ref(null);
 const dialogTitle = ref("")
+const loading = ref(false)
 function view(data) {
   if (data.command == "view") {
     visible.value = true;
@@ -78,10 +79,12 @@ function query() {
     pageNum: pageNum.value,
     search: search.value
   }
+  loading.value = true
   blogApi.list(data).then((res) => {
     if (res.data.data) {
       tableData.value = res.data.data; total.value = res.data.total;
     }
+    loading.value = false
   })
 }
 function queryRow(data) {

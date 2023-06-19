@@ -87,15 +87,23 @@
           <div>
             <add-token style="display:inline-block;" @balance="getBalances()"></add-token>
             &nbsp;
-            <purchase-cosd style="display:inline-block" @balance="getBalance('cosd')"></purchase-cosd>
+            <purchase-cosd style="display:inline-block" @balance="refreshCosd()"></purchase-cosd>
           </div>
         </div>
       </div>
     <div class="card" style="margin-top:50px;">
       <div class="card-header card-header-text card-header-warning">
         <div class="card-text" style="display:block">
-          <h4 class="card-title">Transcations</h4>
-          <p class="card-category"></p>
+          <el-row>
+            <el-col :span="22">
+              <h4 class="card-title">Transcations</h4>
+              <p class="card-category"></p>
+            </el-col>
+            <el-col :span="2" style="text-align:right">
+              <i class="fa fa-refresh page-refresh" @click="listRefresh"></i>
+            </el-col>
+          </el-row>
+          
         </div>
       </div>
       <div class="card-body">
@@ -106,13 +114,13 @@
               <el-option label="purchase" :value="7"></el-option>
               <el-option label="withdraw" :value="8"></el-option>
             </el-select>
-            <buy-list v-if="activeName =='evic'" :txtype="evicType"></buy-list>
+            <buy-list v-model:refresh="isrefresh" v-if="activeName =='evic'" :txtype="evicType"></buy-list>
           </el-tab-pane>
           <el-tab-pane label="COSD" name="cosd">
-            <buy-list v-if="activeName =='cosd'" :txtype="transTypes.buy"></buy-list>
+            <buy-list v-model:refresh="isrefresh" v-if="activeName =='cosd'" :txtype="transTypes.buy"></buy-list>
           </el-tab-pane>
           <el-tab-pane label="Blindbox" name="blindbox">
-            <buy-list v-if="activeName =='blindbox'" :txtype="transTypes.blindbox"></buy-list>
+            <buy-list v-model:refresh="isrefresh" v-if="activeName =='blindbox'" :txtype="transTypes.blindbox"></buy-list>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -162,6 +170,7 @@ const max = ref(Infinity)
 const min = ref(100)
 const activeName = ref("evic")
 const evicType = ref("[7,8]")
+const isrefresh = ref(false);
 function isEmpty() {
   if (!amount.value) {
     ElMessage.error("amount is required!")
@@ -215,7 +224,7 @@ const openHandler = {
     max.value = dashboard.value.evics;
     min.value = 1000;
     if (dashboard.value.evics < 1000) {
-      ElMessage.warning("Withdraw must be at least 1000 EVIC!");
+      ElMessage.warning("Sorry, you need to have at least 1000 EVICS to exchange!");
       return false;
     }
     amount.value = 10;
@@ -237,7 +246,7 @@ const evicHandler = {
     let data = {
       from: store.state.metaMask?.account,
       address: CONTRACTS["busd"].address,
-      money: amount.value,
+      amount: amount.value,
       abi: abis.value.busd
     }
     loadingHelper.show()
@@ -256,7 +265,8 @@ const evicHandler = {
         "nftVo": {},
       }
       savaAfterTranscation(param)
-      dashboard.value.evics = dashboard.value.evics + amount.value * 100;
+      evicBalance()
+      listRefresh()
     }).catch(err => {
       loadingHelper.hide();
     })
@@ -264,7 +274,7 @@ const evicHandler = {
   withdraw: () => {
     if (!amount1.value) return;
     if (amount1.value > dashboard.value.evics) {
-      ElMessage.warning("cannot exceed the balance!")
+      ElMessage.warning("Sorry,the amount cannot exceed the balance!")
       return
     }
     let param = {
@@ -283,7 +293,8 @@ const evicHandler = {
       loadingHelper.hide();
       if (res.code == 0) {
         ElNotification({ type: "success", message: "it will take a few minutes,please refresh later" })
-        dashboard.value.evics = dashboard.value.evics - amount1.value;
+        evicBalance()
+        listRefresh()
       }
     }).catch(err => {
       loadingHelper.hide();
@@ -291,6 +302,7 @@ const evicHandler = {
   }
 }
 function refresh() {
+  evicBalance()
   getBalance('cosd')
   getBalance('nft')
 }
@@ -298,11 +310,17 @@ function getBalances(){
   getBalance('cosd')
   getBalance('busd')
 }
+function listRefresh(){
+  isrefresh.value = true
+}
+function refreshCosd(){
+  getBalance('cosd')
+  if(activeName.value == "cosd") listRefresh()
+}
 Bus.$on('refresh',(isRefresh)=>{
   if(isRefresh) refresh();
 })
 onMounted(() => {
-  evicBalance()
   if (metaMask.isAvailable()) {
     refresh();
   }

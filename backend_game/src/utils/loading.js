@@ -1,16 +1,16 @@
 import { ElLoading } from 'element-plus';
 let loadingCount = 0;
 let loading;
-const start = function() {
-    loading = ElLoading.service({ text: '拼命加载中', 'background': 'rgba(255, 255, 255, 0.6)' })
+const start = function(msg) {
+    loading = ElLoading.service({ text: msg||'Loading...', 'background': 'rgba(255, 255, 255, 0.6)' })
 }
 const stop = () => {
     loading.close();
 };
 export const loadingHelper = {
-    show : () => {
+    show : (msg) => {
         if (loadingCount === 0) {
-            start();
+            start(msg);
         }
         loadingCount += 1;
     },
