@@ -47,7 +47,7 @@
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card card-profile for-channel-only" v-if="$store.state.role == 2">
+          <div class="card card-profile for-channel-only" v-if="$store.state.role == 0">
             <div class="card-avatar">
               <a href="#pablo">
                 <img class="img" :src="require('@/assets/img/channel-providers.webp')" />
@@ -79,7 +79,7 @@
             </div>
           </div>
 
-          <div class="card card-profile for-clubmember-only" v-if="$store.state.role == 0">
+          <div class="card card-profile for-clubmember-only" v-if="$store.state.role == 2">
             <div class="card-avatar">
               <a href="#pablo">
                 <img class="img" :src="require('@/assets/img/club-member.webp')" />
