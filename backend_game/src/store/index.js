@@ -52,7 +52,7 @@ const store = createStore({
         },
         clearRequestToken({ cancelTokenArr }) {
             cancelTokenArr.forEach(item => {
-                item(499)
+                if(item) item(499)
             })
             cancelTokenArr = []
         }

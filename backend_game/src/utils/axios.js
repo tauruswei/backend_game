@@ -55,13 +55,13 @@ axios.interceptors.request.use(
       config.headers["token"] = token;
     }
     removePending(config); //在一个ajax发送前执行一下取消操作
-    config.cancelToken = new axios.CancelToken((c) => {
-      store.commit("pushRequestToken", { cancelToken: c });
+    config.cancelToken = new axios.CancelToken((cancel) => {
+      store.commit("pushRequestToken", { cancelToken: cancel });
       // 这里的ajax标识我是用请求地址&请求方式拼接的字符串，当然你可以选择其他的一些方式
       let date = new Date();
       pending.push({
         u: config.url + "&" + config.method + "&" + date.getTime(),
-        f: c,
+        f: cancel,
       });
     });
     return config;
