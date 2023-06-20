@@ -54,13 +54,13 @@
       </div>
     </div>
     <!--View NFT on Blockchain-->
-    <el-dialog v-model="visible" title="View NFT on Blockchain" width="800px" @close="handleSaveParamAfterTransfer(0)" :open-delay="delay" destroy-on-close>
+    <el-dialog v-model="visible" title="View NFT" width="800px" @close="handleSaveParamAfterTransfer(0)" :open-delay="delay" destroy-on-close>
       <div class="card ">
         <div class="card-header card-header-info card-header-icon">
           <div class="card-icon">
             <i class="fa fa-ticket"></i>
           </div>
-          <h4 class="card-title">View NFT on Blockchain</h4>
+          <h4 class="card-title">View NFT Infomation</h4>
         </div>
         <div class="card-body ">
           <div class="row">
@@ -74,18 +74,38 @@
                   <el-button type="primary" @click="isOnlyUpdateStatus?useNFTForGame(rowData):handleSaveParamAfterTransfer(1)" round>Yes</el-button>
                 </el-col>
               </el-row>
-              <el-row :gutter="10" v-if="rowData.status == 1">
+              <el-row :gutter="10" v-if="rowData?.status == 1">
                 <el-col :span="16"><el-tag type="success">status:&nbsp;Using</el-tag></el-col>
               </el-row>
               <div class="table-responsive table-sales">
                 <table class="table">
                   <tbody>
-                    <template v-for="(item,key) in rowData">
-                      <tr v-if="key !='src'&&key !='status'" :key="key">
-                        <td style="text-transform: capitalize;">{{ key.replace(/\_/g," ")+":" }}</td>
-                        <td>{{ item }}</td>
+                      <tr>
+                        <td>NFT type</td>
+                        <td>{{ rowData?.NFT_type }} 
+                          <a :href="$store.state.metaMask?`${$store.state.metaMask?.url}token/${rowData?.contract_address}?a=${rowData?.Token_ID}`:'javascript:void(0);'" :target="$store.state.metaMask?'_blank':null" title="View NFT on blockchain" class="btn btn-round btn-sm btn-info btn-just-icon"><i class="fa fa-external-link"></i></a>
+                        </td>
                       </tr>
-                    </template>
+                      <tr>
+                        <td>Game Chances</td>
+                        <td>{{ rowData?.game_chances }}</td>
+                      </tr>
+                      <tr>
+                        <td>Blockchain</td>
+                        <td>{{ rowData?.blockchain }}</td>
+                      </tr>
+                      <tr title="You can add this NFT to your wallet manually. For example, go to NFTs tab in MetaMask, click Import NFTs, copy and paste the NFT contract address and token ID to the right fields to add NFT to your wallet.">
+                        <td>Token ID</td>
+                        <td>{{ rowData?.Token_ID }}&nbsp;&nbsp;<i class="fa fa-copy" @click="copy(rowData?.Token_ID)"></i></td>
+                      </tr>
+                      <tr title="You can add this NFT to your wallet manually. For example, go to NFTs tab in MetaMask, click Import NFTs, copy and paste the NFT contract address and token ID to the right fields to add NFT to your wallet.">
+                        <td>Contract Address</td>
+                        <td>{{ rowData?.contract_address }}&nbsp;&nbsp;<i class="fa fa-copy" @click="copy(rowData?.contract_address)"></i></td>
+                      </tr>
+                      <tr>
+                        <td>Minted At</td>
+                        <td>{{ rowData?.minted_at }}</td>
+                      </tr>
                   </tbody>
                 </table>
               </div>
@@ -131,6 +151,7 @@ import DynamicTable from "@/components/dynamic-table.vue";
 import { loadingHelper } from "@/utils/loading";
 import { DateHelper,AppHelper } from "@/utils/helper";
 import { base64 } from "@/utils/base64";
+import { copyClick } from '@/utils/copy';
 import { ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import confetti from 'canvas-confetti';
 import NFTTYPES from "@/data/nft-img-name.json";
@@ -141,9 +162,9 @@ let title = ref({ type: "warning", title: "NFTs", desc: "All NFTs for points com
 let tableData = ref([])
 let tableHeader = ref(["id", "NFT_type", "blockchain", "minted_at", "game_chances"])
 let tableHeader1 = ref(["id", "NFT_type", "blockchain", "minted_at", "run_out_time"])
-let operations = ref([{ id: 1, type: 'success', icon: "fa fa-external-link", name: "View NFT on Blockchain", event: 'view' },
+let operations = ref([{ id: 1, type: 'success', icon: "fa fa-eye", name: "View NFT Info", event: 'view' },
 { id: 2, type: 'primary', icon: "fa fa-gamepad", name: "Use it for game", event: 'updateStatus' },])
-let operations1 = ref([{ id: 1, type: 'success', icon: "fa fa-external-link", name: "View NFT on Blockchain", event: 'view' },])
+let operations1 = ref([{ id: 1, type: 'success', icon: "fa fa-eye", name: "View NFT on Info", event: 'view' },])
 let visible = ref(false);
 let visible1 = ref(false);
 let rowData = ref({});
@@ -442,6 +463,9 @@ function animation(evt, hard) {
 function r(mi, ma) {
   return parseInt(Math.random() * (ma - mi) + mi);
 }
+function copy(val){
+  copyClick(val)
+}
 onMounted(() => {
   query();
   activeName.value = AppHelper.getURLParam('active')||0;
@@ -451,3 +475,9 @@ onMounted(() => {
 })
 
 </script>
+<style scoped>
+.fa-copy{
+  cursor: pointer;
+  color:rgb(121, 121, 158)
+}
+</style>

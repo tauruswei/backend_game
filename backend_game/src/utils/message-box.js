@@ -1,3 +1,4 @@
+//对于消息提醒限制，只显示一个。防止满屏提示。
 let count = 0, countMessage = 0;
 let messagebox;
 let message;

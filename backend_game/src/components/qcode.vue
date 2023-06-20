@@ -7,7 +7,7 @@
     <div style="width:80%;margin:20px auto;">
       <el-input v-model="url">
         <template #append>
-          <el-button type="primary" @click="copyClick">Copy</el-button>
+          <el-button type="primary" @click="copyClick(url)">Copy</el-button>
         </template>
       </el-input>
     </div>
@@ -17,6 +17,7 @@
 import QrcodeVue from 'qrcode.vue'
 import { useStore } from "vuex"
 import { ref, watch } from "vue"
+import { copyClick } from '@/utils/copy';
 const store = useStore();
 const props = defineProps({
   id: {
@@ -41,13 +42,7 @@ function download() {
   a.click()
   ElMessage.warning('loading...')
 }
-function copyClick() {
-  const input = document.createElement('input') // 创建input对象
-  input.value = url.value // 设置复制内容
-  document.body.appendChild(input) // 添加临时实例
-  input.select() // 选择实例内容
-  document.execCommand('Copy') // 执行复制
-  document.body.removeChild(input) // 删除临时实例
-  ElMessage.success('copy successfully！')
+function copy(val) {
+  copyClick(val)
 }
 </script>

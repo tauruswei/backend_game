@@ -15,7 +15,6 @@ axios.defaults.timeout = 100000; //超时时间
 //axios.defaults.retryDelay = 100000;
 //解决重复请求
 let pending = []; //声明一个数组用于存储每个请求的取消函数和标识
-let cancelToken = axios.CancelToken;
 let removePending = (ever) => {
   for (let p in pending) {
     if (pending[p].u === ever.url + "&" + ever.method) {
