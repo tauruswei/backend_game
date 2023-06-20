@@ -12,7 +12,7 @@
             </div>
             <div class="card-footer">
               <div class="stats">
-                <i class="fa fa-btc"></i>&nbsp;All COSD staked for the game
+                <i class="fa fa-btc"></i>&nbsp;All COSD in your wallet
                 <!-- <a href="#pablo">Get More COSD...</a> -->
               </div>
             </div>
@@ -47,7 +47,7 @@
             <div class="card-footer">
               <div class="stats">
                 <i class="fa fa-ticket"></i>&nbsp;
-                <a href="/plat/nfts">Get More NFTs</a>
+                <a href="/plat/nfts?active=3">Get More NFTs</a>
               </div>
             </div>
           </div>
@@ -64,7 +64,7 @@
             <div class="card-footer">
               <div class="stats">
                 <i class="fa fa-gamepad"></i>&nbsp;
-                <a href="#pablo">View games remaining</a>
+                <a href="/plat/nfts?active=0">View games remaining</a>
               </div>
             </div>
           </div>
@@ -171,6 +171,7 @@ const min = ref(100)
 const activeName = ref("evic")
 const evicType = ref("[7,8]")
 const isrefresh = ref(false);
+console.log(new Date().getTime())
 function isEmpty() {
   if (!amount.value) {
     ElMessage.error("amount is required!")

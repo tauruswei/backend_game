@@ -14,7 +14,7 @@
             </div>
         </template>
       </el-table-column>
-      <el-table-column label="txID" min-width="30%">
+      <el-table-column label="Transcation ID" min-width="30%">
         <template #default="scope">
             <a :href="$store.state.metaMask?($store.state.metaMask?.url+'tx/'+scope.row.txId):'javascript:void(0);'" :target="$store.state.metaMask?'_blank':null">{{ scope.row.txId }}</a>
         </template>

@@ -54,7 +54,7 @@
       </div>
     </div>
     <!--View NFT on Blockchain-->
-    <el-dialog v-model="visible" title="View NFT on Blockchain" width="800px" @close="handleSaveParamAfterTransfer()" :open-delay="delay" destroy-on-close>
+    <el-dialog v-model="visible" title="View NFT on Blockchain" width="800px" @close="handleSaveParamAfterTransfer(0)" :open-delay="delay" destroy-on-close>
       <div class="card ">
         <div class="card-header card-header-info card-header-icon">
           <div class="card-icon">
@@ -71,7 +71,7 @@
               <el-row :gutter="10" v-if="rowData.status == 0">
                 <el-col :span="16">use it for game?</el-col>
                 <el-col :span="8" style="text-align: right;">
-                  <el-button type="primary" @click="isOnlyUpdateStatus?updateStatus(rowData):handleSaveParamAfterTransfer(1)" round>Yes</el-button>
+                  <el-button type="primary" @click="isOnlyUpdateStatus?useNFTForGame(rowData):handleSaveParamAfterTransfer(1)" round>Yes</el-button>
                 </el-col>
               </el-row>
               <el-row :gutter="10" v-if="rowData.status == 1">
@@ -123,13 +123,13 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, getCurrentInstance } from "vue";
+import { ref, onMounted, getCurrentInstance,onBeforeUnmount,onUnmounted } from "vue";
 import { useStore } from "vuex";
 import { nftApi, userApi } from "@/api/request";
 import PageTitle from "@/components/page-title.vue";
 import DynamicTable from "@/components/dynamic-table.vue";
 import { loadingHelper } from "@/utils/loading";
-import { DateHelper } from "@/utils/helper";
+import { DateHelper,AppHelper } from "@/utils/helper";
 import { base64 } from "@/utils/base64";
 import { ASSETTYPE, TXTYPE, savaAfterTranscation } from "@/utils/meta-mask";
 import confetti from 'canvas-confetti';
@@ -160,7 +160,7 @@ const delay = ref(0);
 const amount = ref(20);
 const amount1 = ref(1);
 const { proxy } = getCurrentInstance();
-const metaMask = proxy.metaMask;
+let metaMask = proxy.metaMask;
 const disabled = ref(false)
 const nftParam = ref({})
 const loading = ref(false)
@@ -444,8 +444,10 @@ function r(mi, ma) {
 }
 onMounted(() => {
   query();
+  activeName.value = AppHelper.getURLParam('active')||0;
   if (metaMask.isAvailable()) {
-  getAllowance('blindbox')
+    getAllowance('blindbox')
   }
 })
+
 </script>

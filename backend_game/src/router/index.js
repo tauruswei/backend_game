@@ -211,18 +211,20 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     document.title = 'Accout - Chess of Stars';
+    
     //进入登录页面的时候清除 token
     if (to.path == "/login" || to.path == "/register") {
       store.commit("setUser", null);
       store.commit("setRole", null);
       store.commit("removeToken", "");
-      store.commit("clearRequestToken");
       store.commit("setMetaMask", null);
+      store.commit("clearRequestToken");
       sessionStorage.clear();
     }
     if (to.meta.requireAuth) {
+      let token = localStorage.getItem("TOKEN");
       // 判断该路由是否需要登录权限
-      if (store.state.token !== "" && store.state.token !== null) {
+      if (token !== "" && token !== null) {
         next();
       } else {
         next({
