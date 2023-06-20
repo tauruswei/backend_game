@@ -7,6 +7,7 @@ const { ElementPlusResolver } = require('unplugin-vue-components/resolvers')
 //const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = defineConfig({
+  publicPath: process.env.NODE_ENV == "production" ? "https://www.chessofstars.io/account-static/" : '/',
   transpileDependencies: true,
   lintOnSave: false, //关闭eslint
   outputDir: "dist",
@@ -78,12 +79,12 @@ module.exports = defineConfig({
   devServer: {
     port: 1521,
     historyApiFallback: true,
-    client:{
-      overlay:{
-      runtimeErrors:false
+    client: {
+      overlay: {
+        runtimeErrors: false
+      }
     }
-    }
-    
+
   },
-    
+
 });
