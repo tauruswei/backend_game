@@ -107,7 +107,7 @@
         </el-col>
         <el-col :span="24" style="margin-top:15px">
           <div style="text-align: right;">
-            <b style="display:inline-block;padding:0 10px;background: #fef1db;color:#ff9800;">allowance: {{ allowance['blindbox'] }}</b>
+            <b style="display:inline-block;padding:0 10px;background: #fef1db;color:#ff9800;">Current approved allowance: {{ allowance['blindbox'] }}</b>
           </div>
           <el-button type="primary" @click="nftApprove()" style="width:100%" :disabled="disabled">
             <el-tag size="small">1</el-tag>&nbsp;Approve Spending
@@ -187,17 +187,17 @@ function query() {
   nftApi.list(data).then((res) => {
     if (res.data.list) {
       tableData.value = res.data.list.map(i => {
-        let imgInfo = NFTTYPES[i.nftType + ''];
+        let info = NFTTYPES[i.nftType + ''];
         let item = {
           id: i.id,
           Token_ID: i.tokenId,
           tx_id: i.txId,
-          NFT_type: i.nftType,
+          NFT_type: info.type +' - '+ info.en_name,
           blockchain: i.blockChain,
           minted_at: DateHelper.toString(i.mintedAt * 1000),
           run_out_time: DateHelper.toString(i.runOutTime * 1000),
           game_chances: i.gameChances,
-          src: `https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/card/` + imgInfo?.card_name
+          src: `https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/card/` + info?.card_name
         }
         return item
       });
@@ -344,9 +344,9 @@ function getNFTnfoFromChain(id) {
   }
   metaMask.getNFTInfoByContract(param).then(res => {
     visible.value = true;
-    let imgInfo = NFTTYPES[res.number + ''];
-    rowData.value.src = `https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/card/` + imgInfo?.card_name;
-    rowData.value.NFT_type = res.number;
+    let info = NFTTYPES[res.number + ''];
+    rowData.value.src = `https://s3.ap-northeast-1.amazonaws.com/www.chessofstars.io/assets/img/card/` + info?.card_name;
+    rowData.value.NFT_type = info.type +' - '+ info.en_name;
     rowData.value.game_chances = res.chances;
     rowData.value.status = 0;
     rowData.value.blockchain = blockChain.value;
@@ -369,7 +369,7 @@ async function handleSaveParamAfterTransfer(value) {
         {
           confirmButtonText: 'Yes',
           cancelButtonText: 'Cancel',
-          type: 'warning',
+          type: 'info',
         }
       )
         .then(() => {
@@ -395,7 +395,7 @@ function useNFTForGame(row) {
     {
       confirmButtonText: 'Yes',
       cancelButtonText: 'Cancel',
-      type: 'warning',
+      type: 'info',
     }
   )
     .then(() => {

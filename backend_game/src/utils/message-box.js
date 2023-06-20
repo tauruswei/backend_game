@@ -18,8 +18,13 @@ const start = function (msg, title, success, error) {
             error ? error() : null
         })
 }
-const startMessage = function (msg) {
-    messagebox = ElMessage.error(msg)
+const startMessage = function (msg,html,dur) {
+    messagebox = ElMessage({
+        dangerouslyUseHTMLString: html||false,
+        message:msg,
+        type:"error",
+        duration: dur || 3000
+    })
     setTimeout(function(){ countMessage = 0; }, 1000)
 }
 const stop = () => {
@@ -32,9 +37,9 @@ export const messageHelper = {
         }
         count += 1;
     },
-    error: (msg) => {
+    error: (msg,html,dur) => {
         if (countMessage === 0) {
-            startMessage(msg);
+            startMessage(msg,html,dur);
         }
         countMessage += 1;
     }

@@ -5,7 +5,7 @@
       <span class="wtext-l">Chess Of Stars</span>
     </div>
     <div class="login-box" style="margin-top:10px">
-      <h3 class="title-des wtext-xl">Welcome !</h3>
+      <h3 class="title-des wtext-xl">Play & Earn,</h3>
       <p class="text-muted"><small>register your own account^^</small></p>
       <el-form ref="formRef" :rules="rules" label-position="top" label-width="100px" :model="form" style="padding-top: 40px">
         <el-form-item label="Email" prop="email">
@@ -52,6 +52,7 @@ import { AppHelper } from "@/utils/helper";
 import { loadingHelper } from "@/utils/loading";
 import { encryptAES } from "@/utils/crypto";
 import CountDownTime from "@/components/count-down-time.vue"
+import { ElMessageBox, ElNotification } from "element-plus";
 const store = useStore();
 const router = useRouter();
 const roleList = ref([{ id: 0, name: 'channel leader' }, { id: 1, name: 'club boss' }, { id: 2, name: 'user' }]);//0-渠道商 1-俱乐部老板 2 普通用户
@@ -65,7 +66,7 @@ const form = ref({
   userType: 2,
   code: "",
   rpassword: "",
-  inviterId: id?id:null,
+  inviterId: id ? id : null,
 });
 const rules = ref({});
 const time = ref(0)
@@ -143,9 +144,9 @@ rules.value.rpassword = [
   },
 ];
 function doRegister() {
+  loadingHelper.show();
   formRef.value.validate((valid) => {
     if (valid) {
-      loadingHelper.show();
       let data = {
         email: form.value.email,
         name: form.value.name,
@@ -156,15 +157,32 @@ function doRegister() {
       }
       userApi.signup(data).then((res) => {
         if (res.code == 0 && res.msg == "success") {
-          formRef.value.resetFields()
-          router.push('/login')
+          formRef.value.resetFields();
+          loadingHelper.hide();
+          ElMessageBox.confirm(
+            'Sign up successfully!Do you want to redirected to login now?',
+            'Success',
+            {
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'Cancel',
+              type: 'success',
+            }
+          )
+            .then(() => {
+              router.push('/login')
+            })
+            .catch(() => {
+              console.log('cancel')
+            })
         }
-        loadingHelper.hide();
+        
       });
+    }else{
+      loadingHelper.hide();
     }
   });
 }
-function setDisabled(disabled){
+function setDisabled(disabled) {
   btndisabled.value = disabled
 }
 </script>

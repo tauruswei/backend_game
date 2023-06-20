@@ -121,6 +121,8 @@ function submit() {
       reset();
       closeDialog()
       refresh()
+    }else{
+      loadingHelper.hide()
     }
   })
 }

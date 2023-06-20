@@ -80,9 +80,9 @@ rules.value.rpassword = [
   },
 ];
 function submit() {
+  loadingHelper.show();
   formRef.value.validate((valid) => {
     if (valid) {
-      loadingHelper.show();
       let param = {
         username: form.value.username,
         newPasswd: encryptAES(form.value.password)
@@ -97,6 +97,8 @@ function submit() {
         }
         loadingHelper.hide();
       })
+    }else{
+      loadingHelper.hide();
     }
   });
 }

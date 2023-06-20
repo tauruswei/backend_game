@@ -84,9 +84,9 @@ rules.value.rpassword = [
   },
 ];
 function submit() {
+  loadingHelper.show();
   formRef.value.validate((valid) => {
     if (valid) {
-      loadingHelper.show();
       let param = {
         oldPasswd: encryptAES(form.value.oldPassword),
         newPasswd: encryptAES(form.value.newPassword),
@@ -105,6 +105,8 @@ function submit() {
         }
         loadingHelper.hide();
       })
+    }else{
+      loadingHelper.hide();
     }
   });
 }

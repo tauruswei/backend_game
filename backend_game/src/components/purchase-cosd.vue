@@ -21,7 +21,7 @@
         </el-col>
         <el-col :span="24" style="margin-top:15px">
           <div style="text-align: right;">
-            <b style="display:inline-block;padding:0 10px;background: #fef1db;color:#ff9800;">allowance: {{ allowance['buycosd'] }}</b>
+            <b style="display:inline-block;padding:0 10px;background: #fef1db;color:#ff9800;">Current approved allowance: {{ allowance['buycosd'] }}</b>
           </div>
           <el-button type="primary" @click="purchaseApprove()" style="width:100%" :disabled="disabled">
             <el-tag size="small">1</el-tag>&nbsp;Approve Spending

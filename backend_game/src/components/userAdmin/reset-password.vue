@@ -95,9 +95,9 @@ rules.value.rpassword = [
   },
 ];
 function submit() {
+  loadingHelper.show();
   formRef.value.validate((valid) => {
     if (valid) {
-      loadingHelper.show();
       let param = {
         email: form.value.email,
         code: form.value.code,
@@ -113,6 +113,8 @@ function submit() {
         }
         loadingHelper.hide();
       })
+    }else{
+      loadingHelper.hide();
     }
   });
 }

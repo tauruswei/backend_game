@@ -5,8 +5,8 @@
       <span class="wtext-l">Chess Of Stars</span>
     </div>
     <div class="login-box">
-      <h3 class="title-des wtext-xl">Welcome !</h3>
-      <p class="text-muted"><small>have a nice time^^</small></p>
+      <h3 class="title-des wtext-xl">Play & Earn,</h3>
+      <p class="text-muted"><small>Enjoy the GameFi^^</small></p>
       <el-form ref="formRef" :rules="rules" label-position="top" label-width="100px" :model="form" style="padding-top: 40px">
         <el-form-item label="Email" prop="email">
           <el-input v-model="form.email" placeholder="enter your email" clearable />
@@ -77,10 +77,10 @@ rules.value.password = [
     trigger: "blur",
   }
 ];
-async function doLogin() {
-  await formRef.value.validate((valid) => {
+function doLogin() {
+  loadingHelper.show();
+  formRef.value.validate((valid) => {
     if (valid) {
-      loadingHelper.show();
       let data = {
         email: form.value.email,
         passwd: encryptAES(form.value.password),
@@ -92,8 +92,9 @@ async function doLogin() {
           store.commit("setToken", res.data.token);
           getABI()
         }
-        loadingHelper.hide();
       });
+    }else{
+      loadingHelper.hide();
     }
   });
 }
@@ -106,6 +107,7 @@ function getABI(){
       store.commit("setABI",{...res.data});
       router.push("/plat");
     }
+    loadingHelper.hide();
   })
 }
 </script>

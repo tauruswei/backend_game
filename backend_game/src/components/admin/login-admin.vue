@@ -5,8 +5,8 @@
       <span class="wtext-l">Chess Of Stars</span>
     </div>
     <div class="login-box">
-      <h3 class="title-des wtext-xl">Welcome !</h3>
-      <p class="text-muted"><small>have a nice time^^</small></p>
+      <h3 class="title-des wtext-xl">Play & Earn,</h3>
+      <p class="text-muted"><small>Enjoy the GameFi^^</small></p>
       <el-form ref="formRef" :rules="rules" label-position="top" label-width="100px" :model="form" style="padding-top: 40px">
         <el-form-item label="Username" prop="username">
           <el-input v-model="form.username" placeholder="enter your username" clearable />
@@ -52,10 +52,10 @@ rules.value.password = [
   { required: true, message: "Password is required", trigger: "blur" },
   { min: 8, max: 64, message: "The length between 8 and 64 character", trigger: "blur" }
 ];
-async function doLogin() {
-  await formRef.value.validate((valid) => {
+function doLogin() {
+  loadingHelper.show();
+  formRef.value.validate((valid) => {
     if (valid) {
-      loadingHelper.show();
       let data = {
         username: form.value.username,
         passwd: form.value.password,
@@ -70,6 +70,8 @@ async function doLogin() {
         }
         loadingHelper.hide();
       });
+    }else{
+      loadingHelper.hide();
     }
   });
 }

@@ -42,7 +42,7 @@ export class MetaMask {
   }
   async connectMetaMask() {
     if (!window.ethereum) {
-      messageHelper.error('Please install MetaMask!');
+      messageHelper.error(`Please install Metamask Wallet at <a href="https://metamask.io/">metamask.io</a>.`, true, 4000);
       return
     }
     if (!this.isMetaMaskInstalled()) {
@@ -56,7 +56,7 @@ export class MetaMask {
     }
     await this.getProvider()
     if (!this.provider) {
-      messageHelper.error('Please install MetaMask!');
+      messageHelper.error(`Please install Metamask Wallet at <a href="https://metamask.io/">metamask.io</a>.`, true, 4000);
       return
     }
     if (this.provider !== window.ethereum) {
@@ -113,7 +113,7 @@ export class MetaMask {
       await ethereum.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: CHAINID }], // chainId must be in hexadecimal numbers
-      }).then(res=>{
+      }).then(res => {
         console.log(res)
       })
       return true;
@@ -122,7 +122,7 @@ export class MetaMask {
         console.log("no network")
         return 4902
       } else if (error.code === 4001) {
-        alert('Sorry you need to switch to the right network, please try again!');
+        messageHelper.error('Sorry you need to switch to the right network, please try again!');
         return false
       } else {
         return false
@@ -146,7 +146,7 @@ export class MetaMask {
             },
           },
         ],
-      }).then(res=>{
+      }).then(res => {
         console.log(res)
       })
       console.log("add network success")
@@ -207,7 +207,7 @@ export class MetaMask {
   isAvailable() {
     let ret = false;
     if (!this.isMetaMaskInstalled()) {
-      messageHelper.error("please install metamask")
+      messageHelper.error(`Please install Metamask Wallet at <a href="https://metamask.io/">metamask.io</a>.`, true, 4000)
       return false;
     }
     if (!store.state.metaMask) {
@@ -437,7 +437,7 @@ export class MetaMask {
       })
     })
   }
-  async addNFTToWalletByContract(param){
+  async addNFTToWalletByContract(param) {
     const myContract = this.getContract(param.abi, param.address);
     return new Promise((resolve, reject) => {
       myContract.methods.addNFT(param.tokenId).send({

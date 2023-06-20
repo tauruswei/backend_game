@@ -266,7 +266,7 @@
         </el-col>
         <el-col :span="24" style="margin-top:15px" v-if="needApprove">
           <div style="text-align: right;">
-            <b style="display:inline-block;padding:0 10px;background: #fef1db;color:#ff9800;">allowance: {{ allowance[action.key] }}</b>
+            <b style="display:inline-block;padding:0 10px;background: #fef1db;color:#ff9800;">Current approved allowance: {{ allowance[action.key] }}</b>
           </div>
           <el-button type="primary" @click="handleApproveOperate()" style="width:100%" :disabled="disabled">
             <el-tag size="small">1</el-tag>&nbsp;Approve Spending

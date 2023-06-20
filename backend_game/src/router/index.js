@@ -210,7 +210,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    document.title = to.meta?.title;
+    document.title = 'Accout - Chess of Stars';
     //进入登录页面的时候清除 token
     if (to.path == "/login" || to.path == "/register") {
       store.commit("setUser", null);
